@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Icono y Nombre -->
+    <link rel="icon" href="">
+    <title>DigitalNoteSys</title>
+    <!-- Iconos -->
+    <script src="https://kit.fontawesome.com/0fb473f9ca.js" crossorigin="anonymous"></script>
+    <!-- Hojas de Estilo -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+    {% block headAdd %}{% endblock %}
+</head>
+
+<body>
+    <!-- Menú Principal -->
+    <header>
+        <nav class="navbar">
+            <h1 class="navbar__logo"><a href="{{ url_for('inicio.menu') }}">
+                <img src="{{ url_for('static', filename='image/logo64px.png') }}" alt="logo">
+                <span>DigitalNoteSys</span></a>
+            </h1>
+
+            <ul class="navbar__options">
+                <li class="navbar__options--link"><a href="#">
+                    <i class="fa-solid fa-house"></i>
+                    <p>Profesores</p>
+                </a></li>
+                <li class="navbar__options--link"><a href="#">
+                    <i class="fa-solid fa-house"></i>
+                    <p>Materias</p>
+                </a></li>
+                <li class="navbar__options--link"><a href="#">
+                    <i class="fa-solid fa-house"></i>
+                    <p>Cursos</p>
+                </a></li>
+                <li class="navbar__options--link"><a href="#">
+                    <i class="fa-solid fa-house"></i>
+                    <p>Estudiantes</p>
+                </a></li>
+                <li class="navbar__options--link"><a href="#">
+                    <i class="fa-solid fa-house"></i>
+                    <p>Calificaciones</p>
+                </a></li>
+            </ul>
+            <ul class="navbar__buttons">
+                <button class="navbar__buttons--profile">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+                {#<!--
+                {% if current_user.is_authenticated %}
+                <form action="{{ url_for('logout') }}" method="POST">
+                    <button type="submit" class="navbar__buttons--logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <p>Cerrar Sesión</p>
+                    </button>
+                </form>
+                {% endif %} -->#}
+            </div>
+        </nav>
+    </header>
+    <!-- Contenido de la página -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 Dark_Knigth</p>
+    </footer>
+</body>
+
+</html>
