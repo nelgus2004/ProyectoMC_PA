@@ -12,7 +12,7 @@ controller = MainController()
 @estudiante_bp.route('/')
 def show():
     result = controller.show_estudiante()
-    return render_template('estudiante.html', registros=result)
+    return render_template('estudiante.html', registros=result, active_page='estudiante')
 
 @estudiante_bp.route('/add_estudiante', methods=['POST'])
 def add():

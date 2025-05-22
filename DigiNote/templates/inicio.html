@@ -29,13 +29,16 @@
                 <p>Profesores</p>
             </a></li>
             <li class="sidebar__options--link"><a href="#" onclick="activarOpcion(this)">
-                <img src="{{ url_for('static', filename='image/asignatura.png') }}" alt="Icono">             <p>Materias</p>
+                <img src="{{ url_for('static', filename='image/asignatura.png') }}" alt="Icono">
+                <p>Materias</p>
             </a></li>
-            <li class="sidebar__options--link"><a href="#" onclick="activarOpcion(this)">
+            <li class="sidebar__options--link {% if active_page == 'curso' %}active{% endif %}">
+                <a href="#" onclick="activarOpcion(this)">
                 <img src="{{ url_for('static', filename='image/curso.png') }}" alt="Icono">
                 <p>Cursos</p>
             </a></li>
-            <li class="sidebar__options--link"><a href="{{ url_for('estudiante.show') }}" onclick="activarOpcion(this)">
+            <li class="sidebar__options--link {% if active_page == 'estudiante' %}active{% endif %}">
+                <a href="{{ url_for('estudiante.show') }}" onclick="activarOpcion(this)>
                 <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
                 <p>Estudiantes</p>
             </a></li>
