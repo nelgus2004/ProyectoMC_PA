@@ -1,0 +1,90 @@
+/*----------------------------CSS Reset------------------------- */
+
+/* Reset general para elementos HTML */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+
+/* Variables de los colores */
+:root {
+  --blanco: #F3F5F1;
+  --verde: #498752;
+  --agua: #89AAB0;
+  --gris: #748887;
+  --verde-oscuro: #34464B;
+}
+
+body,
+html {
+  width: 100vw;
+  width: 100dvw;
+  height: 100vh;
+  height: 100dvh;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  background: var(--blanco);
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+/* Contenedor Principal */
+.panel {
+  float: right;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  width: calc(100% - 14.6rem);
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.header {
+  width: 100%;
+  height: 6.3rem;
+  background-color: var(--blanco);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-color: var(--agua);
+  padding: 0 1rem 0.8rem 1rem
+}
+
+.header h1 {
+  width: 17.8rem;
+  margin-top: 20px;
+  text-align: center;
+  font-family: sans-serif;
+  font-weight: 900;
+  font-style: normal;
+  font-size: 30px;
+  color: var(--verde-oscuro);
+  border-bottom: 2px solid var(--blanco);
+}
+
+.contenido {
+  width: 100%;
+  height: calc(100% - 6.3rem);
+  padding: 1rem;
+}

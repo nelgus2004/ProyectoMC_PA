@@ -1,0 +1,125 @@
+/* Variables de los colores */
+:root {
+  --blanco: #F3F5F1;
+  --verde: #498752;
+  --agua: #89AAB0;
+  --gris: #748887;
+  --verde-oscuro: #34464B;
+}
+
+/* Tipo de Fuente */
+@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Oswald&display=swap');
+
+/* Menú Lateral */
+.sidebar {
+    background-color: var(--verde-oscuro);
+    width: 14.6rem;
+    height: 100%;
+    display: flex;
+    align-content: start;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    z-index: 4;
+}
+
+.sidebar__btn--logout,
+.sidebar a {
+    display: flex;
+    color: var(--blanco);
+    text-decoration: none;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar__logo {
+    width: 100%;
+    padding: 2rem 1rem 1rem 1rem;
+}
+
+.sidebar__logo a {
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.sidebar__logo img {
+    width: 3rem;
+    height: 3rem;
+    filter: brightness(0) invert(1);
+    margin-right: 3px;
+}
+
+.sidebar__logo span {
+    font-family: "Kaushan Script", cursive;
+    font-weight: 800;
+    font-style: normal;
+    font-size: 1.6rem;
+    color: #f1f1f1;
+}
+
+.sidebar__linea {
+    border: none;
+    height: 2px;
+    background-color: var(--gris);
+    width: 90%;
+    margin: .8rem auto;
+}
+
+.sidebar__options {
+    width: 100%;
+    list-style: none;
+    display: flex;
+    padding: .5rem 0rem 1rem 1rem;
+    flex-direction: column;
+}
+
+.sidebar__options img {
+    margin: 0;
+    padding: 0;
+    width: 2rem;
+    filter: brightness(0) invert(1);
+}
+
+.sidebar__options--link {
+    margin-left: 5px;
+    height: 58px;
+}
+
+.sidebar__btn--logout,
+.sidebar__options--link a {
+    font-family: sans-serif;
+    justify-content: start;
+    height: 100%;
+    border: none;
+    background: none;
+    cursor: pointer;
+    gap: .5rem;
+    padding-left: 15px;
+    margin: 0;
+    transition: all 1s ease;
+}
+
+.sidebar__btn--logout:hover,
+.sidebar__options--link a:hover {
+    border-bottom: 2px solid var(--blanco);
+    background-color: var(--gris);
+}
+
+.sidebar__options--link.active {
+    position: relative;
+}
+
+.sidebar__options--link.active::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 1.8rem solid transparent;
+    border-bottom: 1.8rem solid transparent;
+    border-right: 1rem solid var(--blanco); 
+}

@@ -1,5 +1,5 @@
 from flask import request
-from notesSys.database.db import mysql
+from DigiNote.database.db import mysql
 
 class indexController:
     def index(self):

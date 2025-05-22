@@ -1,6 +1,6 @@
 import pytest
 
-from notesSys.app import create_app
+from DigiNote.app import create_app
 
 
 @pytest.fixture

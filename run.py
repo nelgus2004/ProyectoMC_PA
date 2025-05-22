@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from notesSys.app import create_app
+from DigiNote.app import create_app
 
 load_dotenv()
 

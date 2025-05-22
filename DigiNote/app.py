@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for 
-from notesSys.config.config import get_config_by_name
-from notesSys.initialize_functions import initialize_route, initialize_db
+from DigiNote.config.config import get_config_by_name
+from DigiNote.initialize_functions import initialize_route, initialize_db
 
 def create_app(config=None) -> Flask:
     app = Flask(__name__)
@@ -17,8 +17,8 @@ def create_app(config=None) -> Flask:
     def index():
         return redirect(url_for('inicio.menu'))
     
-    #print("\nList of registered routes:")
-    #for rule in app.url_map.iter_rules():
-    #    print(f"Endpoint: {rule.endpoint} -> URL: {rule}")
+    print("\nList of registered routes:")
+    for rule in app.url_map.iter_rules():
+        print(f"Endpoint: {rule.endpoint} -> URL: {rule}")
     
     return app

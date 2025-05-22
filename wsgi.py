@@ -1,3 +1,3 @@
-from notesSys.app import create_app
+from DigiNote.app import create_app
 
 app = create_app('production')

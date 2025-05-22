@@ -1,6 +1,6 @@
 from flask import Flask
-from notesSys.modules import all_routes
-from notesSys.database.db import mysql, mysql_settings
+from DigiNote.modules import all_routes
+from DigiNote.database.db import mysql, mysql_settings
 
 def initialize_route(app: Flask):
     with app.app_context():

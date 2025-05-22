@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Nombre de la aplicación -->
+    <title>DigiNote {% block title %}{% endblock %}</title>
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <!-- Hojas de Estilo -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+    {% block headAdd %}{% endblock %}
+</head>
+
+<body>
+    <!-- Menú Principal -->
+    <nav class="sidebar">
+        <div class="sidebar__logo"><a href="{{ url_for('inicio.menu') }}">
+            <img src="{{ url_for('static', filename='image/logo64px.png') }}" alt="logo">
+            <span>DigiNote</span></a>    
+        </div>
+        <div class="sidebar__linea"></div>
+        <ul class="sidebar__options">
+            <li class="sidebar__options--link"><a href="#" onclick="activarOpcion(this)">
+                <img src="{{ url_for('static', filename='image/docente.png') }}" alt="logo">
+                <p>Profesores</p>
+            </a></li>
+            <li class="sidebar__options--link"><a href="#" onclick="activarOpcion(this)">
+                <img src="{{ url_for('static', filename='image/asignatura.png') }}" alt="Icono">             <p>Materias</p>
+            </a></li>
+            <li class="sidebar__options--link"><a href="#" onclick="activarOpcion(this)">
+                <img src="{{ url_for('static', filename='image/curso.png') }}" alt="Icono">
+                <p>Cursos</p>
+            </a></li>
+            <li class="sidebar__options--link"><a href="{{ url_for('estudiante.show') }}" onclick="activarOpcion(this)">
+                <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
+                <p>Estudiantes</p>
+            </a></li>
+            <li class="sidebar__options--link"><a href="#" onclick="activarOpcion(this)">
+                <img src="{{ url_for('static', filename='image/notas.png') }}" alt="Icono">
+                <p>Calificaciones</p>
+            </a></li>
+            <li class="sidebar__options--link">
+            {#<!--
+            {% if current_user.is_authenticated %}
+            <form action="{{ url_for('logout') }}" method="POST"> -->#}
+
+                <button type="submit" class="sidebar__btn--logout" onclick="activarOpcion(this)">
+                    <img src="{{ url_for('static', filename='image/logout.png') }}" alt="Icono">
+                    <p>Cerrar Sesión</p>
+                </button>
+            
+            {#<!--
+            {#</form>
+            {% endif %} -->#}             
+            </a></li>
+    </nav>
+    <!-- Contenido de la página -->
+    <div class="panel">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+
+</html>

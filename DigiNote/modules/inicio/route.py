@@ -11,6 +11,6 @@ def menu():
     return render_template('inicio.html')
 
 
-#@index_bp.route('/loging')
-#def index():
+#@index_bp.route('/logout')
+#def logout():
 #    return redirect(url_for('inicio.login'))
