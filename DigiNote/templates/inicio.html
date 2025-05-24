@@ -12,7 +12,7 @@
     <!-- Hojas de Estilo -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
-    {% block headAdd %}{% endblock %}
+    {% block head %}{% endblock %}
 </head>
 
 <body>
@@ -24,25 +24,28 @@
         </div>
         <div class="sidebar__linea"></div>
         <ul class="sidebar__options">
-            <li class="sidebar__options--link"><a href="#" onclick="activarOpcion(this)">
+            <li class="sidebar__options--link {% if active_page == 'prof' %}active{% endif %}">
+                <a href="#">
                 <img src="{{ url_for('static', filename='image/docente.png') }}" alt="logo">
                 <p>Profesores</p>
             </a></li>
-            <li class="sidebar__options--link"><a href="#" onclick="activarOpcion(this)">
+            <li class="sidebar__options--link {% if active_page == 'mat' %}active{% endif %}">
+                <a href="#">
                 <img src="{{ url_for('static', filename='image/asignatura.png') }}" alt="Icono">
                 <p>Materias</p>
             </a></li>
-            <li class="sidebar__options--link {% if active_page == 'curso' %}active{% endif %}">
-                <a href="#" onclick="activarOpcion(this)">
+            <li class="sidebar__options--link {% if active_page == 'cur' %}active{% endif %}">
+                <a href="#">
                 <img src="{{ url_for('static', filename='image/curso.png') }}" alt="Icono">
                 <p>Cursos</p>
             </a></li>
-            <li class="sidebar__options--link {% if active_page == 'estudiante' %}active{% endif %}">
-                <a href="{{ url_for('estudiante.show') }}" onclick="activarOpcion(this)>
+            <li class="sidebar__options--link {% if active_page == 'est' %}active{% endif %}">
+                <a href="{{ url_for('estudiante.show') }}">
                 <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
                 <p>Estudiantes</p>
             </a></li>
-            <li class="sidebar__options--link"><a href="#" onclick="activarOpcion(this)">
+            <li class="sidebar__options--link {% if active_page == 'calif' %}active{% endif %}">
+                <a href="#">
                 <img src="{{ url_for('static', filename='image/notas.png') }}" alt="Icono">
                 <p>Calificaciones</p>
             </a></li>
@@ -51,7 +54,7 @@
             {% if current_user.is_authenticated %}
             <form action="{{ url_for('logout') }}" method="POST"> -->#}
 
-                <button type="submit" class="sidebar__btn--logout" onclick="activarOpcion(this)">
+                <button type="submit" class="sidebar__btn--logout">
                     <img src="{{ url_for('static', filename='image/logout.png') }}" alt="Icono">
                     <p>Cerrar Sesión</p>
                 </button>
@@ -65,6 +68,7 @@
     <div class="panel">
         {% block content %}{% endblock %}
     </div>
+        <script src="{{url_for('static', filename='js/scripts.js')}}"></script>
 </body>
 
 </html>

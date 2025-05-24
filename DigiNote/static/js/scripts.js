@@ -1,28 +1,70 @@
-// Efecto al seleccionar una opcion, añadir la clase 'active'
-function activarOpcion(elemento) {
-  const items = document.querySelectorAll('.sidebar__options--link');
-  items.forEach(item => item.classList.remove('active'));
-  // Agregar 'active' al enlace clickeado
-  const itemActivo = elemento.closest('.sidebar__options--link');
-  if (itemActivo) {
-    itemActivo.classList.add('active');
-  }
-}
-
-// Quitar 'active' si se hace clic en el logo
+// Quitar formato 'active' de las opciones al ir al inicio
 document.querySelector('.sidebar__logo a')?.addEventListener('click', () => {
   document.querySelectorAll('.sidebar__options--link').forEach(item => item.classList.remove('active'));
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  // Botones de Editar
+  document.querySelectorAll('.btn__edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const r_get = btn.dataset.get;
+      const r_update = btn.dataset.update;
+      const formId = btn.dataset.form;
+      const modalId = btn.dataset.modal;
+      const campos = JSON.parse(btn.dataset.campos);
 
-const btnDelete = document.querySelectorAll('.btn-delete');
-if (btnDelete) {
-  const btnArray = Array.from(btnDelete);
-  btnArray.forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      if (!confirm('Are you sure you want to delete it?')) {
-        e.preventDefault();
+      editarRegistro(id, r_get, formId, modalId, r_update, campos);
+    });
+  });
+
+  // Botones de Borrar
+  document.querySelectorAll('.btn__delete').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const url = btn.dataset.delete;
+      const confirmMsg = btn.dataset.confirm || "¿Seguro que quieres eliminar este registro?";
+      if (confirm(confirmMsg)) {
+        window.location.href = url;
       }
     });
-  })
+  });
+});
+
+// FORMULARIO EMERGENTE
+// Mostrar formulario
+function abrirForm(action, formId, modalId) {
+  const form = document.getElementById(formId);
+  form.reset();
+  form.action = action;
+  document.getElementById('btn-submit').textContent = 'Guardar';
+  document.getElementById(modalId).style.display = "block";
+}
+// Cerrar formulario
+function cerrarForm(modalId) {
+  document.getElementById(modalId).style.display = "none";
+}
+// Reutilizar formulario para actualizar un registro existente
+function editarRegistro(id, r_get, formId, modalId, r_update, campos) {
+  fetch(r_get + '/' + id)
+    .then(res => res.json())
+    .then(data => {
+      const form = document.getElementById(formId);
+      form.action = r_update + '/' + id;
+      document.getElementById('btn-submit').textContent = 'Actualizar';
+
+      campos.forEach(campo => {
+        const input = form.querySelector(`[name="${campo}"]`);
+        if (input) {
+          let valor = data[campo] || '';
+          if (input.type === 'date' && valor) {
+            const fecha = new Date(valor);
+            valor = fecha.toISOString().split('T')[0]; // formato YYYY-MM-DD
+          }
+
+          input.value = valor;
+        }
+      });
+
+      document.getElementById(modalId).style.display = "block";
+    });
 }

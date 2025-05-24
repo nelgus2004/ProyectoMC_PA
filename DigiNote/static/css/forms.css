@@ -1,3 +1,38 @@
+.emergente {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.form__background {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    width: 60%;
+    border-radius: 10px;
+    position: relative;
+}
+
+.form__cerrar {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+}
+
+
+
+
+
+
+
 /* Contenedor de detalles del usuario */
 .user__details {
     background-color: #f9f9f9;
@@ -10,11 +45,16 @@
 
 /* Estilo para la imagen del perfil */
 .user__profile-picture {
-    width: 100px; /* Ancho del perfil tamaño carnet */
-    height: 100px; /* Alto del perfil tamaño carnet */
-    object-fit: cover; /* Ajusta la imagen al contenedor */
-    border-radius: 50%; /* Redondea la imagen */
-    border: 2px solid #ddd; /* Borde alrededor de la imagen */
+    width: 100px;
+    /* Ancho del perfil tamaño carnet */
+    height: 100px;
+    /* Alto del perfil tamaño carnet */
+    object-fit: cover;
+    /* Ajusta la imagen al contenedor */
+    border-radius: 50%;
+    /* Redondea la imagen */
+    border: 2px solid #ddd;
+    /* Borde alrededor de la imagen */
     margin-bottom: 10px;
 }
 
@@ -83,7 +123,7 @@
 
 .campo__area,
 .campo__date,
-.campo__image, 
+.campo__image,
 .campo {
     width: 100%;
     padding: 0.75rem;
@@ -104,7 +144,7 @@
 }
 
 .campo__image {
-    padding: 0.5rem;    
+    padding: 0.5rem;
 }
 
 .campo__image::file-selector-button {
@@ -171,8 +211,8 @@
 }
 
 .form__error span {
-    color: darkred;   
-    font-size: 14px;  
+    color: darkred;
+    font-size: 14px;
     font-weight: bold;
     padding-bottom: 10px;
 }
@@ -204,9 +244,14 @@
     content: '•';
     font-size: 24px;
     color: #721c24;
-    position: absolute; /* Posicionamiento absoluto */
-    left: 0; /* Alinear a la izquierda */
-    top: 50%; /* Alinear verticalmente al centro */
-    transform: translateY(-50%); /* Ajustar la posición vertical */
-    line-height: 1; /* Ajustar la altura de línea */
+    position: absolute;
+    /* Posicionamiento absoluto */
+    left: 0;
+    /* Alinear a la izquierda */
+    top: 50%;
+    /* Alinear verticalmente al centro */
+    transform: translateY(-50%);
+    /* Ajustar la posición vertical */
+    line-height: 1;
+    /* Ajustar la altura de línea */
 }
