@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -7,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Nombre de la aplicación -->
     <title>DigiNote {% block title %}{% endblock %}</title>
-    <!-- Scripts -->
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <!-- Hojas de Estilo -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
@@ -25,14 +26,19 @@
         <div class="sidebar__linea"></div>
         <ul class="sidebar__options">
             <li class="sidebar__options--link {% if active_page == 'prof' %}active{% endif %}">
-                <a href="#">
+                <a href="{{ url_for('profesor.show') }}">
                 <img src="{{ url_for('static', filename='image/docente.png') }}" alt="logo">
                 <p>Profesores</p>
             </a></li>
             <li class="sidebar__options--link {% if active_page == 'mat' %}active{% endif %}">
-                <a href="#">
+                <a href="{{ url_for('materia.show') }}">
                 <img src="{{ url_for('static', filename='image/asignatura.png') }}" alt="Icono">
                 <p>Materias</p>
+            </a></li>
+            <li class="sidebar__options--link {% if active_page == 'matr' %}active{% endif %}">
+                <a href="#">
+                <img src="{{ url_for('static', filename='image/matricula.png') }}" alt="Icono">
+                <p>Matriculas</p>
             </a></li>
             <li class="sidebar__options--link {% if active_page == 'cur' %}active{% endif %}">
                 <a href="#">
@@ -68,7 +74,8 @@
     <div class="panel">
         {% block content %}{% endblock %}
     </div>
-        <script src="{{url_for('static', filename='js/scripts.js')}}"></script>
+    <!-- Scripts -->
+    <script src="{{url_for('static', filename='js/scripts.js')}}"></script>
 </body>
 
 </html>

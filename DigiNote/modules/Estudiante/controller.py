@@ -1,6 +1,6 @@
 from DigiNote.database.db import mysql
 
-class MainController:
+class EstudianteController:
     def show_estudiante(self):
         cur = mysql.connection.cursor()
         cur.execute('SELECT * FROM estudiante')
@@ -25,17 +25,16 @@ class MainController:
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """, (cedula, nombre, apellido, fechaNacimiento, correo, telefono, direccion, observacion))
             mysql.connection.commit()
-            return 'Estudiante Añadido Correctamente'
+            return ('Estudiante añadido Correctamente', 'successful')
         except Exception as e:
             print(f'Error al añadir estudiante: {e}')
-            return 'ERROR: No se pudo añadir al estudiante.'
+            return ('ERROR: No se pudo añadir al estudiante.', 'error')
         
     def get_estudiante_by_id(self, id):
         cur = mysql.connection.cursor()
         cur.execute('SELECT * FROM Estudiante WHERE idEstudiante = %s', (id,))
         data = cur.fetchall()
         cur.close()
-        #print(data[0])
         return data[0]
 
     def update_estudiante(self, id, request):
@@ -63,7 +62,7 @@ class MainController:
             """, (cedula, nombre, apellido, fechaNacimiento, correo, telefono, direccion, observacion, id))
             mysql.connection.commit()
             cur.close()
-            return 'Estudiante Editado Correctamente'
+            return ('Estudiante Editado Correctamente', 'info')
 
     def delete_estudiante(self, id):
         cur = mysql.connection.cursor()
@@ -72,5 +71,5 @@ class MainController:
         eliminado = cur.rowcount == 0
         cur.close()
         if eliminado:
-            return 'No se encontró el estudiante para eliminar.'
-        return 'Estudiante Eliminado Correctamente'
+            return ('No se encontró el estudiante para eliminar', 'info')
+        return ('Estudiante Eliminado Correctamente', 'successful')

@@ -36,7 +36,8 @@ function abrirForm(action, formId, modalId) {
   const form = document.getElementById(formId);
   form.reset();
   form.action = action;
-  document.getElementById('btn-submit').textContent = 'Guardar';
+  document.getElementById('btn-submit').querySelector('span').textContent = 'Guardar';
+  document.getElementById('btn-submit').querySelector('img').src = '/static/image/save.png';
   document.getElementById(modalId).style.display = "block";
 }
 // Cerrar formulario
@@ -50,8 +51,8 @@ function editarRegistro(id, r_get, formId, modalId, r_update, campos) {
     .then(data => {
       const form = document.getElementById(formId);
       form.action = r_update + '/' + id;
-      document.getElementById('btn-submit').textContent = 'Actualizar';
-
+      document.getElementById('btn-submit').querySelector('span').textContent = 'Actualizar';
+      document.getElementById('btn-submit').querySelector('img').src = '/static/image/update.png';
       campos.forEach(campo => {
         const input = form.querySelector(`[name="${campo}"]`);
         if (input) {
@@ -67,4 +68,12 @@ function editarRegistro(id, r_get, formId, modalId, r_update, campos) {
 
       document.getElementById(modalId).style.display = "block";
     });
+}
+
+// Cerrar Alert
+function cerrarAlert(boton) {
+  const alerta = boton.closest('.alert');
+  if (alerta) {
+    alerta.remove();
+  }
 }

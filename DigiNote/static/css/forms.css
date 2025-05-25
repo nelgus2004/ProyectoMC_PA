@@ -1,257 +1,128 @@
+:root {
+  --blanco: #F3F5F1;
+  --verde: #498752;
+  --agua: #89AAB0;
+  --gris: #748887;
+  --verde-oscuro: #34464B;
+  --negro: #1f1f20;
+  --rojo: #c82333;
+  --azul: #0056b3;
+}
+
 .emergente {
     display: none;
     position: fixed;
     z-index: 999;
-    left: 0;
+    right: 0;
     top: 0;
-    width: 100%;
+    width: calc(100% - 7.4rem);
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
 }
 
 .form__background {
-    background-color: white;
-    margin: 10% auto;
-    padding: 20px;
-    width: 60%;
+    background-color: var(--blanco);
+    margin: 0 auto;
+    margin-top: 3.2rem;
+    padding: 1.8rem;
+    width: 22vw;
     border-radius: 10px;
     position: relative;
 }
 
-.form__cerrar {
+.close {
     position: absolute;
-    top: 10px;
-    right: 20px;
+    top: 15px;
+    right: 15px;
     font-size: 24px;
-    border: none;
+    border: 2px solid var(--rojo);
+    background: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 100%;
+    color: var(--rojo);
     cursor: pointer;
-}
-
-
-
-
-
-
-
-/* Contenedor de detalles del usuario */
-.user__details {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilo para la imagen del perfil */
-.user__profile-picture {
-    width: 100px;
-    /* Ancho del perfil tamaño carnet */
-    height: 100px;
-    /* Alto del perfil tamaño carnet */
-    object-fit: cover;
-    /* Ajusta la imagen al contenedor */
-    border-radius: 50%;
-    /* Redondea la imagen */
-    border: 2px solid #ddd;
-    /* Borde alrededor de la imagen */
-    margin-bottom: 10px;
-}
-
-/* Estilo para los detalles del usuario */
-.user__details h3 {
-    margin: 0;
-    font-size: 1.5em;
-    color: #333;
-}
-
-.user__details p {
-    margin: 5px 0;
-    font-size: 1em;
-    color: #666;
-}
-
-
-
-
-.content {
     display: flex;
-    height: 100%;
-    width: 99%;
-    flex-direction: row;
-    justify-content: space-evenly;
     align-items: center;
+    justify-content: center;
+    padding: 0;
+
+}
+
+.close span {
+    position: static;
+    line-height: 1;
+}
+
+.form {
+    display: flex;
+    font-family: "Roboto Condensed", sans-serif;
+    flex-direction: column;
+    gap: .8rem;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .form__image {
-    max-width: 480px;
-    height: 280px;
-    padding: 0;
+    width: 100%;
+    margin-bottom: 14px;
 }
 
 .form__image img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
+    display: block; 
+    width: 4rem;
+    margin: 10px auto;
 }
 
-.content form {
-    padding: 0;
-    margin-right: 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.form__container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+.form__group {
+    position: relative;
     width: 100%;
 }
 
-.form__field {
+.form__campo--texto,
+.form__campo--area,
+.form__campo--fecha,
+.form__campo--correo {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.form__field label {
-    color: #333;
-    font-weight: bold;
-}
-
-.campo__area,
-.campo__date,
-.campo__image,
-.campo {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid rgb(112, 112, 112);
+    padding: 0.6rem;
+    border: 1px solid var(--gris);
     border-radius: 5px;
-    font-size: .85rem;
-    font-family: Arial, sans-serif;
+    font-size: .9rem;
     box-sizing: border-box;
 }
 
-.campo__date {
+.form__campo--fecha {
     height: 100%;
     box-sizing: border-box;
 }
 
-.campo__area {
+.form__campo--area {
     resize: none;
 }
 
-.campo__image {
-    padding: 0.5rem;
-}
-
-.campo__image::file-selector-button {
-    padding: 0.3rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #e0e0e0;
-    cursor: pointer;
-}
-
-.campo__image::file-selector-button:hover {
-    background-color: #d0d0d0;
-}
-
-.campo::placeholder,
-.campo__area::placeholder,
-.campo__date::placeholder,
-.campo__image::placeholder {
-    color: #9b9b9b;
+.form__campo--texto::placeholder,
+.form__campo--correo::placeholder,
+.form__campo--area::placeholder {
+    color: var(--gris);
+    font-family: "Roboto Condensed", sans-serif;
     opacity: 1;
 }
 
-.required::after {
-    content: '*';
-    margin-left: 2px;
-    font-size: 1rem;
-    color: rgb(225, 5, 27);
-}
-
-.form__footer {
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-}
-
-.form__button {
-    width: 7.5vw;
-    padding: .75rem;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.4s ease;
-}
-
-.form__button:hover {
-    background-color: #555;
-}
-
-
-.form__error {
-    margin-top: 20px;
-    width: 100%;
-    height: auto;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #ffe3e5;
-    border: 1px solid #f4bbc1;
-    border-radius: 5px;
-    text-align: left;
-}
-
-.form__error span {
-    color: darkred;
-    font-size: 14px;
-    font-weight: bold;
-    padding-bottom: 10px;
-}
-
-.form__error span i {
-    margin-right: 15px;
-}
-
-.errorlist {
-    margin-top: 10px;
-    margin-left: 30px;
-    margin-bottom: 5px;
-    padding: 0;
-    list-style-type: none;
-}
-
-.errorlist li {
-    color: darkred;
-    font-size: 14px;
-    margin-bottom: 5px;
-    text-align: left;
-    width: 90%;
-    position: relative;
-    padding-left: 20px;
-    padding-right: 5px;
-}
-
-.errorlist li::before {
-    content: '•';
-    font-size: 24px;
-    color: #721c24;
+.form__campo--texto::placeholder .required::after {
     position: absolute;
-    /* Posicionamiento absoluto */
-    left: 0;
-    /* Alinear a la izquierda */
-    top: 50%;
-    /* Alinear verticalmente al centro */
-    transform: translateY(-50%);
-    /* Ajustar la posición vertical */
-    line-height: 1;
-    /* Ajustar la altura de línea */
+    content: '*';
+    top: 7px;
+    left: 4px;
+    font-size: 1rem;
+    padding: 0;
+    color: var(--rojo);
+}
+
+.form__buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 }

@@ -10,45 +10,64 @@
     {% block content %}
         <!-- Encabezado -->
         <header class="header">
-            <h1>Estudiantes</h1>
+            <h1>Gestionar Estudiantes</h1>
+            <div class="header__btns">
+                <button class="btn btn__add" onclick="abrirForm('{{ url_for('estudiante.add') }}', 'form-estudiante','modal-estudiante')">
+                    <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
+                    <span>Añadir</span></button>    
+            </div>
         </header>
 
         <main class="contenido">
-            <button class="btn btn__add" onclick="abrirForm('{{ url_for('estudiante.add') }}', 'form-estudiante','modal-estudiante')">Añadir</button>
-    
+            <!-- Mensajes de Sistema -->
+            {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+            <div class="alert alert__{{ categoria }}" role="alert">
+                <span>{{ mensaje }}</span>
+                <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+
             <!-- Formulario Emergente -->
             <div class="emergente" id="modal-estudiante">
                 <div class="form__background">
                     <button type="button" class="close" onclick="cerrarForm('modal-estudiante')">
                         <span>&times;</span>
                     </button>
-
+                    <div class="form__image">
+                        <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
+                    </div>
                     <form action="{{ url_for('estudiante.add') }}" method="POST" class="form form__estudiante" id="form-estudiante">
-                        <div class="form-group">
+                        <div class="form__group">
                             <input type="text" class="form__campo--texto" name="Cedula" placeholder="Cédula" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form__group">
                             <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form__group">
                             <input type="text" class="form__campo--texto" name="Apellido" placeholder="Apellido" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form__group">
                             <input type="date" class="form__campo--fecha" name="FechaNacimiento" placeholder="Fecha de Nacimiento">
                         </div>
-                        <div class="form-group">
+                        <div class="form__group">
                             <input type="email" class="form__campo--correo" name="Correo" placeholder="Correo electrónico">
                         </div>
-                        <div class="form-group">
+                        <div class="form__group">
                             <input type="text" class="form__campo--texto" name="Telefono" placeholder="Teléfono">
                         </div>
-                        <div class="form-group">
+                        <div class="form__group">
                             <input type="text" class="form__campo--texto" name="Direccion" placeholder="Dirección">
                         </div>
-                        <div class="form-group">
-                            <textarea class="form__campo--texto" name="Observacion" placeholder="Observaciones" rows="3"></textarea>
+                        <div class="form__group">
+                            <textarea class="form__campo--area" name="Observacion" placeholder="Observaciones" rows="3"></textarea>
                         </div>
-                        <button class="btn btn__save" id="btn-submit">Guardar</button>
+                        <div class="form__buttons">
+                            <button type="submit" class="btn btn__save" id="btn-submit">
+                                <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+                                <span>Guardar</span> </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -60,9 +79,9 @@
                         <p class="card__text"><b>Nombres:</b> {{ reg.Apellido }} {{ reg.Nombre }}</p>
                         <p class="card__text"><b>Fecha Nacimiento:</b>  {{ reg.FechaNacimiento }}</p>
                         <p class="card__text"><b>Correo:</b> {{ reg.Correo }}</p>
-                        <p class="card__text"><b>Telefono:</b> {{ reg.Telefono }}</p>
-                        <p class="card__text"><b>Direccion:</b>  {{ reg.Direccion }}</p>
-                        <p class="card__text"><b>Observacion:</b> {{ reg.Observacion }}</p>
+                        <p class="card__text"><b>Telefono:</b> {{ reg.Telefono or '' }}</p>
+                        <p class="card__text"><b>Direccion:</b>  {{ reg.Direccion or '' }}</p>
+                        <p class="card__text"><b>Observacion:</b> {{ reg.Observacion or '' }}</p>
                     </div>
                     <div class="card__btn">
                         <button type="button" class="btn btn__edit"
@@ -71,12 +90,13 @@
                             data-form="form-estudiante"
                             data-modal="modal-estudiante"
                             data-update="{{ r_update }}"
-                            data-campos='{{ campos|tojson }}'
-                        >Editar</button>
-                        <button ype="button"  class="btn btn__delete"
-                            data-delete="{{ url_for('estudiante.delete', id=reg.idEstudiante) }}"
-                        > Borrar </button>
-
+                            data-campos='{{ campos|tojson }}'>
+                        <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
+                        <span>Editar</span> </button>
+                        <button type="button"  class="btn btn__delete"
+                            data-delete="{{ url_for('estudiante.delete', id=reg.idEstudiante) }}">
+                            <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
+                            <span>Borrar</span> </button>
                     </div>
                 {% endfor %}
             {% else %}

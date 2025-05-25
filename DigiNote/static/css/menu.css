@@ -7,8 +7,6 @@
   --verde-oscuro: #34464B;
 }
 
-/* Tipo de Fuente */
-@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Oswald&display=swap');
 
 /* Menú Lateral */
 .sidebar {
@@ -55,7 +53,7 @@
     font-family: "Kaushan Script", cursive;
     font-weight: 800;
     font-style: normal;
-    font-size: 1.6rem;
+    font-size: 2rem;
     color: #f1f1f1;
 }
 
@@ -89,7 +87,6 @@
 
 .sidebar__btn--logout,
 .sidebar__options--link a {
-    font-family: sans-serif;
     justify-content: start;
     height: 100%;
     border: none;

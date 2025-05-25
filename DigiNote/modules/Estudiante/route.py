@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, make_response
-from .controller import MainController
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash, make_response
+from .controller import EstudianteController
 
 estudiante_bp = Blueprint('estudiante', __name__, template_folder='DigiNote/templates')
-controller = MainController()
+controller = EstudianteController()
 
 @estudiante_bp.route('/')
 def show():
@@ -18,7 +18,7 @@ def show():
 @estudiante_bp.route('/add_estudiante', methods=['POST'])
 def add():
     result = controller.add_estudiante(request)
-    print(result)
+    flash(*result)
     return redirect(url_for('estudiante.show'))
 
 @estudiante_bp.route('/get_estudiante/<id>', methods=['POST', 'GET'])
@@ -29,11 +29,11 @@ def get(id):
 @estudiante_bp.route('/update_estudiante/<id>', methods=['POST'])
 def update(id):
     result = controller.update_estudiante(id, request)
-    print(result)
+    flash(*result)
     return redirect(url_for('estudiante.show'))
 
 @estudiante_bp.route('/delete_estudiante/<string:id>', methods=['POST', 'GET'])
 def delete(id):
     result = controller.delete_estudiante(id)
-    print(result)
+    flash(*result)
     return redirect(url_for('estudiante.show'))
