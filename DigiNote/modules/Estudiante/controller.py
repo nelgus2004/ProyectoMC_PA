@@ -11,8 +11,8 @@ class EstudianteController:
     def add_estudiante(self, request):
         if request.method == 'POST':
             cedula = request.form['Cedula']
-            nombre = request.form['Nombre']
-            apellido = request.form['Apellido']
+            nombre = request.form['Nombre'].strip().title()
+            apellido = request.form['Apellido'].strip().title()
             fechaNacimiento = request.form['FechaNacimiento']
             correo = request.form['Correo']
             telefono = request.form['Telefono'] or None
@@ -40,8 +40,8 @@ class EstudianteController:
     def update_estudiante(self, id, request):
         if request.method == 'POST':
             cedula = request.form['Cedula']
-            nombre = request.form['Nombre']
-            apellido = request.form['Apellido']
+            nombre = request.form['Nombre'].strip().title()
+            apellido = request.form['Apellido'].strip().title()
             fechaNacimiento = request.form['FechaNacimiento']
             correo = request.form['Correo']
             telefono = request.form['Telefono'] or None

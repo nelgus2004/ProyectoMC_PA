@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Estudiante (
     FechaNacimiento DATE NOT NULL,
     Correo VARCHAR(100) NOT NULL,
     Telefono VARCHAR(20),
-    Direccion TEXT,
+    Direccion TEXT NOT NULL,
     Observacion TEXT
 ) ENGINE=InnoDB;
 
@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS Profesor (
     Nombre VARCHAR(50) NOT NULL,
     Apellido VARCHAR(50) NOT NULL,
     Telefono VARCHAR(20),
-    Correo VARCHAR(100),
-    Especialidad VARCHAR(100),
+    Correo VARCHAR(100) NOT NULL,
+    Especialidad VARCHAR(100) NOT NULL,
     Direccion TEXT
 ) ENGINE=InnoDB;
 
@@ -31,7 +31,21 @@ CREATE TABLE IF NOT EXISTS Materia (
     Descripcion TEXT
 ) ENGINE=InnoDB;
 
--- 4. Tabla PeriodoLectivo;
+-- 4. Asignación de Materias (Profesor-Materia-Curso);
+CREATE TABLE IF NOT EXISTS AsignacionMaterias (
+    idAsignacion INT AUTO_INCREMENT PRIMARY KEY,
+    idProfesor INT NOT NULL,
+    idMateria INT NOT NULL,
+    idCurso INT NOT NULL,
+    FOREIGN KEY (idProfesor) REFERENCES Profesor(idProfesor)
+        ON DELETE CASCADE,
+    FOREIGN KEY (idMateria) REFERENCES Materia(idMateria)
+        ON DELETE CASCADE,
+    FOREIGN KEY (idCurso) REFERENCES Curso(idCurso)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- 5. Tabla PeriodoLectivo;
 CREATE TABLE IF NOT EXISTS PeriodoLectivo (
     idPeriodo INT AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(20) NOT NULL,
@@ -40,11 +54,10 @@ CREATE TABLE IF NOT EXISTS PeriodoLectivo (
     Estado ENUM('Activo', 'Inactivo') DEFAULT 'Inactivo'
 ) ENGINE=InnoDB;
 
--- 5. Tabla Curso;
+-- 6. Tabla Curso;
 CREATE TABLE IF NOT EXISTS Curso (
     idCurso INT AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
-    Grado VARCHAR(20) NOT NULL,
+    Paralelo VARCHAR(5) NOT NULL,
     Turno ENUM('Mañana', 'Tarde') NOT NULL,
     Aula VARCHAR(50),
     idPeriodo INT,
@@ -53,7 +66,7 @@ CREATE TABLE IF NOT EXISTS Curso (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- 6. Tabla Matrícula;
+-- 7. Tabla Matrícula;
 CREATE TABLE IF NOT EXISTS Matricula (
     idMatricula INT AUTO_INCREMENT PRIMARY KEY,
     idEstudiante INT NOT NULL,
@@ -66,20 +79,6 @@ CREATE TABLE IF NOT EXISTS Matricula (
     FOREIGN KEY (idCurso) REFERENCES Curso(idCurso)
         ON DELETE CASCADE,
     FOREIGN KEY (idPeriodo) REFERENCES PeriodoLectivo(idPeriodo)
-        ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- 7. Asignación de Materias (Profesor-Materia-Curso);
-CREATE TABLE IF NOT EXISTS AsignacionMaterias (
-    idAsignacion INT AUTO_INCREMENT PRIMARY KEY,
-    idProfesor INT NOT NULL,
-    idMateria INT NOT NULL,
-    idCurso INT NOT NULL,
-    FOREIGN KEY (idProfesor) REFERENCES Profesor(idProfesor)
-        ON DELETE CASCADE,
-    FOREIGN KEY (idMateria) REFERENCES Materia(idMateria)
-        ON DELETE CASCADE,
-    FOREIGN KEY (idCurso) REFERENCES Curso(idCurso)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

@@ -11,8 +11,8 @@ class ProfesorController:
     def add_profesor(self, request):
         if request.method == 'POST':
             cedula = request.form['Cedula']
-            nombre = request.form['Nombre']
-            apellido = request.form['Apellido']
+            nombre = request.form['Nombre'].strip().title()
+            apellido = request.form['Apellido'].strip().title()
             telefono = request.form['Telefono'] or None
             correo = request.form['Correo'] or None
             especialidad = request.form['Especialidad'] or None
@@ -39,8 +39,8 @@ class ProfesorController:
     def update_profesor(self, id, request):
         if request.method == 'POST':
             cedula = request.form['Cedula']
-            nombre = request.form['Nombre']
-            apellido = request.form['Apellido']
+            nombre = request.form['Nombre'].strip().title()
+            apellido = request.form['Apellido'].strip().title()
             telefono = request.form['Telefono'] or None
             correo = request.form['Correo'] or None
             especialidad = request.form['Especialidad'] or None

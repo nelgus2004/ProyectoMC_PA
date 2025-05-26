@@ -1,6 +1,6 @@
 {% extends './inicio.html' %}
 
-{% block title %}| Materias{% endblock %}
+{% block title %}| Periodos{% endblock %}
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
@@ -10,9 +10,9 @@
 {% block content %}
     <!-- Encabezado -->
     <header class="header">
-        <h1>Gestionar Materias</h1>
+        <h1>Gestionar <br> Periodos Lectivos</h1>
         <div class="header__btns">
-            <button class="btn btn__add" onclick="abrirForm('{{ url_for('materia.add') }}', 'form-materia','modal-materia')">
+            <button class="btn btn__add" onclick="abrirForm('{{ url_for('periodo.add') }}', 'form-periodo','modal-periodo')">
                 <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
                 <span>Añadir</span>
             </button>    
@@ -31,28 +31,31 @@
         {% endfor %}
 
         <!-- Formulario Emergente -->
-        <div class="emergente" id="modal-materia">
+        <div class="emergente" id="modal-periodo">
             <div class="form__background">
-                <button type="button" class="close" onclick="cerrarForm('modal-materia')">
+                <button type="button" class="close" onclick="cerrarForm('modal-periodo')">
                     <span>&times;</span>
                 </button>
                 <div class="form__image">
-                    <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
+                    <img src="{{ url_for('static', filename='image/periodo.png') }}" alt="Icono">
                 </div>
-                <form action="{{ url_for('materia.add') }}" method="POST" class="form form__materia" id="form-materia">
+                <form action="{{ url_for('periodo.add') }}" method="POST" class="form form__periodo" id="form-periodo">
                     <div class="form__group">
-                        <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre de la Materia" required>
+                        <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre del Periodo" required>
                     </div>
                     <div class="form__group">
-                        <select class="form__campo--select" name="Nivel" required>
-                            <option value="" disabled selected>Seleccione el Nivel</option>
-                            <option value="1ro">1ro</option>
-                            <option value="2do">2do</option>
-                            <option value="3ro">3ro</option>
+                        <label for="FechaInicio">Fecha de Inicio</label>
+                        <input type="date" class="form__campo--fecha" name="FechaInicio" required>
+                    </div>
+                    <div class="form__group">
+                        <label for="FechaFin">Fecha de Fin</label>
+                        <input type="date" class="form__campo--fecha" name="FechaFin" required>
+                    </div>
+                    <div class="form__group">
+                        <select class="form__campo--select" name="Estado">
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo" selected>Inactivo</option>
                         </select>
-                    </div>
-                    <div class="form__group">
-                        <textarea class="form__campo--area" name="Descripcion" placeholder="Descripción de la materia" rows="3"></textarea>
                     </div>
                     <div class="form__buttons">
                         <button type="submit" class="btn btn__save" id="btn-submit">
@@ -64,28 +67,30 @@
             </div>
         </div>
 
+        <!-- Tarjetas de Periodos -->
         <div class="cards">
         {% if registros %}
             {% for reg in registros %}
             <div class="card">
                 <div class="card__content">
                     <h3 class="card__text card__title">{{ reg.Nombre }}</h3>
-                    <p class="card__text"><b>Nivel:</b> {{ reg.Nivel }}</p>
-                    <p class="card__text"><b>Descripción:</b> {{ reg.Descripcion or '' }}</p>
+                    <p class="card__text"><b>Inicio:</b> {{ reg.FechaInicio }}</p>
+                    <p class="card__text"><b>Fin:</b> {{ reg.FechaFin }}</p>
+                    <p class="card__text"><b>Estado:</b> {{ reg.Estado }}</p>
                 </div>
                 <div class="card__btn">
                     <button type="button" class="btn btn__edit"
-                        data-id="{{ reg.idMateria }}"
+                        data-id="{{ reg.idPeriodo }}"
                         data-get="{{ r_get }}"
-                        data-form="form-materia"
-                        data-modal="modal-materia"
+                        data-form="form-periodo"
+                        data-modal="modal-periodo"
                         data-update="{{ r_update }}"
                         data-campos='{{ campos|tojson }}'>
                         <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
                         <span>Editar</span>
                     </button>
                     <button type="button" class="btn btn__delete"
-                        data-delete="{{ url_for('materia.delete', id=reg.idMateria) }}">
+                        data-delete="{{ url_for('periodo.delete', id=reg.idPeriodo) }}">
                         <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
                         <span>Borrar</span>
                     </button>
@@ -93,7 +98,7 @@
             </div>
             {% endfor %}
         {% else %}
-            <p>No hay materias registradas actualmente</p>
+            <p>No hay periodos registrados actualmente</p>
         {% endif %}
         </div>
     </main>

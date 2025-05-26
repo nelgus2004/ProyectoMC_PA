@@ -2,10 +2,10 @@ from flask import Blueprint, make_response, jsonify
 from .controller import MainController
 
 
-matricula_bp = Blueprint('matricula', __name__, template_folder='notesSys/modules/templates')
+matricula_bp = Blueprint('matricula', __name__, template_folder='DigiNote/templates')
 controller = MainController()
-@matricula_bp.route('/', methods=['GET'])
-def matricula():
-    result=controller.index()
-    return make_response(jsonify(data=result))
+
+@matricula_bp.route('/show')
+def show():
+    return "<h1>Página en construcción</h1>"
       

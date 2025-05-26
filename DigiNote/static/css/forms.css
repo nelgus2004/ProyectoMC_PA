@@ -6,9 +6,12 @@
   --verde-oscuro: #34464B;
   --negro: #1f1f20;
   --rojo: #c82333;
+  --rojo-claro: #f8b3b320;
   --azul: #0056b3;
+  font-family: "Roboto Condensed", sans-serif;
 }
 
+/* Fondo oscuro del formulario emergente */
 .emergente {
     display: none;
     position: fixed;
@@ -20,6 +23,7 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+/* Formularo emergente */
 .form__background {
     background-color: var(--blanco);
     margin: 0 auto;
@@ -30,6 +34,16 @@
     position: relative;
 }
 
+.form {
+    display: flex;
+    font-family: "Roboto Condensed", sans-serif;
+    flex-direction: column;
+    gap: .8rem;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Boton para cerrar formulario emergente */
 .close {
     position: absolute;
     top: 15px;
@@ -54,15 +68,7 @@
     line-height: 1;
 }
 
-.form {
-    display: flex;
-    font-family: "Roboto Condensed", sans-serif;
-    flex-direction: column;
-    gap: .8rem;
-    margin: 0 auto;
-    width: 100%;
-}
-
+/* Imagen/Encabezado del Formulario emergente */
 .form__image {
     width: 100%;
     margin-bottom: 14px;
@@ -74,6 +80,7 @@
     margin: 10px auto;
 }
 
+/* Campos del Formulario emergente */
 .form__group {
     position: relative;
     width: 100%;
@@ -82,7 +89,8 @@
 .form__campo--texto,
 .form__campo--area,
 .form__campo--fecha,
-.form__campo--correo {
+.form__campo--correo,
+.form__campo--select {
     width: 100%;
     padding: 0.6rem;
     border: 1px solid var(--gris);
@@ -91,7 +99,8 @@
     box-sizing: border-box;
 }
 
-.form__campo--fecha {
+.form__campo--fecha,
+.form__campo--select {
     height: 100%;
     box-sizing: border-box;
 }
@@ -125,4 +134,27 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
+}
+
+/* Resaltar campo invalido del formulario emergente */
+.form__campo--texto:required:placeholder-shown,
+.form__campo--correo:required:placeholder-shown,
+.form__campo--fecha:required:invalid,
+.form__campo--select:required:invalid,
+.form__campo--area:required:placeholder-shown {
+    background-color: var(--rojo-claro)
+}
+
+.form__group input:invalid, 
+.form__group textarea:invalid,
+.form__group select:invalid {
+    border: 2px solid var(--rojo);
+    background-color: var(--blanco);
+}
+
+.form__group input:valid, 
+.form__group textarea:valid,
+.form__group select:valid {
+    border: 2px solid var(--verde);
+    background-color: var(--blanco);
 }

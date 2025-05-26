@@ -1,12 +1,14 @@
-/* Variables de los colores */
 :root {
   --blanco: #F3F5F1;
   --verde: #498752;
   --agua: #89AAB0;
   --gris: #748887;
   --verde-oscuro: #34464B;
+  --negro: #1f1f20;
+  --rojo: #c82333;
+  --azul: #0056b3;
+  font-family: "Roboto Condensed", sans-serif;
 }
-
 
 /* Menú Lateral */
 .sidebar {
@@ -21,7 +23,7 @@
     z-index: 4;
 }
 
-.sidebar__btn--logout,
+.sidebar__form--logout button,
 .sidebar a {
     display: flex;
     color: var(--blanco);
@@ -73,19 +75,29 @@
     flex-direction: column;
 }
 
-.sidebar__options img {
-    margin: 0;
-    padding: 0;
-    width: 2rem;
-    filter: brightness(0) invert(1);
-}
-
 .sidebar__options--link {
     margin-left: 5px;
     height: 58px;
 }
 
-.sidebar__btn--logout,
+.sidebar__options--link img {
+    margin: 0;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    filter: brightness(0) invert(1);
+}
+
+.sidebar__form--logout{
+    height: 100%;
+}
+
+.sidebar__form--logout img {
+    width: 1.9rem;
+    height: 1.9rem;
+}
+
+.sidebar__form--logout button,
 .sidebar__options--link a {
     justify-content: start;
     height: 100%;
@@ -98,7 +110,7 @@
     transition: all 1s ease;
 }
 
-.sidebar__btn--logout:hover,
+.sidebar__form--logout button:hover,
 .sidebar__options--link a:hover {
     border-bottom: 2px solid var(--blanco);
     background-color: var(--gris);

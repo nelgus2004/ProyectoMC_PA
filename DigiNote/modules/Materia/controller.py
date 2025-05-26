@@ -10,7 +10,7 @@ class MateriaController:
 
     def add_materia(self, request):
         if request.method == 'POST':
-            nombre = request.form['Nombre']
+            nombre = request.form['Nombre'].strip().title()
             nivel = request.form['Nivel']
             descripcion = request.form.get('Descripcion') or None
             try:
@@ -37,7 +37,7 @@ class MateriaController:
 
     def update_materia(self, id, request):
         if request.method == 'POST':
-            nombre = request.form['Nombre']
+            nombre = request.form['Nombre'].strip().title()
             nivel = request.form['Nivel']
             descripcion = request.form.get('Descripcion') or None
             try:

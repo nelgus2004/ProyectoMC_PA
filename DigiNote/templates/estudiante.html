@@ -40,7 +40,9 @@
                     </div>
                     <form action="{{ url_for('estudiante.add') }}" method="POST" class="form form__estudiante" id="form-estudiante">
                         <div class="form__group">
-                            <input type="text" class="form__campo--texto" name="Cedula" placeholder="Cédula" required>
+                            <input type="text" class="form__campo--texto" name="Cedula" placeholder="Cédula" 
+                                required pattern="^\d{10}$" maxlength="10"
+                                title="La cédula debe tener exactamente 10 dígitos numéricos">
                         </div>
                         <div class="form__group">
                             <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre" required>
@@ -49,16 +51,18 @@
                             <input type="text" class="form__campo--texto" name="Apellido" placeholder="Apellido" required>
                         </div>
                         <div class="form__group">
-                            <input type="date" class="form__campo--fecha" name="FechaNacimiento" placeholder="Fecha de Nacimiento">
+                            <input type="date" class="form__campo--fecha" name="FechaNacimiento" placeholder="Fecha de Nacimiento" required>
                         </div>
                         <div class="form__group">
-                            <input type="email" class="form__campo--correo" name="Correo" placeholder="Correo electrónico">
+                            <input type="email" class="form__campo--correo" name="Correo" placeholder="Correo electrónico" required>
                         </div>
                         <div class="form__group">
-                            <input type="text" class="form__campo--texto" name="Telefono" placeholder="Teléfono">
+                            <input type="text" class="form__campo--texto" name="Telefono" placeholder="Teléfono"
+                                pattern="^\d{10}$" inputmode="numeric" maxlength="10"
+                                title="El teléfono debe tener exactamente 10 dígitos numéricos">
                         </div>
                         <div class="form__group">
-                            <input type="text" class="form__campo--texto" name="Direccion" placeholder="Dirección">
+                            <input type="text" class="form__campo--texto" name="Direccion" placeholder="Dirección" required>
                         </div>
                         <div class="form__group">
                             <textarea class="form__campo--area" name="Observacion" placeholder="Observaciones" rows="3"></textarea>
@@ -74,6 +78,7 @@
             <div class="cards">
             {% if registros %}
                 {% for reg in registros %}
+                <div class="card">
                     <div class="card__content">
                         <h3 class="card__text card__title">{{ reg.Cedula }}</h3>
                         <p class="card__text"><b>Nombres:</b> {{ reg.Apellido }} {{ reg.Nombre }}</p>
@@ -98,6 +103,7 @@
                             <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
                             <span>Borrar</span> </button>
                     </div>
+                </div>
                 {% endfor %}
             {% else %}
                 <p>No hay estudiantes registrados actualmente.</p>

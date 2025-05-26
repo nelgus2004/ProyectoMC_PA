@@ -19,56 +19,87 @@
 <body>
     <!-- Menú Principal -->
     <nav class="sidebar">
-        <div class="sidebar__logo"><a href="{{ url_for('inicio.menu') }}">
-            <img src="{{ url_for('static', filename='image/logo64px.png') }}" alt="logo">
-            <span>DigiNote</span></a>    
+        <div class="sidebar__logo">
+            <a href="{{ url_for('inicio.menu') }}">
+                <img src="{{ url_for('static', filename='image/logo64px.png') }}" alt="logo">
+                <span>DigiNote</span>
+            </a>    
         </div>
         <div class="sidebar__linea"></div>
         <ul class="sidebar__options">
-            <li class="sidebar__options--link {% if active_page == 'prof' %}active{% endif %}">
-                <a href="{{ url_for('profesor.show') }}">
-                <img src="{{ url_for('static', filename='image/docente.png') }}" alt="logo">
-                <p>Profesores</p>
-            </a></li>
+            <!-- Periodos Lectivos -->
+            <li class="sidebar__options--link {% if active_page == 'per' %}active{% endif %}">
+                <a href="{{ url_for('periodo.show') }}">
+                    <img src="{{ url_for('static', filename='image/periodo.png') }}" alt="Icono">
+                    <p>Periodos</p>
+                </a>
+            </li>
+            <!-- Materias -->
             <li class="sidebar__options--link {% if active_page == 'mat' %}active{% endif %}">
                 <a href="{{ url_for('materia.show') }}">
-                <img src="{{ url_for('static', filename='image/asignatura.png') }}" alt="Icono">
-                <p>Materias</p>
-            </a></li>
-            <li class="sidebar__options--link {% if active_page == 'matr' %}active{% endif %}">
-                <a href="#">
-                <img src="{{ url_for('static', filename='image/matricula.png') }}" alt="Icono">
-                <p>Matriculas</p>
-            </a></li>
+                    <img src="{{ url_for('static', filename='image/asignatura.png') }}" alt="Icono">
+                    <p>Materias</p>
+                </a>
+            </li>
+            <!-- Cursos -->
             <li class="sidebar__options--link {% if active_page == 'cur' %}active{% endif %}">
-                <a href="#">
-                <img src="{{ url_for('static', filename='image/curso.png') }}" alt="Icono">
-                <p>Cursos</p>
-            </a></li>
+                <a href="{{ url_for('curso.show') }}">
+                    <img src="{{ url_for('static', filename='image/curso.png') }}" alt="Icono">
+                    <p>Cursos</p>
+                </a>
+            </li>
+            <!-- Profesores -->
+            <li class="sidebar__options--link {% if active_page == 'prof' %}active{% endif %}">
+                <a href="{{ url_for('profesor.show') }}">
+                    <img src="{{ url_for('static', filename='image/docente.png') }}" alt="logo">
+                    <p>Profesores</p>
+                </a>
+            </li>
+            <!-- Estudiantes -->
             <li class="sidebar__options--link {% if active_page == 'est' %}active{% endif %}">
                 <a href="{{ url_for('estudiante.show') }}">
-                <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
-                <p>Estudiantes</p>
-            </a></li>
+                    <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
+                    <p>Estudiantes</p>
+                </a>
+            </li>
+            <!-- Matrícula -->
+            <li class="sidebar__options--link {% if active_page == 'matr' %}active{% endif %}">
+                <a href="{{ url_for('matricula.show') }}">
+                    <img src="{{ url_for('static', filename='image/matricula.png') }}" alt="Icono">
+                    <p>Matrículas</p>
+                </a>
+            </li>
+            <!-- Calificaciones -->
             <li class="sidebar__options--link {% if active_page == 'calif' %}active{% endif %}">
-                <a href="#">
-                <img src="{{ url_for('static', filename='image/notas.png') }}" alt="Icono">
-                <p>Calificaciones</p>
-            </a></li>
+                <a href="{{ url_for('calificacion.show') }}">
+                    <img src="{{ url_for('static', filename='image/notas.png') }}" alt="Icono">
+                    <p>Calificaciones</p>
+                </a>
+            </li>
+            <!-- Usuarios -->
+            <li class="sidebar__options--link {% if active_page == 'user' %}active{% endif %}">
+                <a href="{{ url_for('auth.show') }}">
+                    <img src="{{ url_for('static', filename='image/usuario.png') }}" alt="Icono">
+                    <p>Usuarios</p>
+                </a>
+            </li>
+            <!-- Cerrar sesión -->
             <li class="sidebar__options--link">
-            {#<!--
+                <form action="{{ url_for('auth.logout') }}" class="sidebar__form--logout" method="POST">
+                    <button type="submit">
+                        <img src="{{ url_for('static', filename='image/logout.png') }}" alt="Icono">
+                        <p>Cerrar Sesión</p>
+                    </button>
+                </form>
+            </li>
+        </ul>
+           {#<!--
             {% if current_user.is_authenticated %}
             <form action="{{ url_for('logout') }}" method="POST"> -->#}
-
-                <button type="submit" class="sidebar__btn--logout">
-                    <img src="{{ url_for('static', filename='image/logout.png') }}" alt="Icono">
-                    <p>Cerrar Sesión</p>
-                </button>
-            
             {#<!--
             {#</form>
             {% endif %} -->#}             
-            </a></li>
+       
     </nav>
     <!-- Contenido de la página -->
     <div class="panel">
