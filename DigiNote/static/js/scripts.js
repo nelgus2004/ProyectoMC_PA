@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
 });
 
 // FORMULARIO EMERGENTE
@@ -53,6 +54,7 @@ function editarRegistro(id, r_get, formId, modalId, r_update, campos) {
       form.action = r_update + '/' + id;
       document.getElementById('btn-submit').querySelector('span').textContent = 'Actualizar';
       document.getElementById('btn-submit').querySelector('img').src = '/static/image/update.png';
+
       campos.forEach(campo => {
         const input = form.querySelector(`[name="${campo}"]`);
         if (input) {
@@ -61,7 +63,6 @@ function editarRegistro(id, r_get, formId, modalId, r_update, campos) {
             const fecha = new Date(valor);
             valor = fecha.toISOString().split('T')[0]; // formato YYYY-MM-DD
           }
-
           input.value = valor;
         }
       });
@@ -77,3 +78,51 @@ function cerrarAlert(boton) {
     alerta.remove();
   }
 }
+
+// Filtro segun el valor seleccionado en una lista
+document.addEventListener('DOMContentLoaded', () => {
+  const filtro = document.querySelector('.filtro');
+  const lista = document.querySelector('.lista');
+
+  if (!filtro || !lista) return;
+
+  const datos = JSON.parse(filtro.dataset.items || '[]');
+  const seleccionadosRaw = filtro.dataset.selected || '[]';
+  const seleccionados = Array.isArray(JSON.parse(seleccionadosRaw))
+    ? JSON.parse(seleccionadosRaw)
+    : [JSON.parse(seleccionadosRaw)];
+
+  const campoFiltro = filtro.dataset.filtrarPor;
+  const campoValor = filtro.dataset.valor;
+  const campoTexto = filtro.dataset.texto;
+
+  function construirTexto(item) {
+    return campoTexto.split('-').map(part => item[part.trim()] || '').join(' - ');
+  }
+
+  function actualizar() {
+    lista.innerHTML = '';
+    const valorFiltro = filtro.value;
+
+    datos.forEach(item => {
+      if (item[campoFiltro] === valorFiltro) {
+        const opt = document.createElement('option');
+        opt.value = item[campoValor];
+        opt.textContent = construirTexto(item);
+        if (seleccionados.includes(String(item[campoValor]))) {
+          opt.selected = true;
+        }
+        lista.appendChild(opt);
+      }
+    });
+  }
+
+  const valorInicial = filtro.dataset.selected;
+  if (valorInicial) {
+    filtro.value = valorInicial;
+  }
+
+  actualizar();
+
+  filtro.addEventListener('change', actualizar);
+});

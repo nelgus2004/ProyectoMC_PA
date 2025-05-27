@@ -72,3 +72,9 @@ class ProfesorController:
             return ('No se encontró el profesor para eliminar.', 'info')
         return ('Profesor Eliminado Correctamente', 'successful')
 
+    def list_profesores(self):
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT idProfesor, Nombre, Apellido FROM Profesor")
+        data = cur.fetchall()
+        cur.close()
+        return data

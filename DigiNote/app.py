@@ -17,8 +17,8 @@ def create_app(config=None) -> Flask:
     def index():
         return redirect(url_for('inicio.menu'))
     
-    print("\nList of registered routes:")
-    for rule in app.url_map.iter_rules():
-        print(f"Endpoint: {rule.endpoint} -> URL: {rule}")
+#    print("\nList of registered routes:")
+#    for rule in app.url_map.iter_rules():
+#        print(f"Endpoint: {rule.endpoint} -> URL: {rule}")
     
     return app

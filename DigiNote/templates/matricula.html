@@ -1,0 +1,134 @@
+{% extends './inicio.html' %}
+
+{% block title %}| Matrículas{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+    <!-- Encabezado -->
+    <header class="header">
+        <h1>Gestionar Matrículas</h1>
+        <div class="header__btns">
+            <button class="btn btn__add" onclick="abrirForm('{{ url_for('matricula.add') }}', 'form-matricula', 'modal-matricula')">
+                <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
+                <span>Añadir</span>
+            </button>    
+        </div>
+    </header>
+
+    <main class="contenido">
+        <!-- Mensajes de Sistema -->
+        {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+        <div class="alert alert__{{ categoria }}" role="alert">
+            <span>{{ mensaje }}</span>
+            <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+
+        <!-- Formulario Emergente -->
+        <div class="emergente" id="modal-matricula">
+            <div class="form__background">
+                <button type="button" class="close" onclick="cerrarForm('modal-matricula')">
+                    <span>&times;</span>
+                </button>
+                <div class="form__image">
+                    <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
+                </div>
+
+                <form action="{{ url_for('matricula.add') }}" method="POST" class="form form__matricula" id="form-matricula">
+                    
+                    <div class="form__group">
+                        <select class="form__campo--select" name="idEstudiante" required>
+                            <option value="" disabled selected>Seleccione el Estudiante</option>
+                            {% for est in foraneo.estudiantes %}
+                            <option value="{{ est.idEstudiante }}">{{ est.Nombre }} {{ est.Apellido }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form__group">
+                        <select class="form__campo--select filtro" name="Nivel" required 
+                            data-items='{{ foraneo.asignaciones | tojson | safe }}'
+                            data-selected='{{ registros.Nivel }}'
+                            data-filtrar-por="Nivel" 
+                            data-valor="idAsignacion" 
+                            data-texto="Materia - Paralelo">
+                            <option value="" disabled >Seleccione el Nivel</option>
+                            <option value="1ro">1ro</option>
+                            <option value="2do">2do</option>
+                            <option value="3ro">3ro</option>
+                        </select>
+                    </div>
+
+                    <!-- Asignaciones (múltiples cursos) -->
+                    <div class="form__group multiselect">
+                        <label for="idAsignacion">Seleccione los Cursos:</label>
+                        <select class="form__campo--select lista" name="idAsignacion" multiple required size="5">
+                            
+                        </select>
+                        <small>Usa Ctrl (Windows) o Cmd (Mac) para seleccionar varios</small>
+                    </div>
+
+                    <div class="form__group">
+                        <input type="date" class="form__campo--fecha" name="FechaMatricula" value="{{ fecha_actual }}" readonly>
+                    </div>
+
+                    <div class="form__buttons">
+                        <button type="submit" class="btn btn__save" id="btn-submit">
+                            <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+                            <span>Guardar</span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="cards">
+        {% if registros %}
+            {% for reg in registros %}
+            <div class="card">
+                <div class="card__content">
+                    <h3 class="card__text card__title">{{ reg.Estudiante }}</h3>
+                    <p class="card__text"><b>Fecha de Matrícula:</b> {{ reg.FechaMatricula }}</p>
+                    <p class="card__text"><b>Nivel:</b> {{ reg.Nivel }}</p>
+                    <p class="card__text"><b>Promedio Anual:</b> {{ reg.PromedioAnual }}</p>
+                    <div class="card__text">
+                        <b>Materias:</b>
+                        <ul class="card__text--list">
+                        {% for asigd in materias[reg.idMatricula] %}
+                            <li> {{ asigd.Profesor }} <br> {{ asigd.Materia }} {{ asigd.Paralelo }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="card__btn">
+                    <button type="button" class="btn btn__edit"
+                        data-id="{{ reg.idMatricula }}"
+                        data-get="{{ r_get }}"
+                        data-form="form-matricula"
+                        data-modal="modal-matricula"
+                        data-update="{{ r_update }}"
+                        data-campos='{{ campos|tojson }}'>
+                        <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
+                        <span>Editar</span>
+                    </button>
+                    <button type="button" class="btn btn__delete"
+                        data-delete="{{ url_for('matricula.delete', id=reg.idMatricula) }}">
+                        <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
+                        <span>Borrar</span>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No hay matrículas registradas actualmente</p>
+        {% endif %}
+        </div>
+    </main>
+{% endblock %}

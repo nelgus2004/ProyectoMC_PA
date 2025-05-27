@@ -127,6 +127,14 @@
     color: var(--rojo);
 }
 
+.multiselect small{
+    font-size: .6rem;
+}
+
+.multiselect label {
+    font-size: .9rem;
+}
+
 .form__buttons {
     width: 100%;
     display: flex;

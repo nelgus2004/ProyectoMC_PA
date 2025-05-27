@@ -59,6 +59,30 @@
     font-weight: 500;
 }
 
+.card__text--list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5em;
+}
+
+.card__text--list li {
+  position: relative;
+  padding-left: 1.5em;
+  margin-bottom: 0.6em;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--negro);
+}
+
+.card__text--list li::before {
+  content: "-->";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--azul);
+  font-weight: 800;
+}
+
 .card__btn {
     display: flex;
     justify-content: flex-end;

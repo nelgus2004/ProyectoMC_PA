@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_mysqldb import MySQL
+import MySQLdb.cursors
 from dotenv import load_dotenv
 import os
 
@@ -25,7 +26,7 @@ def mysql_settings(app: Flask):
                         if command.strip() and not command.startswith('--'):
                             cur.execute(command)
                 mysql.connection.commit()
-                print("* Base de datos generada correctamente.")
+                print(" * Base de datos generada correctamente.")
                 cur.close()
             except Exception as e:
-                print(f"* Error al generar la base de datos: {e}")
+                print(f" * Error al generar la base de datos: {e}")

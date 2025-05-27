@@ -72,3 +72,18 @@ class PeriodoController:
         except Exception as e:
             print(f'Error al eliminar periodo: {e}')
             return ('ERROR: No se pudo eliminar el periodo.', 'error')
+        
+    from flask import jsonify
+
+    def list_periodos(self):
+        cur = mysql.connection.cursor()
+        cur.execute("""
+                    SELECT idPeriodo,
+                            Nombre,
+                            CONCAT(DATE_FORMAT(FechaInicio, '%M'), '-' , DATE_FORMAT(FechaFin, '%M')) AS Duracion
+                    FROM PeriodoLectivo
+                    WHERE Estado = 'Activo'
+        """)
+        data = cur.fetchall()
+        cur.close()
+        return data

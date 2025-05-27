@@ -73,3 +73,10 @@ class EstudianteController:
         if eliminado:
             return ('No se encontró el estudiante para eliminar', 'info')
         return ('Estudiante Eliminado Correctamente', 'successful')
+
+    def list_estudiantes(self):
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT idEstudiante, Cedula, Nombre, Apellido FROM Estudiante")
+        data = cur.fetchall()
+        cur.close()
+        return data

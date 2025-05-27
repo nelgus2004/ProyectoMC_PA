@@ -1,10 +1,17 @@
-from flask import Blueprint, make_response, jsonify
-from .controller import MainController
-
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
+from .controller import CalificacionesController
 
 calificacion_bp = Blueprint('calificacion', __name__, template_folder='DigiNote/templates')
-controller = MainController()
+controller = CalificacionesController()
 
-@calificacion_bp.route('/show')
+@calificacion_bp.route('/')
 def show():
-    return "<h1>Página enconstrucción</h1>"
+    result = ''
+    foreign = ''
+    return render_template(
+        'calificacion.html'
+    )
+    
+@calificacion_bp.route('/add_calificacion', methods=['POST'])
+def add():
+    return "<p>text</p>"

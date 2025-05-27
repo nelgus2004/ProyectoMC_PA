@@ -69,3 +69,10 @@ class MateriaController:
         except Exception as e:
             print(f'Error al eliminar materia: {e}')
             return ('ERROR: No se pudo eliminar la materia.', 'error')
+
+    def list_materias(self):
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT idMateria, Nombre, Nivel FROM Materia")
+        data = cur.fetchall()
+        cur.close()
+        return data
