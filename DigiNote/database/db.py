@@ -7,7 +7,7 @@ load_dotenv()
 
 def mysql_settings(app: Flask):
     app.config['SQLALCHEMY_DATABASE_URI'] = (
-        f"mysql://{os.getenv('MYSQL_USER') or 'adminNotes'}:"
+        f"mysql+pymysql://{os.getenv('MYSQL_USER') or 'adminNotes'}:"
         f"{os.getenv('MYSQL_PASSWORD') or 'admin123.'}@"
         f"{os.getenv('MYSQL_HOST') or '127.0.0.1'}/"
         f"{os.getenv('MYSQL_DB') or 'db_notas'}"
