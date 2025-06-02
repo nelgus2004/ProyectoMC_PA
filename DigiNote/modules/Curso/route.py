@@ -4,7 +4,6 @@ from .controller import CursoController
 curso_bp = Blueprint('curso', __name__, template_folder='DigiNote/templates')
 controller = CursoController()
 
-
 @curso_bp.route('/')
 def show():
     result = controller.show_curso()
@@ -14,9 +13,10 @@ def show():
         registros=result,
         foraneo=foreign,
         active_page='cur',
-        r_get=url_for('curso.get', id='').rstrip('/'),
-        r_update=url_for('curso.update', id='').rstrip('/'),
-        campos=['idProfesor', 'idMateria','Paralelo', 'HoraEntrada', 'HoraSalida', 'Aula', 'idPeriodo']
+        r_add=url_for('curso.add'),
+        r_get=url_for('curso.get', id=0).rsplit('/', 1)[0],
+        r_update=url_for('curso.update', id=0).rsplit('/', 1)[0],
+        r_delete=url_for('curso.delete', id=0).rsplit('/', 1)[0]
     )
 
 @curso_bp.route('/add_curso', methods=['POST'])

@@ -1,74 +1,119 @@
-// Quitar formato 'active' de las opciones al ir al inicio
-document.querySelector('.sidebar__logo a')?.addEventListener('click', () => {
-  document.querySelectorAll('.sidebar__options--link').forEach(item => item.classList.remove('active'));
-});
+const div = document.getElementById('rutas');
+const rutas = {
+  add: div.dataset.add,
+  get: div.dataset.get,
+  update: div.dataset.update,
+  delete: div.dataset.delete
+};
 
+// FORMULARIO EMERGENTE
 document.addEventListener('DOMContentLoaded', () => {
-  // Botones de Editar
+
+  // Botones de Añadir (abrir formulario vacío)
+  document.querySelectorAll('.btn__add').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const name = btn.dataset.name;
+      añadirRegistro(`form-${name}`);
+    });
+  });
+
+  // Click en Botón de Editar
   document.querySelectorAll('.btn__edit').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.id;
-      const r_get = btn.dataset.get;
-      const r_update = btn.dataset.update;
-      const formId = btn.dataset.form;
-      const modalId = btn.dataset.modal;
-      const campos = JSON.parse(btn.dataset.campos);
-
-      editarRegistro(id, r_get, formId, modalId, r_update, campos);
+      const formId = `form-${btn.dataset.name}`;
+      editarRegistro(id, formId);
     });
   });
 
-  // Botones de Borrar
+  // Click en Botón de Borrar
   document.querySelectorAll('.btn__delete').forEach(btn => {
     btn.addEventListener('click', () => {
-      const url = btn.dataset.delete;
-      const confirmMsg = btn.dataset.confirm || "¿Seguro que quieres eliminar este registro?";
-      if (confirm(confirmMsg)) {
-        window.location.href = url;
-      }
+      const id = btn.dataset.id;
+      borrarRegistro(id);
     });
   });
 
+  // Click en Botón cerrar formulario
+  document.querySelectorAll('.close').forEach(btn => {
+    btn.addEventListener('click', cerrarForm);
+  });
 });
 
-// FORMULARIO EMERGENTE
-// Mostrar formulario
-function abrirForm(action, formId, modalId) {
+// Mostrar formulario para añadir un registro
+function añadirRegistro(formId) {
   const form = document.getElementById(formId);
   form.reset();
-  form.action = action;
-  document.getElementById('btn-submit').querySelector('span').textContent = 'Guardar';
-  document.getElementById('btn-submit').querySelector('img').src = '/static/image/save.png';
-  document.getElementById(modalId).style.display = "block";
+  form.action = rutas.add;
+
+  const btnSubmit = form.querySelector('#btn-submit');
+  if (btnSubmit) {
+    btnSubmit.querySelector('span').textContent = 'Guardar';
+    btnSubmit.querySelector('img').src = '/static/image/save.png';
+  }
+
+  const modal = form.closest('.emergente');
+  if (modal) modal.style.display = "block";
 }
-// Cerrar formulario
-function cerrarForm(modalId) {
-  document.getElementById(modalId).style.display = "none";
+
+// Borrar registrp
+function borrarRegistro(id) {
+  const url = `${rutas.delete}/${id}`;
+  const confirmMsg = btn.dataset.confirm || "¿Seguro que quieres eliminar este registro?";
+  if (confirm(confirmMsg)) {
+    window.location.href = url;
+  }
 }
-// Reutilizar formulario para actualizar un registro existente
-function editarRegistro(id, r_get, formId, modalId, r_update, campos) {
-  fetch(r_get + '/' + id)
+
+// Reutilizar formulario para actualizar registro existente
+function editarRegistro(id, formId) {
+
+  fetch(`${rutas.get}/${id}`)
     .then(res => res.json())
     .then(data => {
-      const form = document.getElementById(formId);
-      form.action = r_update + '/' + id;
-      document.getElementById('btn-submit').querySelector('span').textContent = 'Actualizar';
-      document.getElementById('btn-submit').querySelector('img').src = '/static/image/update.png';
+      try {
+        const form = document.getElementById(formId);
+        form.action = `${rutas.update}/${id}`;
 
-      campos.forEach(campo => {
-        const input = form.querySelector(`[name="${campo}"]`);
-        if (input) {
-          let valor = data[campo] || '';
-          if (input.type === 'date' && valor) {
-            const fecha = new Date(valor);
-            valor = fecha.toISOString().split('T')[0]; // formato YYYY-MM-DD
-          }
-          input.value = valor;
+        // Modificar el boton de enviar a aenctualizar
+        const btnSubmit = form.querySelector('#btn-submit');
+        if (btnSubmit) {
+          btnSubmit.querySelector('span').textContent = 'Actualizar';
+          btnSubmit.querySelector('img').src = '/static/image/update.png';
         }
-      });
 
-      document.getElementById(modalId).style.display = "block";
+        Object.keys(data).forEach(campo => {
+          const input = form.querySelector(`[name="${campo}"]`);
+          if (input) {
+            let valor = data[campo] || '';
+
+            if (input.type === 'date' && valor) {
+              const fecha = new Date(valor);
+              valor = fecha.toISOString().split('T')[0]; // formato YYYY-MM-DD
+            }
+
+            if (input.multiple && Array.isArray(valor)) {
+              [...input.options].forEach(option => {
+                option.selected = valor.includes(option.value);
+              });
+            } else {
+              input.value = valor;
+            }
+          }
+        });
+
+        const modal = form.closest('.emergente');
+        if (modal) modal.style.display = "block";
+      } catch (error) {
+        console.error("Error al editar registro:", error.message);
+      }
     });
+}
+
+// Cerrar formulario
+function cerrarForm() {
+  const modal = document.querySelector('.emergente[style*="block"]');
+  if (modal) modal.style.display = "none";
 }
 
 // Cerrar Alert
@@ -125,4 +170,9 @@ document.addEventListener('DOMContentLoaded', () => {
   actualizar();
 
   filtro.addEventListener('change', actualizar);
+});
+
+// Quitar formato 'active' de las opciones al ir al inicio
+document.querySelector('.sidebar__logo a')?.addEventListener('click', () => {
+  document.querySelectorAll('.sidebar__options--link').forEach(item => item.classList.remove('active'));
 });

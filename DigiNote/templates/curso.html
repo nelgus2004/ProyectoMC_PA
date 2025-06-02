@@ -3,125 +3,126 @@
 {% block title %}| Cursos{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block content %}
-    <!-- Encabezado -->
-    <header class="header">
-        <h1>Gestionar Cursos</h1>
-        <div class="header__btns">
-            <button class="btn btn__add" onclick="abrirForm('{{ url_for('curso.add') }}', 'form-curso', 'modal-curso')">
-                <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
-                <span>Añadir</span>
-            </button>    
-        </div>
-    </header>
+<!-- Encabezado -->
+<header class="header">
+    <h1>Gestionar Cursos</h1>
+    <div class="header__btns">
+        <button class="btn btn__add" data-name="curso">
+            <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
+            <span>Añadir</span>
+        </button>
+    </div>
+</header>
 
-    <main class="contenido">
-        <!-- Mensajes de Sistema -->
-        {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
-        <div class="alert alert__{{ categoria }}" role="alert">
-            <span>{{ mensaje }}</span>
-            <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
-                <span aria-hidden="true">&times;</span>
+<main class="contenido">
+    <!-- Mensajes de Sistema -->
+    {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+    <div class="alert alert__{{ categoria }}" role="alert">
+        <span>{{ mensaje }}</span>
+        <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+
+    <!-- Rutas -->
+    <template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}"
+        data-delete="{{ r_delete }}">
+    </template>
+
+    <!-- Formulario Emergente -->
+    <div class="emergente" id="modal-curso">
+        <div class="form__background">
+            <button type="button" class="close">
+                <span>&times;</span>
             </button>
+            <div class="form__image">
+                <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
+            </div>
+
+            <form action="{{ r_add }}" method="POST" class="form form__curso" id="form-curso">
+                <div class="form__group">
+                    <select class="form__campo--select" name="idProfesor" required>
+                        <option value="" disabled selected>Seleccione el Profesor</option>
+                        {% for prof in foraneo.profesores %}
+                        <option value="{{ prof.idProfesor }}">{{ prof.Nombre }} {{ prof.Apellido }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form__group">
+                    <select class="form__campo--select" name="idMateria" required>
+                        <option value="" disabled selected>Seleccione la Materia</option>
+                        {% for mat in foraneo.materias %}
+                        <option value="{{ mat.idMateria }}">{{ mat.Nombre }} {{ mat.Nivel }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form__group">
+                    <input type="text" class="form__campo--texto" name="Paralelo" placeholder="Paralelo" maxlength="5"
+                        required>
+                </div>
+                <div class="form__group">
+                    <input type="time" class="form__campo--fecha" name="HoraEntrada" required>
+                </div>
+                <div class="form__group">
+                    <input type="time" class="form__campo--fecha" name="HoraSalida" required>
+                </div>
+                <div class="form__group">
+                    <input type="text" class="form__campo--texto" name="Aula" placeholder="Aula" maxlength="50">
+                </div>
+                <div class="form__group">
+                    <select class="form__campo--select" name="idPeriodo" required>
+                        <option value="" disabled selected>Seleccione el Periodo Lectivo</option>
+                        {% for periodo in foraneo.periodos %}
+                        <option value="{{ periodo.idPeriodo }}">{{ periodo.Nombre }} {{ periodo.Duracion }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form__buttons">
+                    <button type="submit" class="btn btn__save" id="btn-submit">
+                        <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+                        <span>Guardar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="cards">
+        {% if registros %}
+        {% for reg in registros %}
+        <div class="card">
+            <div class="card__content">
+                <h3 class="card__text card__title"> {{ reg.Profesor }} <br> {{ reg.Materia }} {{reg.Nivel}}</h3>
+                <p class="card__text"><b>Hora de Entrada:</b> {{ reg.HoraEntrada }}</p>
+                <p class="card__text"><b>Hora de Salida:</b> {{ reg.HoraSalida }}</p>
+                <p class="card__text"><b>Aula:</b> {{ reg.Aula or '' }}</p>
+                <p class="card__text"><b>Periodo Lectivo:</b> {{ reg.Periodo }}</p>
+            </div>
+            <div class="card__btn">
+                <button type="button" class="btn btn__edit" data-id="{{ reg.idAsignacion }}" data-name="curso"
+                    data-campos='{{ campos|tojson }}'>
+                    <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
+                    <span>Editar</span>
+                </button>
+                <button type="button" class="btn btn__delete" data-id="{{ reg.idAsignacion }}">
+                    <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
+                    <span>Borrar</span>
+                </button>
+            </div>
         </div>
         {% endfor %}
-
-        <!-- Formulario Emergente -->
-        <div class="emergente" id="modal-curso">
-            <div class="form__background">
-                <button type="button" class="close" onclick="cerrarForm('modal-curso')">
-                    <span>&times;</span>
-                </button>
-                <div class="form__image">
-                    <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
-                </div>
-
-                <form action="{{ url_for('curso.add') }}" method="POST" class="form form__curso" id="form-curso">
-                    <div class="form__group">
-                        <select class="form__campo--select" name="idProfesor" required>
-                            <option value="" disabled selected>Seleccione el Profesor</option>
-                            {% for prof in foraneo.profesores %}
-                            <option value="{{ prof.idProfesor }}">{{ prof.Nombre }} {{ prof.Apellido }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form__group">
-                        <select class="form__campo--select" name="idMateria" required>
-                            <option value="" disabled selected>Seleccione la Materia</option>
-                            {% for mat in foraneo.materias %}
-                            <option value="{{ mat.idMateria }}">{{ mat.Nombre }} {{ mat.Nivel }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form__group">
-                        <input type="text" class="form__campo--texto" name="Paralelo" placeholder="Paralelo" maxlength="5" required>
-                    </div>
-                    <div class="form__group">
-                        <input type="time" class="form__campo--fecha" name="HoraEntrada" required>
-                        </input>
-                    </div>
-                    <div class="form__group">
-                        <input type="time" class="form__campo--fecha" name="HoraSalida" required>
-                        </input>
-                    </div>
-                    <div class="form__group">
-                        <input type="text" class="form__campo--texto" name="Aula" placeholder="Aula" maxlength="50">
-                    </div>
-                    <div class="form__group">
-                        <select class="form__campo--select" name="idPeriodo" required>
-                            <option value="" disabled selected>Seleccione el Periodo Lectivo</option>
-                            {% for periodo in foraneo.periodos %}
-                            <option value="{{ periodo.idPeriodo }}">{{ periodo.Nombre }} {{ periodo.Duracion }}"</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form__buttons">
-                        <button type="submit" class="btn btn__save" id="btn-submit">
-                            <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
-                            <span>Guardar</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="cards">
-        {% if registros %}
-            {% for reg in registros %}
-            <div class="card">
-                <div class="card__content">
-                    <h3 class="card__text card__title"> {{ reg.Profesor }} <br> {{ reg.Materia }} {{reg.Nivel}}</h3>
-                    <p class="card__text"><b>Hora de Entrada:</b> {{ reg.HoraEntrada }}</p>
-                    <p class="card__text"><b>Hora de Salida:</b> {{ reg.HoraSalida}}</p>
-                    <p class="card__text"><b>Aula:</b> {{ reg.Aula or '' }}</p>
-                    <p class="card__text"><b>Periodo Lectivo:</b> {{ reg.Periodo }}</p>
-                </div>
-                <div class="card__btn">
-                    <button type="button" class="btn btn__edit"
-                        data-id="{{ reg.idAsignacion }}"
-                        data-get="{{ r_get }}"
-                        data-form="form-curso"
-                        data-modal="modal-curso"
-                        data-update="{{ r_update }}"
-                        data-campos='{{ campos|tojson }}'>
-                        <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
-                        <span>Editar</span>
-                    </button>
-                    <button type="button" class="btn btn__delete"
-                        data-delete="{{ url_for('curso.delete', id=reg.idAsignacion) }}">
-                        <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
-                        <span>Borrar</span>
-                    </button>
-                </div>
-            </div>
-            {% endfor %}
         {% else %}
-            <p>No hay cursos registrados actualmente</p>
+        <p>No hay cursos registrados actualmente</p>
         {% endif %}
-        </div>
-    </main>
+    </div>
+</main>
+{% endblock %}
+
+{% block sripts %}
 {% endblock %}

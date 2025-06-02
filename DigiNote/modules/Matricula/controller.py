@@ -1,8 +1,12 @@
-# controller.py
-from DigiNote.database.db import mysql
+from flask import request
+from sqlalchemy.exc import SQLAlchemyError
+from DigiNote.database import db
+from DigiNote.database.models import ( Estudiante, Materia, Matricula, MatriculaAsignacion, Profesor, AsignacionCurso, PeriodoLectivo )
+
 from ..Estudiante.controller import EstudianteController
 from ..Curso.controller import CursoController
 from ..Calificaciones.controller import CalificacionesController
+
 
 class MatriculaController:
     def __init__(self):
@@ -11,161 +15,124 @@ class MatriculaController:
         self.calificacion = CalificacionesController()
 
     def show_matricula(self):
-        # Datos de la matrícula
-        cur1 = mysql.connection.cursor()
-        cur1.execute("""
-            SELECT 
-                M.idMatricula,
-                CONCAT(E.Apellido, ' ', E.Nombre) AS Estudiante,
-                M.FechaMatricula,
-                M.Nivel,
-                M.PromedioAnual
-            FROM Matricula M
-            JOIN Estudiante E ON M.idEstudiante = E.idEstudiante
-        """)
-        matriculas = cur1.fetchall()
-        cur1.close()
+        try:
+            matriculas = db.session.query(
+                Matricula.idMatricula,
+                Estudiante.Apellido,
+                Estudiante.Nombre,
+                Matricula.FechaMatricula,
+                Matricula.Nivel,
+                Matricula.PromedioAnual
+            ).join(Matricula.estudiante).all()
 
-       # Materias inscritas por matrícula       
-        cur2 = mysql.connection.cursor()
-        cur2.execute("""
-            SELECT 
-                MA.idMatricula,
-                Matr.Nombre AS Materia,
-                AC.Paralelo,
-                CONCAT(P.Apellido, ' ', P.Nombre) AS Profesor
-            FROM MatriculaAsignacion MA
-            JOIN AsignacionCurso AC ON MA.idAsignacion = AC.idAsignacion
-            JOIN Materia Matr ON AC.idMateria = Matr.idMateria
-            JOIN Profesor P ON AC.idProfesor = P.idProfesor
-            JOIN PeriodoLectivo Prd ON AC.idPeriodo = Prd.idPeriodo
-            WHERE Prd.Estado = 'Activo'
-        """)
-        asignaciones = cur2.fetchall()
-        cur2.close()
-        return (matriculas, asignaciones)
+            asignaciones = db.session.query(
+                MatriculaAsignacion.idMatricula,
+                Materia.Nombre.label('Materia'),
+                AsignacionCurso.Paralelo,
+                Profesor.Apellido,
+                Profesor.Nombre
+            ).join(MatriculaAsignacion.asignacion) \
+            .join(AsignacionCurso.materia) \
+            .join(AsignacionCurso.profesor) \
+            .join(AsignacionCurso.periodo) \
+            .filter(PeriodoLectivo.Estado == 'Activo') \
+            .all()
 
+            return (matriculas, asignaciones)
+        except SQLAlchemyError as e:
+            print(f" * Error al obtener matrículas: {e}")
+            return ([], [])
 
     def add_matricula(self, request):
         if request.method == 'POST':
-            idEstudiante = request.form['idEstudiante']
-            asignaciones = request.form.getlist('idAsignacion')
-            fechaMatricula = request.form['FechaMatricula']
-            nivel = request.form['Nivel']
-            promedio = request.form.get('PromedioAnual', 0)
-
             try:
-                cur = mysql.connection.cursor()
-                # Insertar matrícula
-                cur.execute("""
-                    INSERT INTO Matricula (idEstudiante, FechaMatricula, Nivel, PromedioAnual)
-                    VALUES (%s, %s, %s, %s)
-                """, (idEstudiante, fechaMatricula, nivel, promedio))
-                idMatricula = cur.lastrowid
+                nueva = Matricula(
+                    idEstudiante=request.form['idEstudiante'],
+                    FechaMatricula=request.form['FechaMatricula'],
+                    Nivel=request.form['Nivel'],
+                    PromedioAnual=request.form.get('PromedioAnual', 0)
+                )
+                db.session.add(nueva)
+                db.session.flush()  # Obtener ID antes del commit
 
-                # Insertar asignaciones de cursos por matricula
-                for idAsignacion in asignaciones:
-                    cur.execute("""
-                        INSERT INTO MatriculaAsignacion (idMatricula, idAsignacion)
-                        VALUES (%s, %s)
-                    """, (idMatricula, idAsignacion))
+                for id_asig in request.form.getlist('idAsignacion'):
+                    db.session.add(MatriculaAsignacion(idMatricula=nueva.idMatricula, idAsignacion=id_asig))
 
-                mysql.connection.commit()
-                cur.close()
+                db.session.commit()
                 return ('Matrícula creada correctamente con sus asignaciones.', 'successful')
-
-            except Exception as e:
-                print(f'Error en add_matricula: {e}')
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                print(f" * Error en add_matricula: {e}")
                 return ('ERROR: No se pudo registrar la matrícula.', 'error')
 
-
     def get_matricula_by_id(self, id):
-        cur1 = mysql.connection.cursor()
-        cur1.execute("""
-            SELECT idMatricula, idEstudiante, FechaMatricula, Nivel, PromedioAnual
-            FROM Matricula
-            WHERE idMatricula = %s
-        """, (id,))
-        matricula = cur1.fetchone()
-        cur1.close()
-        
-        # Obtener las asignaciones asociadas a la matrícula
-        cur2 = mysql.connection.cursor()
-        cur2.execute("""
-            SELECT idAsignacion
-            FROM MatriculaAsignacion
-            WHERE idMatricula = %s
-        """, (id,))
-        asignaciones = [row['idAsignacion'] for row in cur2.fetchall()]
+        try:
+            matricula = db.session.get(Matricula, id)
+            if not matricula:
+                return {}
 
-        cur2.close()
-
-        if matricula:
-            matricula['asignaciones'] = asignaciones
-            return matricula
-        else:
+            asignaciones = [ma.idAsignacion for ma in matricula.asignaciones]
+            result = {
+                'idMatricula': matricula.idMatricula,
+                'idEstudiante': matricula.idEstudiante,
+                'FechaMatricula': matricula.FechaMatricula.isoformat(),
+                'Nivel': matricula.Nivel,
+                'PromedioAnual': matricula.PromedioAnual,
+                'asignaciones': asignaciones
+            }
+            return result
+        except SQLAlchemyError as e:
+            print(f" * Error en get_matricula_by_id: {e}")
             return {}
 
     def update_matricula(self, id, request):
         if request.method == 'POST':
-            idEstudiante = request.form['idEstudiante']
-            fechaMatricula = request.form['FechaMatricula']
-            nivel = request.form['Nivel']
-            nuevas_asignaciones = request.form.getlist('idAsignacion')
-            promedio = self.calificacion.promedioAnual()
-
             try:
-                cur = mysql.connection.cursor()
+                matricula = db.session.get(Matricula, id)
+                if not matricula:
+                    return ('ERROR: Matrícula no encontrada.', 'error')
 
-                # Actualizar datos básicos
-                cur.execute("""
-                    UPDATE Matricula
-                    SET idEstudiante = %s,
-                        FechaMatricula = %s,
-                        Nivel = %s,
-                        PromedioAnual = %s
-                    WHERE idMatricula = %s
-                """, (idEstudiante, fechaMatricula, nivel, promedio, id))
+                matricula.idEstudiante = request.form['idEstudiante']
+                matricula.FechaMatricula = request.form['FechaMatricula']
+                matricula.Nivel = request.form['Nivel']
+                matricula.PromedioAnual = self.calificacion.promedioAnual()
 
-                # Obtener asignaciones actuales
-                cur.execute("SELECT idAsignacion FROM MatriculaAsignacion WHERE idMatricula = %s", (id,))
-                asig_actual = [str(row['idAsignacion']) for row in cur.fetchall()]
+                nuevas_asignaciones = set(request.form.getlist('idAsignacion'))
+                actuales_asignaciones = {str(ma.idAsignacion) for ma in matricula.asignaciones}
 
-                # Eliminar asignaciones quitadas
-                for id_asig in asig_actual:
-                    if id_asig not in nuevas_asignaciones:
-                        cur.execute("DELETE FROM MatriculaAsignacion WHERE idMatricula = %s AND idAsignacion = %s", (id, id_asig))
+                # Eliminar las que ya no están
+                for ma in list(matricula.asignaciones):
+                    if str(ma.idAsignacion) not in nuevas_asignaciones:
+                        db.session.delete(ma)
 
-                # Insertar asignaciones añadidas
-                for id_asig in nuevas_asignaciones:
-                    if id_asig not in asig_actual:
-                        cur.execute("INSERT INTO MatriculaAsignacion (idMatricula, idAsignacion) VALUES (%s, %s)", (id, id_asig))
+                # Añadir las nuevas
+                for id_asig in nuevas_asignaciones - actuales_asignaciones:
+                    db.session.add(MatriculaAsignacion(idMatricula=id, idAsignacion=id_asig))
 
-                mysql.connection.commit()
-                cur.close()
+                db.session.commit()
                 return ('Matrícula actualizada correctamente', 'info')
-
-            except Exception as e:
-                print(f'Error al actualizar matrícula: {e}')
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                print(f" * Error al actualizar matrícula: {e}")
                 return ('ERROR: No se pudo actualizar la matrícula.', 'error')
 
-
-
     def delete_matricula(self, id):
-        cur = mysql.connection.cursor()
-        cur.execute('DELETE FROM MatriculaAsignacion WHERE idMatricula = %s', (id,))
-        cur.execute('DELETE FROM Matricula WHERE idMatricula = %s', (id,))
-        mysql.connection.commit()
-        eliminado = cur.rowcount == 0
-        cur.close()
-        if eliminado:
-            return ('No se encontró la matrícula para eliminar', 'info')
-        return ('Matrícula eliminada correctamente', 'successful')
+        try:
+            matricula = db.session.get(Matricula, id)
+            if not matricula:
+                return ('No se encontró la matrícula para eliminar', 'info')
+
+            db.session.query(MatriculaAsignacion).filter_by(idMatricula=id).delete()
+            db.session.delete(matricula)
+            db.session.commit()
+            return ('Matrícula eliminada correctamente', 'successful')
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            print(f" * Error al eliminar matrícula: {e}")
+            return ('ERROR: No se pudo eliminar la matrícula.', 'error')
 
     def foreign_records(self):
         return {
             'estudiantes': self.estudiante.list_estudiantes(),
             'asignaciones': self.curso.list_curso()
         }
-
-

@@ -12,7 +12,7 @@
     <header class="header">
         <h1>Gestionar Materias</h1>
         <div class="header__btns">
-            <button class="btn btn__add" onclick="abrirForm('{{ url_for('materia.add') }}', 'form-materia','modal-materia')">
+            <button class="btn btn__add" data-name="materia">
                 <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
                 <span>Añadir</span>
             </button>    
@@ -30,16 +30,18 @@
         </div>
         {% endfor %}
 
+        <template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}" data-delete="{{ r_delete }}"></template>
+
         <!-- Formulario Emergente -->
         <div class="emergente" id="modal-materia">
             <div class="form__background">
-                <button type="button" class="close" onclick="cerrarForm('modal-materia')">
+                <button type="button" class="close">
                     <span>&times;</span>
                 </button>
                 <div class="form__image">
                     <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
                 </div>
-                <form action="{{ url_for('materia.add') }}" method="POST" class="form form__materia" id="form-materia">
+                <form action="{{ r_add }}" method="POST" class="form form__materia" id="form-materia">
                     <div class="form__group">
                         <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre de la Materia" required>
                     </div>
@@ -76,16 +78,12 @@
                 <div class="card__btn">
                     <button type="button" class="btn btn__edit"
                         data-id="{{ reg.idMateria }}"
-                        data-get="{{ r_get }}"
-                        data-form="form-materia"
-                        data-modal="modal-materia"
-                        data-update="{{ r_update }}"
-                        data-campos='{{ campos|tojson }}'>
+                        data-name="materia">
                         <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
                         <span>Editar</span>
                     </button>
                     <button type="button" class="btn btn__delete"
-                        data-delete="{{ url_for('materia.delete', id=reg.idMateria) }}">
+                        data-id="{{ reg.idMateria }}">
                         <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
                         <span>Borrar</span>
                     </button>
@@ -97,4 +95,7 @@
         {% endif %}
         </div>
     </main>
+{% endblock %}
+
+{% block sripts %}
 {% endblock %}

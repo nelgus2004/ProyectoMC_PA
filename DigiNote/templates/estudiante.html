@@ -3,112 +3,115 @@
 {% block title %}| Estudiantes{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
-    {% block content %}
-        <!-- Encabezado -->
-        <header class="header">
-            <h1>Gestionar Estudiantes</h1>
-            <div class="header__btns">
-                <button class="btn btn__add" onclick="abrirForm('{{ url_for('estudiante.add') }}', 'form-estudiante','modal-estudiante')">
-                    <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
-                    <span>Añadir</span></button>    
-            </div>
-        </header>
+{% block content %}
+<!-- Encabezado -->
+<header class="header">
+    <h1>Gestionar Estudiantes</h1>
+    <div class="header__btns">
+        <button class="btn btn__add" data-name="estudiante">
+            <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
+            <span>Añadir</span></button>
+    </div>
+</header>
 
-        <main class="contenido">
-            <!-- Mensajes de Sistema -->
-            {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
-            <div class="alert alert__{{ categoria }}" role="alert">
-                <span>{{ mensaje }}</span>
-                <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            {% endfor %}
+<main class="contenido">
+    <!-- Mensajes de Sistema -->
+    {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+    <div class="alert alert__{{ categoria }}" role="alert">
+        <span>{{ mensaje }}</span>
+        <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
 
-            <!-- Formulario Emergente -->
-            <div class="emergente" id="modal-estudiante">
-                <div class="form__background">
-                    <button type="button" class="close" onclick="cerrarForm('modal-estudiante')">
-                        <span>&times;</span>
-                    </button>
-                    <div class="form__image">
-                        <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
-                    </div>
-                    <form action="{{ url_for('estudiante.add') }}" method="POST" class="form form__estudiante" id="form-estudiante">
-                        <div class="form__group">
-                            <input type="text" class="form__campo--texto" name="Cedula" placeholder="Cédula" 
-                                required pattern="^\d{10}$" maxlength="10"
-                                title="La cédula debe tener exactamente 10 dígitos numéricos">
-                        </div>
-                        <div class="form__group">
-                            <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre" required>
-                        </div>
-                        <div class="form__group">
-                            <input type="text" class="form__campo--texto" name="Apellido" placeholder="Apellido" required>
-                        </div>
-                        <div class="form__group">
-                            <input type="date" class="form__campo--fecha" name="FechaNacimiento" placeholder="Fecha de Nacimiento" required>
-                        </div>
-                        <div class="form__group">
-                            <input type="email" class="form__campo--correo" name="Correo" placeholder="Correo electrónico" required>
-                        </div>
-                        <div class="form__group">
-                            <input type="text" class="form__campo--texto" name="Telefono" placeholder="Teléfono"
-                                pattern="^\d{10}$" inputmode="numeric" maxlength="10"
-                                title="El teléfono debe tener exactamente 10 dígitos numéricos">
-                        </div>
-                        <div class="form__group">
-                            <input type="text" class="form__campo--texto" name="Direccion" placeholder="Dirección" required>
-                        </div>
-                        <div class="form__group">
-                            <textarea class="form__campo--area" name="Observacion" placeholder="Observaciones" rows="3"></textarea>
-                        </div>
-                        <div class="form__buttons">
-                            <button type="submit" class="btn btn__save" id="btn-submit">
-                                <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
-                                <span>Guardar</span> </button>
-                        </div>
-                    </form>
-                </div>
+    <template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}" data-delete="{{ r_delete }}"></template>
+
+    <!-- Formulario Emergente -->
+    <div class="emergente" id="modal-estudiante">
+        <div class="form__background">
+            <button type="button" class="close">
+                <span>&times;</span>
+            </button>
+            <div class="form__image">
+                <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
             </div>
-            <div class="cards">
-            {% if registros %}
-                {% for reg in registros %}
-                <div class="card">
-                    <div class="card__content">
-                        <h3 class="card__text card__title">{{ reg.Cedula }}</h3>
-                        <p class="card__text"><b>Nombres:</b> {{ reg.Apellido }} {{ reg.Nombre }}</p>
-                        <p class="card__text"><b>Fecha Nacimiento:</b>  {{ reg.FechaNacimiento }}</p>
-                        <p class="card__text"><b>Correo:</b> {{ reg.Correo }}</p>
-                        <p class="card__text"><b>Telefono:</b> {{ reg.Telefono or '' }}</p>
-                        <p class="card__text"><b>Direccion:</b>  {{ reg.Direccion or '' }}</p>
-                        <p class="card__text"><b>Observacion:</b> {{ reg.Observacion or '' }}</p>
-                    </div>
-                    <div class="card__btn">
-                        <button type="button" class="btn btn__edit"
-                            data-id="{{ reg.idEstudiante }}"
-                            data-get="{{ r_get }}"
-                            data-form="form-estudiante"
-                            data-modal="modal-estudiante"
-                            data-update="{{ r_update }}"
-                            data-campos='{{ campos|tojson }}'>
-                        <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
-                        <span>Editar</span> </button>
-                        <button type="button"  class="btn btn__delete"
-                            data-delete="{{ url_for('estudiante.delete', id=reg.idEstudiante) }}">
-                            <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
-                            <span>Borrar</span> </button>
-                    </div>
+            <form action="{{ r_add }}" method="POST" class="form form__estudiante" id="form-estudiante">
+                <div class="form__group">
+                    <input type="text" class="form__campo--texto" name="Cedula" placeholder="Cédula" required
+                        pattern="^\d{10}$" maxlength="10" title="La cédula debe tener exactamente 10 dígitos numéricos">
                 </div>
-                {% endfor %}
-            {% else %}
-                <p>No hay estudiantes registrados actualmente.</p>
-            {% endif %}
+                <div class="form__group">
+                    <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre" required>
+                </div>
+                <div class="form__group">
+                    <input type="text" class="form__campo--texto" name="Apellido" placeholder="Apellido" required>
+                </div>
+                <div class="form__group">
+                    <input type="date" class="form__campo--fecha" name="FechaNacimiento"
+                        placeholder="Fecha de Nacimiento" required>
+                </div>
+                <div class="form__group">
+                    <input type="email" class="form__campo--correo" name="Correo" placeholder="Correo electrónico"
+                        required>
+                </div>
+                <div class="form__group">
+                    <input type="text" class="form__campo--texto" name="Telefono" placeholder="Teléfono"
+                        pattern="^\d{10}$" inputmode="numeric" maxlength="10"
+                        title="El teléfono debe tener exactamente 10 dígitos numéricos">
+                </div>
+                <div class="form__group">
+                    <input type="text" class="form__campo--texto" name="Direccion" placeholder="Dirección" required>
+                </div>
+                <div class="form__group">
+                    <textarea class="form__campo--area" name="Observacion" placeholder="Observaciones"
+                        rows="3"></textarea>
+                </div>
+                <div class="form__buttons">
+                    <button type="submit" class="btn btn__save" id="btn-submit">
+                        <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+                        <span>Guardar</span> </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="cards">
+        {% if registros %}
+        {% for reg in registros %}
+        <div class="card">
+            <div class="card__content">
+                <h3 class="card__text card__title">{{ reg.Cedula }}</h3>
+                <p class="card__text"><b>Nombres:</b> {{ reg.Apellido }} {{ reg.Nombre }}</p>
+                <p class="card__text"><b>Fecha Nacimiento:</b> {{ reg.FechaNacimiento }}</p>
+                <p class="card__text"><b>Correo:</b> {{ reg.Correo }}</p>
+                <p class="card__text"><b>Telefono:</b> {{ reg.Telefono or '' }}</p>
+                <p class="card__text"><b>Direccion:</b> {{ reg.Direccion or '' }}</p>
+                <p class="card__text"><b>Observacion:</b> {{ reg.Observacion or '' }}</p>
             </div>
-           
-        </main>
-    {% endblock %}
+            <div class="card__btn">
+                <button type="button" class="btn btn__edit" data-id="{{ reg.idEstudiante }}" data-name="estudiante">
+                    <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
+                    <span>Editar</span> </button>
+                <button type="button" class="btn btn__delete" data-id="{{ reg.idEstudiante }}">
+                    <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
+                    <span>Borrar</span> </button>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>No hay estudiantes registrados actualmente.</p>
+        {% endif %}
+    </div>
+
+</main>
+
+
+
+{% endblock %}
+
+{% block sripts %}
+{% endblock %}

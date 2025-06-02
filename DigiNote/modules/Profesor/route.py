@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash, make_response
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
 from .controller import ProfesorController
 
 profesor_bp = Blueprint('profesor', __name__, template_folder='DigiNote/templates')
@@ -11,9 +11,10 @@ def show():
         'profesor.html', 
         registros=result,
         active_page='prof',
-        r_get=url_for('profesor.get', id='').rstrip('/'),
-        r_update=url_for('profesor.update', id='').rstrip('/'),
-        campos=['Cedula', 'Nombre', 'Apellido', 'Telefono', 'Correo', 'Especialidad', 'Direccion']
+        r_add=url_for('profesor.add'),
+        r_get=url_for('profesor.get', id=0).rsplit('/', 1)[0],
+        r_update=url_for('profesor.update', id=0).rsplit('/', 1)[0],
+        r_delete=url_for('profesor.delete', id=0).rsplit('/', 1)[0]
     )
 
 @profesor_bp.route('/add_profesor', methods=['POST'])
@@ -22,18 +23,28 @@ def add():
     flash(*result)
     return redirect(url_for('profesor.show'))
 
-@profesor_bp.route('/get_profesor/<id>', methods=['POST', 'GET'])
+@profesor_bp.route('/get_profesor/<int:id>', methods=['GET', 'POST'])
 def get(id):
-    result = controller.get_profesor_by_id(id)
-    return jsonify(result)
+    profesor = controller.get_profesor_by_id(id)
+    if profesor:
+        return jsonify({
+            'Cedula': profesor.Cedula,
+            'Nombre': profesor.Nombre,
+            'Apellido': profesor.Apellido,
+            'Telefono': profesor.Telefono,
+            'Correo': profesor.Correo,
+            'Especialidad': profesor.Especialidad,
+            'Direccion': profesor.Direccion
+        })
+    return jsonify({}), 404
 
-@profesor_bp.route('/update_profesor/<id>', methods=['POST'])
+@profesor_bp.route('/update_profesor/<int:id>', methods=['POST'])
 def update(id):
     result = controller.update_profesor(id, request)
     flash(*result)
     return redirect(url_for('profesor.show'))
 
-@profesor_bp.route('/delete_profesor/<string:id>', methods=['POST', 'GET'])
+@profesor_bp.route('/delete_profesor/<int:id>', methods=['POST', 'GET'])
 def delete(id):
     result = controller.delete_profesor(id)
     flash(*result)

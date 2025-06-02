@@ -12,10 +12,10 @@
     <header class="header">
         <h1>Gestionar <br> Periodos Lectivos</h1>
         <div class="header__btns">
-            <button class="btn btn__add" onclick="abrirForm('{{ url_for('periodo.add') }}', 'form-periodo','modal-periodo')">
+            <button class="btn btn__add" data-name="periodo">
                 <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
                 <span>Añadir</span>
-            </button>    
+            </button>
         </div>
     </header>
 
@@ -30,16 +30,18 @@
         </div>
         {% endfor %}
 
+        <template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}" data-delete="{{ r_delete }}"></template>
+
         <!-- Formulario Emergente -->
         <div class="emergente" id="modal-periodo">
             <div class="form__background">
-                <button type="button" class="close" onclick="cerrarForm('modal-periodo')">
+                <button type="button" class="close">
                     <span>&times;</span>
                 </button>
                 <div class="form__image">
                     <img src="{{ url_for('static', filename='image/periodo.png') }}" alt="Icono">
                 </div>
-                <form action="{{ url_for('periodo.add') }}" method="POST" class="form form__periodo" id="form-periodo">
+                <form action="{{ r_add }}" method="POST" class="form form__periodo" id="form-periodo">
                     <div class="form__group">
                         <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre del Periodo" required>
                     </div>
@@ -81,16 +83,12 @@
                 <div class="card__btn">
                     <button type="button" class="btn btn__edit"
                         data-id="{{ reg.idPeriodo }}"
-                        data-get="{{ r_get }}"
-                        data-form="form-periodo"
-                        data-modal="modal-periodo"
-                        data-update="{{ r_update }}"
-                        data-campos='{{ campos|tojson }}'>
+                        data-name="periodo">
                         <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
                         <span>Editar</span>
                     </button>
                     <button type="button" class="btn btn__delete"
-                        data-delete="{{ url_for('periodo.delete', id=reg.idPeriodo) }}">
+                        data-id="{{ reg.idPeriodo }}">
                         <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
                         <span>Borrar</span>
                     </button>

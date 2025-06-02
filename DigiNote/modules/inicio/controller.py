@@ -1,6 +1,5 @@
 from flask import request
-from DigiNote.database.db import mysql
+from DigiNote.database import db
 
 class indexController:
-    def index(self):
-        return 'Hello, World!'
+    pass

@@ -1,15 +1,12 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, make_response, jsonify
+from flask import Blueprint, render_template, session
 from .controller import indexController
-
 
 index_bp = Blueprint('inicio', __name__, template_folder='DigiNote/templates')
 controller  = indexController()
 
 @index_bp.route('/inicio/')
 def menu():
-    #result=controller.index()
     return render_template('inicio.html')
-
 
 #@index_bp.route('/logout')
 #def logout():

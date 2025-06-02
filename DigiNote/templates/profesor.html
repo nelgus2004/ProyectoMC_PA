@@ -12,9 +12,10 @@
     <header class="header">
         <h1>Gestionar Profesores</h1>
         <div class="header__btns">
-            <button class="btn btn__add" onclick="abrirForm('{{ url_for('profesor.add') }}', 'form-profesor','modal-profesor')">
+            <button class="btn btn__add" data-name="profesor">
                 <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
-                <span>Añadir</span></button>    
+                <span>Añadir</span>
+            </button>    
         </div>
     </header>
 
@@ -24,21 +25,24 @@
         <div class="alert alert__{{ categoria }}" role="alert">
             <span>{{ mensaje }}</span>
             <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
-            <span aria-hidden="true">&times;</span>
+                <span aria-hidden="true">&times;</span>
             </button>
         </div>
         {% endfor %}
 
+        <!-- Rutas para JS -->
+        <template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}" data-delete="{{ r_delete }}"></template>
+
         <!-- Formulario Emergente -->
         <div class="emergente" id="modal-profesor">
             <div class="form__background">
-                <button type="button" class="close" onclick="cerrarForm('modal-profesor')">
+                <button type="button" class="close">
                     <span>&times;</span>
                 </button>
                 <div class="form__image">
                     <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
                 </div>
-                <form action="{{ url_for('profesor.add') }}" method="POST" class="form form__profesor" id="form-profesor">
+                <form action="{{ r_add }}" method="POST" class="form form__profesor" id="form-profesor">
                     <div class="form__group">
                         <input type="text" class="form__campo--texto" name="Cedula" placeholder="Cédula" 
                             required pattern="^\d{10}$" maxlength="10"
@@ -67,11 +71,14 @@
                     <div class="form__buttons">
                         <button type="submit" class="btn btn__save" id="btn-submit">
                             <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
-                            <span>Guardar</span> </button>
+                            <span>Guardar</span>
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
+
+        <!-- Tarjetas de Profesores -->
         <div class="cards">
         {% if registros %}
             {% for reg in registros %}
@@ -87,17 +94,15 @@
                 <div class="card__btn">
                     <button type="button" class="btn btn__edit"
                         data-id="{{ reg.idProfesor }}"
-                        data-get="{{ r_get }}"
-                        data-form="form-profesor"
-                        data-modal="modal-profesor"
-                        data-update="{{ r_update }}"
-                        data-campos='{{ campos|tojson }}'>
-                    <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
-                    <span>Editar</span> </button>
-                    <button type="button"  class="btn btn__delete"
-                        data-delete="{{ url_for('profesor.delete', id=reg.idProfesor) }}">
+                        data-name="profesor">
+                        <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
+                        <span>Editar</span>
+                    </button>
+                    <button type="button" class="btn btn__delete"
+                        data-id="{{ reg.idProfesor }}">
                         <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
-                        <span>Borrar</span> </button>
+                        <span>Borrar</span>
+                    </button>
                 </div>
             </div>
             {% endfor %}
@@ -105,6 +110,5 @@
             <p>No hay profesores registrados actualmente.</p>
         {% endif %}
         </div>
-       
     </main>
 {% endblock %}

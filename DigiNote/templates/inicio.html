@@ -9,7 +9,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <!-- Hojas de Estilo -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
@@ -23,7 +25,7 @@
             <a href="{{ url_for('inicio.menu') }}">
                 <img src="{{ url_for('static', filename='image/logo64px.png') }}" alt="logo">
                 <span>DigiNote</span>
-            </a>    
+            </a>
         </div>
         <div class="sidebar__linea"></div>
         <ul class="sidebar__options">
@@ -93,19 +95,20 @@
                 </form>
             </li>
         </ul>
-           {#<!--
+        {#<!--
             {% if current_user.is_authenticated %}
             <form action="{{ url_for('logout') }}" method="POST"> -->#}
-            {#<!--
+        {#<!--
             {#</form>
-            {% endif %} -->#}             
-       
+            {% endif %} -->#}
+
     </nav>
     <!-- Contenido de la página -->
     <div class="panel">
         {% block content %}{% endblock %}
     </div>
     <!-- Scripts -->
+    {% block sripts %}{% endblock %}
     <script src="{{url_for('static', filename='js/scripts.js')}}"></script>
 </body>
 

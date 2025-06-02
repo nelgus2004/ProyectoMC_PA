@@ -1,136 +1,138 @@
-from DigiNote.database.db import mysql
-from ..Profesor.controller import ProfesorController
-from ..Materia.controller import MateriaController
-from ..Periodo.controller import PeriodoController
+from flask import request
+from sqlalchemy.exc import SQLAlchemyError
+from DigiNote.database import db
+from DigiNote.database.models import AsignacionCurso, Profesor, Materia, PeriodoLectivo
 from datetime import timedelta
-
 
 class CursoController:
     def __init__(self):
-        self.profesor = ProfesorController()
-        self.periodo = PeriodoController()
-        self.materia = MateriaController()
-        
+        pass
+
     def show_curso(self):
-        cur = mysql.connection.cursor()
-        cur.execute("""
-            SELECT AC.idAsignacion, AC.Paralelo, AC.HoraEntrada, AC.HoraSalida, AC.Aula,
-                CONCAT (P.Apellido, ' ', P.Nombre) AS Profesor,
-                M.Nombre AS Materia, M.Nivel,
-                CONCAT (PL.Nombre, ' ', DATE_FORMAT(FechaInicio, '%M'), '-' , DATE_FORMAT(FechaFin, '%M')) AS Periodo
-            FROM AsignacionCurso AC
-            JOIN Profesor P ON AC.idProfesor = P.idProfesor
-            JOIN Materia M ON AC.idMateria = M.idMateria
-            JOIN PeriodoLectivo PL ON AC.idPeriodo = PL.idPeriodo
-            WHERE PL.Estado = 'Activo'
-        """)
-        data = cur.fetchall()
-        cur.close()
-        return data
+        try:
+            data = db.session.query(
+                AsignacionCurso.idAsignacion,
+                AsignacionCurso.Paralelo,
+                AsignacionCurso.HoraEntrada,
+                AsignacionCurso.HoraSalida,
+                AsignacionCurso.Aula,
+                db.func.concat(Profesor.Apellido, ' ', Profesor.Nombre).label('Profesor'),
+                Materia.Nombre.label('Materia'),
+                Materia.Nivel,
+                db.func.concat(PeriodoLectivo.Nombre, ' ', 
+                               db.func.date_format(PeriodoLectivo.FechaInicio, '%M'), '-',
+                               db.func.date_format(PeriodoLectivo.FechaFin, '%M')).label('Periodo')
+            ).join(Profesor).join(Materia).join(PeriodoLectivo)\
+             .filter(PeriodoLectivo.Estado == 'Activo')\
+             .all()
+            return [row._asdict() for row in data]
+        except SQLAlchemyError as e:
+            print(f' * Error al obtener cursos: {e}')
+            return []
 
     def add_curso(self, request):
         if request.method == 'POST':
-            paralelo = request.form['Paralelo'].strip()
-            horaEntrada = request.form['HoraEntrada']
-            horaSalida = request.form['HoraSalida']
-            aula = request.form['Aula'] or None
-            idPeriodo = request.form['idPeriodo'] or None
-            idProfesor = request.form['idProfesor'] or None
-            idMateria = request.form['idMateria'] or None
             try:
-                cur = mysql.connection.cursor()
-                cur.execute("""
-                    INSERT INTO AsignacionCurso (Paralelo, horaEntrada, horaSalida, Aula, idPeriodo, idProfesor, idMateria)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, (paralelo, horaEntrada, horaSalida, aula, idPeriodo, idProfesor, idMateria))
-                mysql.connection.commit()
-                return ('Curso Añadido Correctamente', 'successful')
-            except Exception as e:
-                print(f'Error al añadir curso: {e}')
+                curso = AsignacionCurso(
+                    Paralelo=request.form['Paralelo'].strip(),
+                    HoraEntrada=request.form['HoraEntrada'],
+                    HoraSalida=request.form['HoraSalida'],
+                    Aula=request.form.get('Aula'),
+                    idPeriodo=request.form.get('idPeriodo'),
+                    idProfesor=request.form.get('idProfesor'),
+                    idMateria=request.form.get('idMateria')
+                )
+                db.session.add(curso)
+                db.session.commit()
+                return ('Curso añadido correctamente', 'successful')
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                print(f' * Error al añadir curso: {e}')
                 return ('ERROR: No se pudo añadir el curso.', 'error')
 
     def get_curso_by_id(self, id):
-        cur = mysql.connection.cursor()
-        cur.execute('SELECT * FROM AsignacionCurso WHERE idAsignacion = %s', (id,))
-        data = cur.fetchall()
-        cur.close()
-        if not data:
+        curso = db.session.get(AsignacionCurso, id)
+        if not curso:
             return {}
-        curso = data[0]
         
+        resultado = curso.__dict__.copy()
         for campo in ['HoraEntrada', 'HoraSalida']:
-            if isinstance(curso[campo], timedelta):  # Convertir timedelta a string HH:MM
-                total_seconds = curso[campo].total_seconds()
+            valor = getattr(curso, campo)
+            if isinstance(valor, timedelta):
+                total_seconds = valor.total_seconds()
                 hours = int(total_seconds // 3600)
                 minutes = int((total_seconds % 3600) // 60)
-                curso[campo] = f'{hours:02}:{minutes:02}'
-
-        return curso
+                resultado[campo] = f'{hours:02}:{minutes:02}'
+        resultado.pop('_sa_instance_state', None)
+        return resultado
 
     def update_curso(self, id, request):
         if request.method == 'POST':
-            paralelo = request.form['Paralelo'].strip()
-            horaEntrada = request.form['HoraEntrada']
-            horaSalida = request.form['HoraSalida']
-            aula = request.form['Aula'] or None
-            idPeriodo = request.form['idPeriodo'] or None
-            idProfesor = request.form['idProfesor'] or None
-            idMateria = request.form['idMateria'] or None
             try:
-                cur = mysql.connection.cursor()
-                cur.execute("""
-                    UPDATE AsignacionCurso
-                    SET Paralelo = %s,
-                        horaEntrada = %s,
-                        horaSalida = %s,
-                        Aula = %s,
-                        idPeriodo = %s,
-                        idProfesor = %s,
-                        idMateria = %s
-                    WHERE idAsignacion = %s
-                """, (paralelo, horaEntrada, horaSalida, aula, idPeriodo, idProfesor, idMateria, id))
-                mysql.connection.commit()
-                cur.close()
-                return ('Curso Editado Correctamente', 'info')
-            except Exception as e:
-                print(f'Error al editar curso: {e}')
+                curso = db.session.get(AsignacionCurso, id)
+                if not curso:
+                    return ('No se encontró el curso para editar.', 'info')
+
+                curso.Paralelo = request.form['Paralelo'].strip()
+                curso.HoraEntrada = request.form['HoraEntrada']
+                curso.HoraSalida = request.form['HoraSalida']
+                curso.Aula = request.form.get('Aula')
+                curso.idPeriodo = request.form.get('idPeriodo')
+                curso.idProfesor = request.form.get('idProfesor')
+                curso.idMateria = request.form.get('idMateria')
+
+                db.session.commit()
+                return ('Curso editado correctamente', 'info')
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                print(f' * Error al editar curso: {e}')
                 return ('ERROR: No se pudo editar el curso.', 'error')
 
     def delete_curso(self, id):
-        cur = mysql.connection.cursor()
-        cur.execute('DELETE FROM AsignacionCurso WHERE idAsignacion = %s', (id,))
-        mysql.connection.commit()
-        eliminado = cur.rowcount == 0
-        cur.close()
-        if eliminado:
-            return ('No se encontró el curso para eliminar', 'info')
-        return ('Curso Eliminado Correctamente', 'successful')
-    
+        try:
+            curso = db.session.get(AsignacionCurso, id)
+            if not curso:
+                return ('No se encontró el curso para eliminar.', 'info')
+            db.session.delete(curso)
+            db.session.commit()
+            return ('Curso eliminado correctamente', 'successful')
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            print(f' * Error al eliminar curso: {e}')
+            return ('ERROR: No se pudo eliminar el curso.', 'error')
+
     def foreign_records(self):
-        registros = {
-            'profesores': self.profesor.list_profesores(),
-            'materias': self.materia.list_materias(),
-            'periodos': self.periodo.list_periodos()
-        }
-        return registros
-    
+        try:
+            profesores = db.session.query(Profesor.idProfesor, Profesor.Nombre, Profesor.Apellido).all()
+            materias = db.session.query(Materia.idMateria, Materia.Nombre, Materia.Nivel).all()
+            periodos = db.session.query(
+                PeriodoLectivo.idPeriodo,
+                PeriodoLectivo.Nombre,
+                db.func.concat(db.func.date_format(PeriodoLectivo.FechaInicio, '%M'), '-', db.func.date_format(PeriodoLectivo.FechaFin, '%M')).label('Duracion')
+            ).filter(PeriodoLectivo.Estado == 'Activo').all()
+            return {
+                'profesores': [p._asdict() for p in profesores],
+                'materias': [m._asdict() for m in materias],
+                'periodos': [p._asdict() for p in periodos]
+            }
+        except SQLAlchemyError as e:
+            print(f' * Error al obtener registros relacionados: {e}')
+            return {'profesores': [], 'materias': [], 'periodos': []}
+
     def list_curso(self):
-        cur = mysql.connection.cursor()
-        query = """
-            SELECT 
-                ac.idAsignacion,
-                CONCAT(p.Nombre, ' ', p.Apellido) AS Profesor,
-                m.Nombre AS Materia, m.Nivel,
-                ac.Paralelo,
-                pl.Nombre AS Periodo
-            FROM AsignacionCurso ac
-            JOIN Profesor p ON ac.idProfesor = p.idProfesor
-            JOIN Materia m ON ac.idMateria = m.idMateria
-            JOIN PeriodoLectivo pl ON ac.idPeriodo = pl.idPeriodo
-            WHERE pl.Estado = 'Activo'
-            ORDER BY pl.Nombre, ac.Paralelo, m.Nombre
-        """
-        cur.execute(query)
-        resultados = cur.fetchall()
-        cur.close()
-        return resultados
+        try:
+            data = db.session.query(
+                AsignacionCurso.idAsignacion,
+                db.func.concat(Profesor.Nombre, ' ', Profesor.Apellido).label('Profesor'),
+                Materia.Nombre.label('Materia'),
+                Materia.Nivel,
+                AsignacionCurso.Paralelo,
+                PeriodoLectivo.Nombre.label('Periodo')
+            ).join(Profesor).join(Materia).join(PeriodoLectivo)\
+             .filter(PeriodoLectivo.Estado == 'Activo')\
+             .order_by(PeriodoLectivo.Nombre, AsignacionCurso.Paralelo, Materia.Nombre)\
+             .all()
+            return [row._asdict() for row in data]
+        except SQLAlchemyError as e:
+            print(f' * Error al listar cursos: {e}')
+            return []
