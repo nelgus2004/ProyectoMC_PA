@@ -12,17 +12,18 @@ def show():
     # Agrupar asignaciones por matrícula
     matricula_materias = {}
     for asig in asignaciones:
-        idM = asig[0]  # idMatricula
+        idM = asig[0]
         materia_info = {
             'Materia': asig[1],
             'Paralelo': asig[2],
-            'Profesor': f"{asig[3]} {asig[4]}"
+            'Nivel': asig[3],
+            'Profesor': f"{asig[4]} {asig[5]}"
         }
         if idM not in matricula_materias:
             matricula_materias[idM] = []
         matricula_materias[idM].append(materia_info)
 
-    foreign = controller.foreign_records()
+    foreign = controller.foreign_records() or ''
     fecha_actual = date.today().isoformat()
 
     return render_template(

@@ -1,5 +1,6 @@
 from flask import Flask
 from DigiNote.database import db
+from sqlalchemy import text
 from dotenv import load_dotenv
 import os
 
@@ -18,6 +19,10 @@ def mysql_settings(app: Flask):
     if app.config.get('DEBUG') == True:
         with app.app_context():
             try:
+                # Verificar conexion con la bd
+                db.session.execute(text("SELECT 1"))
+                print(" * Conexión a la base de datos establecida.")
+                # Crear tablas
                 db.create_all()
                 print(" * Base de datos generada correctamente.")
             except Exception as e:

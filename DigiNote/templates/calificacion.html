@@ -3,34 +3,115 @@
 {% block title %}| Calificaciones{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block header %}
+<h1>Gestionar Calificaciones</h1>
+<div class="header__btns">
+    <button class="btn btn__add" data-name="calificacion">
+        <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
+        <span>Añadir</span>
+    </button>
+</div>
 {% endblock %}
 
 {% block content %}
-    <!-- Encabezado -->
-    <header class="header">
-        <h1>Gestionar Calificaciones</h1>
-        <div class="header__btns">
-            <button class="btn btn__add"> <!--onclick="abrirForm('{# url_for('matricula.add') #}', 'form-matricula', 'modal-matricula')">-->
-                <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
-                <span>Añadir</span>
-            </button>    
-        </div>
-    </header>
+<!-- Rutas -->
+<template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" 
+    data-update="{{ r_update }}" data-delete="{{ r_delete }}" >
+</template>
 
-    <main class="contenido">
-        <!-- Mensajes de Sistema -->
-        {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
-        <div class="alert alert__{{ categoria }}" role="alert">
-            <span>{{ mensaje }}</span>
-            <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
-                <span aria-hidden="true">&times;</span>
-            </button>
+<!-- Formulario Emergente -->
+<div class="emergente" id="modal-calificacion">
+    <div class="form__background">
+        <button type="button" class="close">
+            <span>&times;</span>
+        </button>
+        <div class="form__image">
+            <img src="{{ url_for('static', filename='image/notas.png') }}" alt="Icono">
+        </div>
+
+        <form action="{{ r_add }}" method="POST" class="form form__calificacion" id="form-calificacion">
+            <div class="form__group">
+                <select class="form__campo--select" name="idMatriculaAsignacion" required>
+                    <option value="" disabled selected>Seleccione Estudiante - Curso</option>
+                    {% for ma in registros.matricula_asignaciones %}
+                    <option value="{{ ma.idMatriculaAsignacion }}">
+                        {{ ma.estudiante_nombre }} - {{ ma.nivel }} {{ ma.paralelo }} - {{ ma.docente_nombre }} - {{ ma.materia_nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form__group">
+                <select class="form__campo--select" name="Quimestre" required>
+                    <option value="" disabled selected>Seleccione Quimestre</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
+            </div>
+
+            <div class="form__group">
+                <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaAutonoma" placeholder="Nota Autónoma" required>
+            </div>
+
+            <div class="form__group">
+                <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaPractica" placeholder="Nota Práctica" required>
+            </div>
+
+            <div class="form__group">
+                <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaLeccion" placeholder="Nota Lección" required>
+            </div>
+
+            <div class="form__group">
+                <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaExamen" placeholder="Nota Examen" required>
+            </div>
+
+            <div class="form__buttons">
+                <button type="submit" class="btn btn__save" id="btn-submit">
+                    <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+                    <span>Guardar</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tarjetas de Calificaciones -->
+<div class="cards">
+    {% if registros.calificaciones %}
+        {% for cal in registros.calificaciones %}
+        <div class="card">
+            <div class="card__content">
+                <h3 class="card__text card__title">
+                    {{ cal.estudiante_nombre }} - {{ cal.nivel }} {{ cal.paralelo }} - {{ cal.materia_nombre }}
+                </h3>
+                <p class="card__text"><b>Docente:</b> {{ cal.docente_nombre }}</p>
+                <p class="card__text"><b>Quimestre:</b> {{ cal.Quimestre }}</p>
+                <p class="card__text"><b>Notas:</b> Autónoma {{ cal.NotaAutonoma }}, Práctica {{ cal.NotaPractica }}, Lección {{ cal.NotaLeccion }}, Examen {{ cal.NotaExamen }}</p>
+                <p class="card__text"><b>Promedio Quimestre:</b> {{ cal.PromedioQuimestre }}</p>
+            </div>
+            <div class="card__btn">
+                <button type="button" class="btn btn__edit" data-id="{{ cal.idCalificacionQuimestre }}" data-name="calificacion">
+                    <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
+                    <span>Editar</span>
+                </button>
+                <button type="button" class="btn btn__delete" data-id="{{ cal.idCalificacionQuimestre }}">
+                    <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
+                    <span>Borrar</span>
+                </button>
+            </div>
         </div>
         {% endfor %}
+    {% else %}
+    <p>No hay calificaciones registradas actualmente</p>
+    {% endif %}
+</div>
 
-        <h1>Página enconstrucción</h1>
+{% endblock %}
 
-    </main>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/miniForms.js') }}"></script>
 {% endblock %}

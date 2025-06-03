@@ -26,7 +26,7 @@ class PeriodoController:
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f' * Error al añadir periodo: {e}')
-                return ('ERROR: No se pudo añadir el periodo.', 'error')
+                return ('ERROR: No se pudo añadir el periodo.', 'danger')
 
     def get_periodo_by_id(self, id):
         return PeriodoLectivo.query.get(id)
@@ -36,7 +36,7 @@ class PeriodoController:
             try:
                 periodo = PeriodoLectivo.query.get(id)
                 if not periodo:
-                    return ('Periodo no encontrado', 'error')
+                    return ('Periodo no encontrado', 'danger')
                 
                 estado = request.form.get('Estado') or 'Inactivo'
                 if estado == 'Activo':
@@ -54,7 +54,7 @@ class PeriodoController:
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f' * Error al editar periodo: {e}')
-                return ('ERROR: No se pudo editar el periodo.', 'error')
+                return ('ERROR: No se pudo editar el periodo.', 'danger')
 
     def delete_periodo(self, id):
         try:
@@ -63,20 +63,8 @@ class PeriodoController:
                 return ('No se encontró el periodo para eliminar', 'info')
             db.session.delete(periodo)
             db.session.commit()
-            return ('Periodo eliminado correctamente', 'successful')
+            return ('Periodo eliminado correctamente', 'danger')
         except SQLAlchemyError as e:
             db.session.rollback()
             print(f' * Error al eliminar periodo: {e}')
-            return ('ERROR: No se pudo eliminar el periodo.', 'error')
-
-    def list_periodos(self):
-        from sqlalchemy import func
-        query = db.session.query(
-            PeriodoLectivo.idPeriodo,
-            PeriodoLectivo.Nombre,
-            func.concat(
-                func.date_format(PeriodoLectivo.FechaInicio, '%M'), '-',
-                func.date_format(PeriodoLectivo.FechaFin, '%M')
-            ).label('Duracion')
-        ).filter(PeriodoLectivo.Estado == 'Activo')
-        return query.all()
+            return ('ERROR: No se pudo eliminar el periodo.', 'danger')

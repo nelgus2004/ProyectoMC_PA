@@ -28,7 +28,7 @@ section {
 /* Variables de los colores */
 :root {
   --blanco: #F3F5F1;
-  --verde: #498752;
+  --verde: #399b6c;
   --agua: #89AAB0;
   --gris: #748887;
   --verde-oscuro: #34464B;
@@ -66,6 +66,10 @@ html {
 }
 
 /* Encabezado */
+.no-bg {
+    background: none !important;
+}
+
 .header {
   width: 100%;
   height: 6.3rem;
@@ -118,6 +122,17 @@ html {
   transition: background-color 0.4s ease;
 }
 
+.disabled-btn {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.disabled-btn:hover {
+  background-color: inherit;
+  color: inherit;
+}
+
 .btn:hover {
   font-weight: bold;
   color: var(--negro);
@@ -159,10 +174,12 @@ html {
   background-color: #a9afb1;
 }
 
+.btn__danger,
 .btn__delete {
   background-color: var(--rojo);
 }
 
+.btn__danger:hover,
 .btn__delete:hover {
   background-color: #dc5966;
 }
@@ -197,7 +214,7 @@ html {
   border-color: #699f71;
 }
 
-.alert__error {
+.alert__danger {
   background-color: #f8d7da;
   color: var(--rojo);
   border-color: #dc5966;

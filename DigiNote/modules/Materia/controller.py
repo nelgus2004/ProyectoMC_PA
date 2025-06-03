@@ -12,7 +12,6 @@ class MateriaController:
             try:
                 materia = Materia(
                     Nombre=request.form['Nombre'].strip().title(),
-                    Nivel=request.form['Nivel'],
                     Descripcion=request.form.get('Descripcion') or None
                 )
                 db.session.add(materia)
@@ -21,7 +20,7 @@ class MateriaController:
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f" * Error al añadir materia: {e}")
-                return ('ERROR: No se pudo añadir la materia.', 'error')
+                return ('ERROR: No se pudo añadir la materia.', 'danger')
 
     def get_materia_by_id(self, id):
         return Materia.query.get(id)
@@ -33,14 +32,13 @@ class MateriaController:
                 if not materia:
                     return ('Materia no encontrada', 'info')
                 materia.Nombre = request.form['Nombre'].strip().title()
-                materia.Nivel = request.form['Nivel']
                 materia.Descripcion = request.form.get('Descripcion') or None
                 db.session.commit()
                 return ('Materia editada correctamente', 'info')
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f" * Error al editar materia: {e}")
-                return ('ERROR: No se pudo editar la materia.', 'error')
+                return ('ERROR: No se pudo editar la materia.', 'danger')
 
     def delete_materia(self, id):
         try:
@@ -49,15 +47,8 @@ class MateriaController:
                 return ('No se encontró la materia para eliminar', 'info')
             db.session.delete(materia)
             db.session.commit()
-            return ('Materia eliminada correctamente', 'successful')
+            return ('Materia eliminada correctamente', 'danger')
         except SQLAlchemyError as e:
             db.session.rollback()
             print(f" * Error al eliminar materia: {e}")
-            return ('ERROR: No se pudo eliminar la materia.', 'error')
-
-    def list_materias(self):
-        return Materia.query.with_entities(
-            Materia.idMateria,
-            Materia.Nombre,
-            Materia.Nivel
-        ).all()
+            return ('ERROR: No se pudo eliminar la materia.', 'danger')

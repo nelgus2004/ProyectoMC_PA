@@ -10,7 +10,7 @@ app = create_app(config)
 
 if __name__ == "__main__":
     if config == 'development':
-        app.run(port = 3600, debug=True)
+        app.run(port = 5000, debug=True)
     else:
         from werkzeug.serving import run_simple
         run_simple('0.0.0.0', 5000, app)

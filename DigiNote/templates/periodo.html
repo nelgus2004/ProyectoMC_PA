@@ -3,101 +3,90 @@
 {% block title %}| Periodos{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
+
+<!-- Encabezado -->
+{% block header %}
+<h1>Gestionar <br> Periodos Lectivos</h1>
+<div class="header__btns">
+    <button class="btn btn__add" data-name="periodo">
+        <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
+        <span>Añadir</span>
+    </button>
+</div>
+{% endblock %}
+
+
 {% block content %}
-    <!-- Encabezado -->
-    <header class="header">
-        <h1>Gestionar <br> Periodos Lectivos</h1>
-        <div class="header__btns">
-            <button class="btn btn__add" data-name="periodo">
-                <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
-                <span>Añadir</span>
-            </button>
+<template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}"
+    data-delete="{{ r_delete }}"></template>
+
+<!-- Formulario Emergente -->
+<div class="emergente" id="modal-periodo">
+    <div class="form__background">
+        <button type="button" class="close">
+            <span>&times;</span>
+        </button>
+        <div class="form__image">
+            <img src="{{ url_for('static', filename='image/periodo.png') }}" alt="Icono">
         </div>
-    </header>
-
-    <main class="contenido">
-        <!-- Mensajes de Sistema -->
-        {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
-        <div class="alert alert__{{ categoria }}" role="alert">
-            <span>{{ mensaje }}</span>
-            <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        {% endfor %}
-
-        <template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}" data-delete="{{ r_delete }}"></template>
-
-        <!-- Formulario Emergente -->
-        <div class="emergente" id="modal-periodo">
-            <div class="form__background">
-                <button type="button" class="close">
-                    <span>&times;</span>
+        <form action="{{ r_add }}" method="POST" class="form form__periodo" id="form-periodo">
+            <div class="form__group">
+                <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre del Periodo" required>
+            </div>
+            <div class="form__group">
+                <label for="FechaInicio">Fecha de Inicio</label>
+                <input type="date" class="form__campo--fecha" name="FechaInicio" required>
+            </div>
+            <div class="form__group">
+                <label for="FechaFin">Fecha de Fin</label>
+                <input type="date" class="form__campo--fecha" name="FechaFin" required>
+            </div>
+            <div class="form__group">
+                <select class="form__campo--select" name="Estado">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo" selected>Inactivo</option>
+                </select>
+            </div>
+            <div class="form__buttons">
+                <button type="submit" class="btn btn__save" id="btn-submit">
+                    <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+                    <span>Guardar</span>
                 </button>
-                <div class="form__image">
-                    <img src="{{ url_for('static', filename='image/periodo.png') }}" alt="Icono">
-                </div>
-                <form action="{{ r_add }}" method="POST" class="form form__periodo" id="form-periodo">
-                    <div class="form__group">
-                        <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre del Periodo" required>
-                    </div>
-                    <div class="form__group">
-                        <label for="FechaInicio">Fecha de Inicio</label>
-                        <input type="date" class="form__campo--fecha" name="FechaInicio" required>
-                    </div>
-                    <div class="form__group">
-                        <label for="FechaFin">Fecha de Fin</label>
-                        <input type="date" class="form__campo--fecha" name="FechaFin" required>
-                    </div>
-                    <div class="form__group">
-                        <select class="form__campo--select" name="Estado">
-                            <option value="Activo">Activo</option>
-                            <option value="Inactivo" selected>Inactivo</option>
-                        </select>
-                    </div>
-                    <div class="form__buttons">
-                        <button type="submit" class="btn btn__save" id="btn-submit">
-                            <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
-                            <span>Guardar</span>
-                        </button>
-                    </div>
-                </form>
             </div>
-        </div>
+        </form>
+    </div>
+</div>
 
-        <!-- Tarjetas de Periodos -->
-        <div class="cards">
-        {% if registros %}
-            {% for reg in registros %}
-            <div class="card">
-                <div class="card__content">
-                    <h3 class="card__text card__title">{{ reg.Nombre }}</h3>
-                    <p class="card__text"><b>Inicio:</b> {{ reg.FechaInicio }}</p>
-                    <p class="card__text"><b>Fin:</b> {{ reg.FechaFin }}</p>
-                    <p class="card__text"><b>Estado:</b> {{ reg.Estado }}</p>
-                </div>
-                <div class="card__btn">
-                    <button type="button" class="btn btn__edit"
-                        data-id="{{ reg.idPeriodo }}"
-                        data-name="periodo">
-                        <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
-                        <span>Editar</span>
-                    </button>
-                    <button type="button" class="btn btn__delete"
-                        data-id="{{ reg.idPeriodo }}">
-                        <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
-                        <span>Borrar</span>
-                    </button>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p>No hay periodos registrados actualmente</p>
-        {% endif %}
+<!-- Tarjetas de Periodos -->
+<div class="cards">
+    {% if registros %}
+    {% for reg in registros %}
+    <div class="card">
+        <div class="card__content">
+            <h3 class="card__text card__title">{{ reg.Nombre }}</h3>
+            <p class="card__text"><b>Inicio:</b> {{ reg.FechaInicio }}</p>
+            <p class="card__text"><b>Fin:</b> {{ reg.FechaFin }}</p>
+            <p class="card__text"><b>Estado:</b> {{ reg.Estado }}</p>
         </div>
-    </main>
+        <div class="card__btn">
+            <button type="button" class="btn btn__edit" data-id="{{ reg.idPeriodo }}" data-name="periodo">
+                <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
+                <span>Editar</span>
+            </button>
+            <button type="button" class="btn btn__delete" data-id="{{ reg.idPeriodo }}">
+                <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
+                <span>Borrar</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No hay periodos registrados actualmente</p>
+    {% endif %}
+</div>
+
 {% endblock %}

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Nombre de la aplicación -->
     <title>DigiNote {% block title %}{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/favicon.ico') }}">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,9 +104,28 @@
             {% endif %} -->#}
 
     </nav>
+
     <!-- Contenido de la página -->
     <div class="panel">
-        {% block content %}{% endblock %}
+
+        <!-- Encabezado -->
+        <header class="header {% if active_page == 'inicio' %}no-bg{% endif %}">
+            {% block header %}{% endblock %}
+        </header>
+
+        <main class="contenido">
+            <!-- Mensajes de Sistema -->
+            {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+            <div class="alert alert__{{ categoria }}" role="alert">
+                <span>{{ mensaje }}</span>
+                <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+
+            {% block content %}{% endblock %}
+        </main>
     </div>
     <!-- Scripts -->
     {% block sripts %}{% endblock %}

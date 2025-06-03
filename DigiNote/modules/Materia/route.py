@@ -30,7 +30,6 @@ def get(id):
         return jsonify({
             'idMateria': result.idMateria,
             'Nombre': result.Nombre,
-            'Nivel': result.Nivel,
             'Descripcion': result.Descripcion
         })
     else:

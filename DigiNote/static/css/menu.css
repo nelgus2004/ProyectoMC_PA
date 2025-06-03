@@ -36,7 +36,7 @@
 
 .sidebar__logo {
     width: 100%;
-    padding: 2rem 1rem 1rem 1rem;
+    padding: 2rem 1rem .5rem 1rem;
 }
 
 .sidebar__logo a {
@@ -45,9 +45,9 @@
 }
 
 .sidebar__logo img {
-    width: 3rem;
-    height: 3rem;
-    filter: brightness(0) invert(1);
+    width: 3.5rem;
+    height: 3.5rem;
+    /*filter: brightness(0) invert(1);*/
     margin-right: 3px;
 }
 
@@ -64,14 +64,14 @@
     height: 2px;
     background-color: var(--gris);
     width: 90%;
-    margin: .8rem auto;
+    margin: .7rem auto .8rem auto;
 }
 
 .sidebar__options {
     width: 100%;
     list-style: none;
     display: flex;
-    padding: .5rem 0rem 1rem 1rem;
+    padding: .2rem 0rem 1rem 1rem;
     flex-direction: column;
 }
 

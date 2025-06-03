@@ -1,16 +1,21 @@
 const div = document.getElementById('rutas');
-const rutas = {
-  add: div.dataset.add,
-  get: div.dataset.get,
-  update: div.dataset.update,
-  delete: div.dataset.delete
-};
+let rutas = {};
+if (window.location.pathname !== "/app/inicio/") {
+  rutas = {
+    add: div.dataset.add,
+    get: div.dataset.get,
+    update: div.dataset.update,
+    delete: div.dataset.delete,
+  };
+}
 
 // FORMULARIO EMERGENTE
 document.addEventListener('DOMContentLoaded', () => {
 
   // Botones de Añadir (abrir formulario vacío)
   document.querySelectorAll('.btn__add').forEach(btn => {
+    if (btn.closest('#mini-form')) return;
+    if (btn.closest('.edit__foreign')) return;
     btn.addEventListener('click', () => {
       const name = btn.dataset.name;
       añadirRegistro(`form-${name}`);
@@ -28,9 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Click en Botón de Borrar
   document.querySelectorAll('.btn__delete').forEach(btn => {
+    if (btn.closest('#mini-form')) return;
+    if (btn.closest('.edit__foreign')) return;
     btn.addEventListener('click', () => {
       const id = btn.dataset.id;
-      borrarRegistro(id);
+      borrarRegistro(id, btn);
     });
   });
 
@@ -57,7 +64,7 @@ function añadirRegistro(formId) {
 }
 
 // Borrar registrp
-function borrarRegistro(id) {
+function borrarRegistro(id, btn) {
   const url = `${rutas.delete}/${id}`;
   const confirmMsg = btn.dataset.confirm || "¿Seguro que quieres eliminar este registro?";
   if (confirm(confirmMsg)) {
@@ -116,7 +123,7 @@ function cerrarForm() {
   if (modal) modal.style.display = "none";
 }
 
-// Cerrar Alert
+// Cerrar alertas
 function cerrarAlert(boton) {
   const alerta = boton.closest('.alert');
   if (alerta) {
@@ -124,52 +131,11 @@ function cerrarAlert(boton) {
   }
 }
 
-// Filtro segun el valor seleccionado en una lista
-document.addEventListener('DOMContentLoaded', () => {
-  const filtro = document.querySelector('.filtro');
-  const lista = document.querySelector('.lista');
-
-  if (!filtro || !lista) return;
-
-  const datos = JSON.parse(filtro.dataset.items || '[]');
-  const seleccionadosRaw = filtro.dataset.selected || '[]';
-  const seleccionados = Array.isArray(JSON.parse(seleccionadosRaw))
-    ? JSON.parse(seleccionadosRaw)
-    : [JSON.parse(seleccionadosRaw)];
-
-  const campoFiltro = filtro.dataset.filtrarPor;
-  const campoValor = filtro.dataset.valor;
-  const campoTexto = filtro.dataset.texto;
-
-  function construirTexto(item) {
-    return campoTexto.split('-').map(part => item[part.trim()] || '').join(' - ');
-  }
-
-  function actualizar() {
-    lista.innerHTML = '';
-    const valorFiltro = filtro.value;
-
-    datos.forEach(item => {
-      if (item[campoFiltro] === valorFiltro) {
-        const opt = document.createElement('option');
-        opt.value = item[campoValor];
-        opt.textContent = construirTexto(item);
-        if (seleccionados.includes(String(item[campoValor]))) {
-          opt.selected = true;
-        }
-        lista.appendChild(opt);
-      }
-    });
-  }
-
-  const valorInicial = filtro.dataset.selected;
-  if (valorInicial) {
-    filtro.value = valorInicial;
-  }
-
-  actualizar();
-
-  filtro.addEventListener('change', actualizar);
+// Cerrar alertas automáticamente después de 6 segundos
+document.querySelectorAll('.alert').forEach(alerta => {
+  setTimeout(() => {
+    alerta.remove();
+  }, 6000);
 });
 
 // Quitar formato 'active' de las opciones al ir al inicio

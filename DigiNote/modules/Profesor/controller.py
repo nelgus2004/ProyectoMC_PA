@@ -33,7 +33,7 @@ class ProfesorController:
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f' * Error al añadir profesor: {e}')
-                return ('ERROR: No se pudo añadir al profesor.', 'error')
+                return ('ERROR: No se pudo añadir al profesor.', 'danger')
 
     def get_profesor_by_id(self, id):
         return Profesor.query.get(id)
@@ -43,7 +43,7 @@ class ProfesorController:
             try:
                 profesor = Profesor.query.get(id)
                 if not profesor:
-                    return ('No se encontró el profesor.', 'error')
+                    return ('No se encontró el profesor.', 'danger')
 
                 profesor.Cedula = request.form['Cedula']
                 profesor.Nombre = request.form['Nombre'].strip().title()
@@ -58,7 +58,7 @@ class ProfesorController:
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f' * Error al editar profesor: {e}')
-                return ('ERROR: No se pudo editar al profesor.', 'error')
+                return ('ERROR: No se pudo editar al profesor.', 'danger')
 
     def delete_profesor(self, id):
         try:
@@ -68,15 +68,9 @@ class ProfesorController:
 
             db.session.delete(profesor)
             db.session.commit()
-            return ('Profesor eliminado correctamente', 'successful')
+            return ('Profesor eliminado correctamente', 'danger')
         except SQLAlchemyError as e:
             db.session.rollback()
             print(f' * Error al eliminar profesor: {e}')
-            return ('ERROR: No se pudo eliminar al profesor.', 'error')
+            return ('ERROR: No se pudo eliminar al profesor.', 'danger')
 
-    def list_profesores(self):
-        return Profesor.query.with_entities(
-            Profesor.idProfesor,
-            Profesor.Nombre,
-            Profesor.Apellido
-        ).all()

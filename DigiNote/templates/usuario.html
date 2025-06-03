@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
-{% block content %}
+
     <!-- Encabezado -->
-    <header class="header">
+    {% block header %}
         <h1>Gestionar Usuarios</h1>
         <div class="header__btns">
             <button class="btn btn__add"> <!--onclick="abrirForm('{# url_for('matricula.add') #}', 'form-matricula', 'modal-matricula')"> -->
@@ -17,20 +17,8 @@
                 <span>Añadir</span>
             </button>    
         </div>
-    </header>
+    {% endblock %}
 
-    <main class="contenido">
-        <!-- Mensajes de Sistema -->
-        {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
-        <div class="alert alert__{{ categoria }}" role="alert">
-            <span>{{ mensaje }}</span>
-            <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        {% endfor %}
-
+{% block content %}
         <h1>Página enconstrucción</h1>
-
-    </main>
 {% endblock %}

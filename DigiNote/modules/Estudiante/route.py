@@ -53,3 +53,11 @@ def delete(id):
     flash(*result)
     return redirect(url_for('estudiante.show'))
 
+@estudiante_bp.route('/data_estudiantes', methods=['GET'])
+def data_estudiantes():
+    nivel = request.args.get('nivel')
+    paralelo = request.args.get('paralelo')
+    id_periodo = request.args.get('id_periodo')
+
+    resultados = controller.all_data_estudiantes(nivel, paralelo, id_periodo)
+    return jsonify(resultados)

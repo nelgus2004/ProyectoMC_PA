@@ -3,98 +3,78 @@
 {% block title %}| Materias{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+
+<!-- Encabezado -->
+{% block header %}
+<h1>Gestionar Materias</h1>
+<div class="header__btns">
+    <button class="btn btn__add" data-name="materia">
+        <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
+        <span>Añadir</span>
+    </button>
+</div>
 {% endblock %}
 
 {% block content %}
-    <!-- Encabezado -->
-    <header class="header">
-        <h1>Gestionar Materias</h1>
-        <div class="header__btns">
-            <button class="btn btn__add" data-name="materia">
-                <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
-                <span>Añadir</span>
-            </button>    
-        </div>
-    </header>
+<template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}"
+    data-delete="{{ r_delete }}"></template>
 
-    <main class="contenido">
-        <!-- Mensajes de Sistema -->
-        {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
-        <div class="alert alert__{{ categoria }}" role="alert">
-            <span>{{ mensaje }}</span>
-            <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
-                <span aria-hidden="true">&times;</span>
+<!-- Formulario Emergente -->
+<div class="emergente" id="modal-materia">
+    <div class="form__background">
+        <button type="button" class="close">
+            <span>&times;</span>
+        </button>
+        <div class="form__image">
+            <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
+        </div>
+        <form action="{{ r_add }}" method="POST" class="form form__materia" id="form-materia">
+            <div class="form__group">
+                <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre de la Materia" required>
+            </div>
+            <div class="form__group">
+                <textarea class="form__campo--area" name="Descripcion" placeholder="Descripción de la materia"
+                    rows="3"></textarea>
+            </div>
+            <div class="form__buttons">
+                <button type="submit" class="btn btn__save" id="btn-submit">
+                    <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+                    <span>Guardar</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tarjetas de Materia -->
+<div class="cards">
+    {% if registros %}
+    {% for reg in registros %}
+    <div class="card">
+        <div class="card__content">
+            <h3 class="card__text card__title">{{ reg.Nombre }}</h3>
+            <p class="card__text"><b>Descripción:</b> {{ reg.Descripcion or '' }}</p>
+        </div>
+        <div class="card__btn">
+            <button type="button" class="btn btn__edit" data-id="{{ reg.idMateria }}" data-name="materia">
+                <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
+                <span>Editar</span>
+            </button>
+            <button type="button" class="btn btn__delete" data-id="{{ reg.idMateria }}">
+                <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
+                <span>Borrar</span>
             </button>
         </div>
-        {% endfor %}
-
-        <template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}" data-delete="{{ r_delete }}"></template>
-
-        <!-- Formulario Emergente -->
-        <div class="emergente" id="modal-materia">
-            <div class="form__background">
-                <button type="button" class="close">
-                    <span>&times;</span>
-                </button>
-                <div class="form__image">
-                    <img src="{{ url_for('static', filename='image/estudiantes.png') }}" alt="Icono">
-                </div>
-                <form action="{{ r_add }}" method="POST" class="form form__materia" id="form-materia">
-                    <div class="form__group">
-                        <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre de la Materia" required>
-                    </div>
-                    <div class="form__group">
-                        <select class="form__campo--select" name="Nivel" required>
-                            <option value="" disabled selected>Seleccione el Nivel</option>
-                            <option value="1ro">1ro</option>
-                            <option value="2do">2do</option>
-                            <option value="3ro">3ro</option>
-                        </select>
-                    </div>
-                    <div class="form__group">
-                        <textarea class="form__campo--area" name="Descripcion" placeholder="Descripción de la materia" rows="3"></textarea>
-                    </div>
-                    <div class="form__buttons">
-                        <button type="submit" class="btn btn__save" id="btn-submit">
-                            <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
-                            <span>Guardar</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="cards">
-        {% if registros %}
-            {% for reg in registros %}
-            <div class="card">
-                <div class="card__content">
-                    <h3 class="card__text card__title">{{ reg.Nombre }}</h3>
-                    <p class="card__text"><b>Nivel:</b> {{ reg.Nivel }}</p>
-                    <p class="card__text"><b>Descripción:</b> {{ reg.Descripcion or '' }}</p>
-                </div>
-                <div class="card__btn">
-                    <button type="button" class="btn btn__edit"
-                        data-id="{{ reg.idMateria }}"
-                        data-name="materia">
-                        <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
-                        <span>Editar</span>
-                    </button>
-                    <button type="button" class="btn btn__delete"
-                        data-id="{{ reg.idMateria }}">
-                        <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
-                        <span>Borrar</span>
-                    </button>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p>No hay materias registradas actualmente</p>
-        {% endif %}
-        </div>
-    </main>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No hay materias registradas actualmente</p>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block sripts %}

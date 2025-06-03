@@ -6,7 +6,7 @@ controller  = indexController()
 
 @index_bp.route('/inicio/')
 def menu():
-    return render_template('inicio.html')
+    return render_template('inicio.html', active_page='inicio')
 
 #@index_bp.route('/logout')
 #def logout():

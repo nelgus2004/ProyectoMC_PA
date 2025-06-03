@@ -1,0 +1,72 @@
+/* Filtros */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.barra__busqueda {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  max-width: 300px;
+}
+
+.barra__busqueda img {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.barra__busqueda .form__campo--texto {
+  flex-grow: 1;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.btn__filtro {
+  display: flex;
+  align-items: center;
+  background-color: #1976d2;
+  border: none;
+  color: white;
+  padding: 0.4rem 1rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  gap: 6px;
+}
+
+.filtro__opciones {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    flex-direction: row;
+}
+
+.filtro__campo {
+    max-width: 10rem;
+}
+
+.filtro__campo label,
+.filtro__campo select {
+  width: 100%;
+  font-size: .8rem;
+}
+
+.filtro__opciones label {
+  font-weight: 600;
+  color: #333;
+}
+
+.filtro__opciones .form__campo--select {
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}

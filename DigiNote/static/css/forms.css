@@ -1,14 +1,14 @@
 :root {
-  --blanco: #F3F5F1;
-  --verde: #498752;
-  --agua: #89AAB0;
-  --gris: #748887;
-  --verde-oscuro: #34464B;
-  --negro: #1f1f20;
-  --rojo: #c82333;
-  --rojo-claro: #f8b3b320;
-  --azul: #0056b3;
-  font-family: "Roboto Condensed", sans-serif;
+    --blanco: #F3F5F1;
+    --verde: #498752;
+    --agua: #89AAB0;
+    --gris: #748887;
+    --verde-oscuro: #34464B;
+    --negro: #1f1f20;
+    --rojo: #c82333;
+    --rojo-claro: #f8b3b320;
+    --azul: #0056b3;
+    font-family: "Roboto Condensed", sans-serif;
 }
 
 /* Fondo oscuro del formulario emergente */
@@ -18,13 +18,14 @@
     z-index: 999;
     right: 0;
     top: 0;
-    width: calc(100% - 7.4rem);
+    width: calc(100% - 14.4rem);
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
 }
 
 /* Formularo emergente */
-.form__background {
+.form__background,
+#mini-form .form__background {
     background-color: var(--blanco);
     margin: 0 auto;
     margin-top: 3.2rem;
@@ -32,6 +33,26 @@
     width: 22vw;
     border-radius: 10px;
     position: relative;
+}
+
+#mini-form {
+    z-index: 1000;
+}
+
+#mini-form .form__background {
+    transform: translateY(39%);
+    margin-right: 19vw;
+    width: 18vw;
+}
+
+#mini-form-placeholder,
+#mini-form {
+    display: none;
+}
+
+#mini-form-placeholder.visible,
+#mini-form.visible {
+    display: block;
 }
 
 .form {
@@ -44,7 +65,8 @@
 }
 
 /* Boton para cerrar formulario emergente */
-.close {
+.close,
+#mini-form .close {
     position: absolute;
     top: 15px;
     right: 15px;
@@ -75,7 +97,7 @@
 }
 
 .form__image img {
-    display: block; 
+    display: block;
     width: 4rem;
     margin: 10px auto;
 }
@@ -127,7 +149,7 @@
     color: var(--rojo);
 }
 
-.multiselect small{
+.multiselect small {
     font-size: .6rem;
 }
 
@@ -135,6 +157,11 @@
     font-size: .9rem;
 }
 
+#mini-form .form {
+    gap: 3px;
+}
+
+#mini-form .form__buttons,
 .form__buttons {
     width: 100%;
     display: flex;
@@ -142,6 +169,49 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
+}
+
+#mini-form .form__group {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-between;
+}
+
+#mini-form .form__group > * {
+    flex: 1 1 48%;
+    max-width: 48%;
+}
+
+#mini-form .form__buttons {
+    justify-content: flex-end;
+}
+
+#mini-form .form__buttons button {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+#mini-form .form__buttons img {
+    margin: 0;
+}
+
+.edit__foreign {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.edit__foreign button {
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit__foreign button img {
+    margin: 0;
+    padding: 0;
 }
 
 /* Resaltar campo invalido del formulario emergente */
@@ -153,14 +223,14 @@
     background-color: var(--rojo-claro)
 }
 
-.form__group input:invalid, 
+.form__group input:invalid,
 .form__group textarea:invalid,
 .form__group select:invalid {
     border: 2px solid var(--rojo);
     background-color: var(--blanco);
 }
 
-.form__group input:valid, 
+.form__group input:valid,
 .form__group textarea:valid,
 .form__group select:valid {
     border: 2px solid var(--verde);
