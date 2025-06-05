@@ -9,6 +9,7 @@ def crear_superadmin():
     if not Usuario.query.filter_by(Username='superAdmin').first():
         admin = Usuario(
             Username='superAdmin',
+            Correo='admin@diginote.com',
             Password=scrypt.hash('admin123'),
             Rol='Admin',
             Estado='Activo'

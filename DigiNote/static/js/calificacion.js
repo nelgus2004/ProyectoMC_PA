@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     const selectEstudiante = document.querySelector('select[name="idMatriculaAsignacion"]:not(#select-materia)');
     const selectMateria = document.getElementById('select-materia');
-    const quimestreSelect = document.querySelector('select[name="Quimestre"]');
-    const btnGuardar = document.getElementById('btn-guardar-quimestre');
     const inputsNotas = document.querySelectorAll('input[name^="Nota"]');
     const form = document.getElementById('form-calificacion');
+    const btnGuardar = document.querySelector('#btn-submit');
 
     // Al cambiar estudiante, obtener materias (asignaciones)
     selectEstudiante.addEventListener('change', async function () {
@@ -30,22 +29,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Al seleccionar quimestre, habilitar campos
-    quimestreSelect.addEventListener('change', function () {
+    // Al seleccionar una materia, habilitar campos de notas
+    selectMateria.addEventListener('change', function () {
         inputsNotas.forEach(input => input.disabled = false);
     });
 
-    // Enviar calificación
-    btnGuardar.addEventListener('click', async function () {
-        const formData = new FormData(form);
-        const promedio = (
-            parseFloat(formData.get('NotaAutonoma') || 0) +
-            parseFloat(formData.get('NotaPractica') || 0) +
-            parseFloat(formData.get('NotaLeccion') || 0) +
-            parseFloat(formData.get('NotaExamen') || 0)
-        ) / 4;
+    // Enviar calificación completa (Q1, Q2 y final)
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-        formData.set('PromedioQuimestre', promedio.toFixed(2));
+        const formData = new FormData(form);
 
         try {
             const res = await fetch(form.action, {
@@ -56,15 +49,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const text = await res.text();
 
             if (res.ok) {
-                alert('✅ Calificación guardada correctamente.');
-                location.reload(); // o cerrar modal y actualizar tabla
+                alert('Calificación guardada correctamente.');
+                location.reload();
             } else {
                 console.error('Error en respuesta:', text);
-                alert('❌ Error al guardar calificación.');
             }
         } catch (err) {
             console.error('Error al guardar calificación:', err);
-            alert('❌ Error de red.');
         }
     });
 });

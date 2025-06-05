@@ -8,14 +8,13 @@ controller = CalificacionesController()
 def show():
     registros = controller.show_calificaciones()
     foreign = controller.foreign_records()
-    print(foreign)
     return render_template(
         'calificacion.html',
         registros=registros,
         foraneo=foreign,
         active_page='calif',
         r_add=url_for('calificacion.add'),
-        r_get=url_for('calificacion.get_calificacion', id_matricula=0, quimestre=0).rsplit('/', 1)[0],
+        r_get=url_for('calificacion.get_calificacion', id_matricula=0).rsplit('/', 1)[0],
         r_update=url_for('calificacion.update', id=0).rsplit('/', 1)[0],
         r_delete=url_for('calificacion.delete', id=0).rsplit('/', 1)[0],
         r_asignaciones=url_for('calificacion.obtener_asignaciones', id_estudiante=0).rsplit('/', 1)[0]
@@ -27,12 +26,11 @@ def add():
     flash(*resultado)
     return redirect(url_for('calificacion.show'))
 
-@calificacion_bp.route('/get/<int:id_matricula>/<int:quimestre>', methods=['GET'])
-def get_calificacion(id_matricula, quimestre):
-    calificacion = controller.get_calificacion_by_id(id_matricula=id_matricula, quimestre=quimestre)
+@calificacion_bp.route('/get/<int:id_matricula>', methods=['GET'])
+def get_calificacion(id_matricula):
+    calificacion = controller.get_calificacion_by_id(id_matricula_asignacion=id_matricula)
     if not calificacion:
         return jsonify({})
-
     return jsonify(calificacion)
 
 @calificacion_bp.route('/update/<int:id>', methods=['POST'])

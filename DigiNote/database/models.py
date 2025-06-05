@@ -112,7 +112,7 @@ class AsignacionCurso(db.Model):
     idPeriodo = db.Column(db.Integer, db.ForeignKey('periodo_lectivo.idPeriodo', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
 
     matricula_asignacion = db.relationship('MatriculaAsignacion', back_populates='asignaciones_curso', cascade='all, delete-orphan')
-    calificacion_final = db.relationship('CalificacionFinal', back_populates='asignaciones_curso', cascade='all, delete-orphan')
+    calificacion = db.relationship('Calificacion', back_populates='asignaciones_curso', cascade='all, delete-orphan')
     profesor = db.relationship('Profesor', back_populates='asignaciones_curso')
     materia = db.relationship('Materia', back_populates='asignaciones_curso')
     curso = db.relationship('Curso', back_populates='asignaciones_curso')
@@ -151,36 +151,14 @@ class MatriculaAsignacion(db.Model):
 
     matricula = db.relationship('Matricula', back_populates='matricula_asignacion')
     asignaciones_curso = db.relationship('AsignacionCurso', back_populates='matricula_asignacion')
-    calificacion_final = db.relationship('CalificacionFinal', back_populates='matricula_asignacion', uselist=False)
+    calificacion = db.relationship('Calificacion', back_populates='matricula_asignacion', uselist=False)
 
-
-class CalificacionesQuimestre(db.Model):
-    __tablename__ = 'calificacion_quimestre'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
-    def to_dict(self):
-        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
-
-    idQuimestre = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    idCalificacionFinal = db.Column(
-        db.Integer,
-        db.ForeignKey('calificacion_final.idCalificacionFinal', ondelete='CASCADE', onupdate='CASCADE'),
-        nullable=True
-    )
-    Quimestre = db.Column(db.Enum('1', '2'), nullable=False)
-    NotaAutonoma = db.Column(db.Numeric(5, 2), default=0)
-    NotaPractica = db.Column(db.Numeric(5, 2), default=0)
-    NotaLeccion = db.Column(db.Numeric(5, 2), default=0)
-    NotaExamen = db.Column(db.Numeric(5, 2), default=0)
-    PromedioQuimestre = db.Column(db.Numeric(5, 2), default=0)
-
-    calificacion_final = db.relationship('CalificacionFinal', back_populates='quimestres')
     
-
-class CalificacionFinal(db.Model):
-    __tablename__ = 'calificacion_final'
+class Calificacion(db.Model):
+    __tablename__ = 'calificacion'
     __table_args__ = {'mysql_engine': 'InnoDB'}
 
-    idCalificacionFinal = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    idCalificacion = db.Column(db.Integer, primary_key=True, autoincrement=True)
     idMatriculaAsignacion = db.Column(
         db.Integer,
         db.ForeignKey('matricula_asignacion.idMatriculaAsignacion', ondelete='CASCADE', onupdate='CASCADE'),
@@ -192,14 +170,20 @@ class CalificacionFinal(db.Model):
         db.ForeignKey('asignacion_curso.idAsignacion', ondelete='CASCADE', onupdate='CASCADE'),
         nullable=False
     )
+    NotaAutonoma1 = db.Column(db.Numeric(5, 2), default=0)
+    NotaPractica1 = db.Column(db.Numeric(5, 2), default=0)
+    NotaLeccion1 = db.Column(db.Numeric(5, 2), default=0)
+    NotaExamen1 = db.Column(db.Numeric(5, 2), default=0)
     PromQuimestre1 = db.Column(db.Numeric(5, 2), default=0)
+    NotaAutonoma2 = db.Column(db.Numeric(5, 2), default=0)
+    NotaPractica2 = db.Column(db.Numeric(5, 2), default=0)
+    NotaLeccion2 = db.Column(db.Numeric(5, 2), default=0)
+    NotaExamen2 = db.Column(db.Numeric(5, 2), default=0)
     PromQuimestre2 = db.Column(db.Numeric(5, 2), default=0)
     PromedioFinal = db.Column(db.Numeric(5, 2), default=0)
 
-    matricula_asignacion = db.relationship('MatriculaAsignacion', back_populates='calificacion_final')
-    asignaciones_curso = db.relationship('AsignacionCurso', back_populates='calificacion_final')
-    quimestres = db.relationship('CalificacionesQuimestre', back_populates='calificacion_final', cascade='all, delete-orphan')
-
+    matricula_asignacion = db.relationship('MatriculaAsignacion', back_populates='calificacion')
+    asignaciones_curso = db.relationship('AsignacionCurso', back_populates='calificacion')
 
 class Usuario(db.Model):
     __tablename__ = 'usuarios'

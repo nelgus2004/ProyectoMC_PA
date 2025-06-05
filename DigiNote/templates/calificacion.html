@@ -60,43 +60,52 @@
             </div>
 
             <div class="placeholder__notas" id="modal-quimestre">
-
-                <div class="fila-1">
-                    <div class="form__group">
-                        <select class="form__campo--select" name="Quimestre" required>
-                            <option value="" disabled selected>Seleccione Quimestre</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                        </select>
+                <div class="placeholder__notas" id="modal-quimestre">
+                    <div class="quimestre-section">
+                        <h4>Quimestre 1</h4>
+                        <div class="filas">
+                            <div class="form__group">
+                                <input type="number" min="0" max="10" step="0.01" name="NotaAutonoma1"
+                                    class="form__campo--texto" placeholder="Autónoma Q1" required>
+                            </div>
+                            <div class="form__group">
+                                <input type="number" min="0" max="10" step="0.01" name="NotaPractica1"
+                                    class="form__campo--texto" placeholder="Práctica Q1" required>
+                            </div>
+                            <div class="form__group">
+                                <input type="number" min="0" max="10" step="0.01" name="NotaLeccion1"
+                                    class="form__campo--texto" placeholder="Lección Q1" required>
+                            </div>
+                            <div class="form__group">
+                                <input type="number" min="0" max="10" step="0.01" name="NotaExamen1"
+                                    class="form__campo--texto" placeholder="Examen Q1" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form__buttons">
-                        <button type="button" id="btn-guardar-quimestre" class="btn btn__save">
-                            <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
-                        </button>
+
+                    <div class="quimestre-section">
+                        <h4>Quimestre 2</h4>
+                        <div class="filas">
+                            <div class="form__group">
+                                <input type="number" min="0" max="10" step="0.01" name="NotaAutonoma2"
+                                    class="form__campo--texto" placeholder="Autónoma Q2" required>
+                            </div>
+                            <div class="form__group">
+                                <input type="number" min="0" max="10" step="0.01" name="NotaPractica2"
+                                    class="form__campo--texto" placeholder="Práctica Q2" required>
+                            </div>
+                            <div class="form__group">
+                                <input type="number" min="0" max="10" step="0.01" name="NotaLeccion2"
+                                    class="form__campo--texto" placeholder="Lección Q2" required>
+                            </div>
+                            <div class="form__group">
+                                <input type="number" min="0" max="10" step="0.01" name="NotaExamen2"
+                                    class="form__campo--texto" placeholder="Examen Q2" required>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="filas">
-                    <div class="form__group">
-                        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaAutonoma"
-                            placeholder="Nota Autónoma" disabled required>
-                    </div>
 
-                    <div class="form__group">
-                        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaPractica"
-                            placeholder="Nota Práctica" disabled required>
-                    </div>
-
-                    <div class="form__group">
-                        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaLeccion"
-                            placeholder="Nota Lección" disabled required>
-                    </div>
-
-                    <div class="form__group">
-                        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaExamen"
-                            placeholder="Nota Examen" disabled required>
-                    </div>
-                        <input type="hidden" class="form__campo--texto" name="PromedioQuimestre" disabled>
-                </div>
             </div>
         </form>
     </div>
@@ -111,13 +120,12 @@
     <div class="card">
         <div class="card__content">
             <h3 class="card__text card__title">
-                {{ cal.estudiante_nombre }} - {{ cal.nivel }} {{ cal.paralelo }} - {{ cal.materia_nombre }}
+                {{ cal.Estudiante }} - {{ cal.Nivel }} {{ cal.Paralelo }} - {{ cal.Materia }}
             </h3>
-            <p class="card__text"><b>Docente:</b> {{ cal.docente_nombre }}</p>
-            <p class="card__text"><b>Quimestre:</b> {{ cal.Quimestre }}</p>
-            <p class="card__text"><b>Notas:</b> Autónoma {{ cal.NotaAutonoma }}, Práctica {{ cal.NotaPractica }},
-                Lección {{ cal.NotaLeccion }}, Examen {{ cal.NotaExamen }}</p>
-            <p class="card__text"><b>Promedio Quimestre:</b> {{ cal.PromedioQuimestre }}</p>
+            <p class="card__text"><b>Docente:</b> {{ cal.Profesor }}</p>
+            <p class="card__text"><b>Promedio Quimestre 1:</b> {{ cal.PromQuimestre1 }}</p>
+            <p class="card__text"><b>Promedio Quimestre 2:</b> {{ cal.PromQuimestre2 }}</p>
+            <p class="card__text"><b>Promedio Final:</b> {{ cal.PromedioFinal }}</p>
         </div>
         <div class="card__btn">
             <button type="button" class="btn btn__edit" data-id="{{ cal.idCalificacionQuimestre }}"
