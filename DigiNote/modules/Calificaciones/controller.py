@@ -1,12 +1,8 @@
 from flask import request
 from sqlalchemy.exc import SQLAlchemyError
 from DigiNote.database import db
-from DigiNote.database.models import (
-    CalificacionesQuimestre, CalificacionFinal,
-    MatriculaAsignacion, Matricula,
-    Estudiante, AsignacionCurso,
-    Profesor, Materia
-)
+from DigiNote.database.models import CalificacionesQuimestre, CalificacionFinal, MatriculaAsignacion, Matricula, Estudiante, AsignacionCurso, PeriodoLectivo, Curso, Materia, Profesor
+
 
 class CalificacionesController:
     def __init__(self):
@@ -14,36 +10,53 @@ class CalificacionesController:
 
     def show_calificaciones(self):
         try:
-            registros = []
-            asignaciones = db.session.query(MatriculaAsignacion)\
-                .join(Matricula)\
-                .join(Estudiante)\
-                .join(AsignacionCurso)\
-                .join(Profesor)\
-                .join(Materia)\
-                .all()
-            
-            for a in asignaciones:
-                estudiante = a.matricula.estudiante
-                curso = a.asignacion_curso
-                profesor = curso.docente
+            finales = db.session.query(CalificacionFinal).all()
+            resultados = []
+
+            for final in finales:
+                quimestres = final.quimestres
+
+                # Aseguramos orden por nombre del quimestre (Q1, Q2)
+                q1 = next((q for q in quimestres if q.Quimestre.lower() == "quimestre 1"), None)
+                q2 = next((q for q in quimestres if q.Quimestre.lower() == "quimestre 2"), None)
+
+                asignacion = final.matricula_asignacion
+                matricula = asignacion.matricula
+                estudiante = matricula.estudiante
+                curso = asignacion.asignacion
+                profesor = curso.profesor
                 materia = curso.materia
 
-                registros.append({
-                    'idMatriculaAsignacion': a.idMatriculaAsignacion,
-                    'Nombre': estudiante.nombre,
-                    'Apellido': getattr(estudiante, 'apellido', ''),
-                    'idAsignacion': curso.idAsignacion,
-                    'Nivel': curso.nivel,
-                    'Paralelo': curso.paralelo,
-                    'NombreProfesor': profesor.nombre,
-                    'ApellidoProfesor': getattr(profesor, 'apellido', ''),
-                    'NombreMateria': materia.nombre,
+                resultados.append({
+                    'Estudiante': f"{estudiante.Nombre} {estudiante.Apellido}",
+                    'Cedula': estudiante.Cedula,
+                    'Materia': materia.Nombre,
+                    'Profesor': f"{profesor.Nombre} {profesor.Apellido}",
+                    'Nivel': curso.curso.Nivel if curso.curso else matricula.Nivel,
+                    'Paralelo': curso.curso.Paralelo if curso.curso else matricula.Paralelo,
+                    'PromedioFinal': float(final.PromedioFinal or 0),
+
+                    # Quimestre 1
+                    'Q1_Autonoma': float(q1.NotaAutonoma) if q1 else None,
+                    'Q1_Practica': float(q1.NotaPractica) if q1 else None,
+                    'Q1_Leccion': float(q1.NotaLeccion) if q1 else None,
+                    'Q1_Examen': float(q1.NotaExamen) if q1 else None,
+                    'Q1_Promedio': float(q1.PromedioQuimestre) if q1 else None,
+
+                    # Quimestre 2
+                    'Q2_Autonoma': float(q2.NotaAutonoma) if q2 else None,
+                    'Q2_Practica': float(q2.NotaPractica) if q2 else None,
+                    'Q2_Leccion': float(q2.NotaLeccion) if q2 else None,
+                    'Q2_Examen': float(q2.NotaExamen) if q2 else None,
+                    'Q2_Promedio': float(q2.PromedioQuimestre) if q2 else None,
                 })
-            return registros
-        except Exception as e:
-            print(f"* Error al obtener registros foráneos: {e}")
+
+            return resultados
+
+        except SQLAlchemyError as e:
+            print(f' * Error al obtener calificaciones: {e}')
             return []
+
 
     def add_calificacion(self, request):
         if request.method == 'POST':
@@ -57,12 +70,11 @@ class CalificacionesController:
 
                 promedio = round((autonoma + practica + leccion + examen) / 4, 2)
 
-                # Obtener o crear calificación final para la asignación
-                final = db.session.query(CalificacionFinal).filter_by(idMatriculaAsignacion=idMatriculaAsignacion).first()
-                if not final:
-                    final = CalificacionFinal(idMatriculaAsignacion=idMatriculaAsignacion)
-                    db.session.add(final)
-                    db.session.flush()  # Para obtener idCalificacionFinal
+                asignacionCurso = db.session.query(MatriculaAsignacion).get(idMatriculaAsignacion).asi
+                final = CalificacionFinal(
+                    idMatriculaAsignacion=idMatriculaAsignacion,
+                    idAsignacionCurso=asignacionCurso.idAsignacionCurso
+)
 
                 nueva = CalificacionesQuimestre(
                     idCalificacionFinal=final.idCalificacionFinal,
@@ -93,14 +105,15 @@ class CalificacionesController:
                 print(f' * Error al registrar calificación: {e}')
                 return ('ERROR: No se pudo registrar la calificación.', 'danger')
 
-    def get_calificacion_by_id(self, id):
+    def get_calificacion_by_id(self, id_matricula, quimestre):
         try:
-            calif = db.session.get(CalificacionesQuimestre, id)
+            calif = CalificacionesQuimestre.query.filter_by(idMatriculaAsignacion=id_matricula, Quimestre=quimestre).first()
             if not calif:
                 return {}
 
             resultado = calif.to_dict()
-            # Agregamos datos detallados de la asignación y estudiante para mostrar
+            
+            # Agregamos datos relacionados
             final = calif.calificacion_final
             asignacion = final.matricula_asignacion
             matricula = asignacion.matricula
@@ -178,3 +191,58 @@ class CalificacionesController:
             db.session.rollback()
             print(f' * Error al eliminar calificación: {e}')
             return ('ERROR: No se pudo eliminar la calificación.', 'danger')
+
+    def foreign_records(self):
+        try:
+            estudiantes = db.session.query(
+                Estudiante.idEstudiante,
+                Estudiante.Cedula,
+                Estudiante.Nombre,
+                Estudiante.Apellido
+            ).join(Estudiante.matriculas) \
+            .join(Matricula.matricula_asignacion) \
+            .join(MatriculaAsignacion.asignaciones_curso) \
+            .join(AsignacionCurso.periodo) \
+            .filter(PeriodoLectivo.Estado == 'Activo') \
+            .distinct() \
+            .all()
+
+            return {'estudiantes': [dict(idEstudiante=e.idEstudiante, nombreCompleto=e.Nombre + ' ' + e.Apellido, cedula = e.Cedula) for e in estudiantes]}
+        except SQLAlchemyError as e:
+            print(f" * Error en foreign_records (filtrando con matrícula activa): {e}")
+            return {'estudiantes': [] }
+
+    def get_asignaciones_por_estudiante(self, id_estudiante):
+        try:
+            asignaciones = db.session.query(
+                MatriculaAsignacion.idMatriculaAsignacion,
+                AsignacionCurso.idAsignacionCurso,
+                Materia.Nombre.label('nombre_materia'),
+                Profesor.Nombre.label('nombre_profesor'),
+                Profesor.Apellido.label('apellido_profesor'),
+                Curso.Nivel,
+                Curso.Paralelo
+            ).join(MatriculaAsignacion.matricula) \
+            .join(MatriculaAsignacion.asignaciones_curso) \
+            .join(AsignacionCurso.profesor) \
+            .join(AsignacionCurso.materia) \
+            .join(AsignacionCurso.curso) \
+            .filter(Matricula.idEstudiante == id_estudiante) \
+            .filter(AsignacionCurso.periodo.has(PeriodoLectivo.Estado == 'Activo')) \
+            .all()
+
+            resultado = []
+            for a in asignaciones:
+                resultado.append({
+                    'idMatriculaAsignacion': a.idMatriculaAsignacion,
+                    'idAsignacionCurso': a.idAsignacionCurso,
+                    'materia': a.nombre_materia,
+                    'profesor': f'{a.nombre_profesor} {a.apellido_profesor}',
+                    'nivel': a.Nivel,
+                    'paralelo': a.Paralelo
+                })
+
+            return resultado
+        except SQLAlchemyError as e:
+            print(f' * Error al obtener asignaciones del estudiante: {e}')
+            return []

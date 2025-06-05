@@ -1,0 +1,96 @@
+:root {
+  --blanco: #F3F5F1;
+  --verde: #399b6c;
+  --agua: #89AAB0;
+  --gris: #748887;
+  --verde-oscuro: #34464B;
+  --negro: #1f1f20;
+  --rojo: #c82333;
+  --azul: #0056b3;
+}
+
+.auth_header {
+  height: 5.3rem;
+  padding: 0 1rem;
+}
+
+.navbar__logo {
+  width: 14rem;
+  padding: 1rem 1rem .5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.navbar__logo img {
+  width: 3.5rem;
+  height: 3.5rem;
+  /*filter: brightness(0) invert(1);*/
+  margin-right: 3px;
+}
+
+.navbar__logo span {
+  font-family: "Kaushan Script", cursive;
+  font-weight: 800;
+  font-style: normal;
+  font-size: 2rem;
+  color: #f1f1f1;
+  margin: 0;
+}
+
+.navbar__buttons {
+  padding: 1rem 1rem .5rem 1rem;
+  display: flex;
+  justify-content: center;
+  gap: .5rem;
+  align-items: center;
+}
+
+.btn__login,
+.btn__register {
+  background-color: var(--azul);
+  width: 100%;
+  height: 2rem;
+  margin: 0;
+}
+
+.btn__login:hover,
+.btn__register:hover {
+  background-color: #4b8dd2;
+}
+
+.navbar__link {
+  width: 8rem;
+  background-color: var(--verde-oscuro);
+  text-decoration: none;
+}
+
+.navbar__link:hover {
+  background-color: #a1b8a8;
+}
+
+.auth__title {
+  text-align: center;
+  margin: 0 auto;
+  font-size: 2.8rem;
+  font-weight: 900;
+  margin-top: 2rem;
+}
+
+.form__auth--background {
+  background-color: rgb(137, 170, 176, 0.3);
+  margin: 0 auto;
+  margin-top: 3.2rem;
+  padding: 1.8rem;
+  width: 22vw;
+  border-radius: 10px;
+  border: 2px solid var(--agua);
+  position: relative;
+}
+
+.form__footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}

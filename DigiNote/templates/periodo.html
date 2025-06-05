@@ -1,55 +1,65 @@
 {% extends './inicio.html' %}
 
-{% block title %}| Periodos{% endblock %}
+{% block title %}| Usuarios{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
-
-<!-- Encabezado -->
 {% block header %}
-<h1>Gestionar <br> Periodos Lectivos</h1>
+<h1>Gestionar Usuarios</h1>
 <div class="header__btns">
-    <button class="btn btn__add" data-name="periodo">
+    <button class="btn btn__add" data-name="usuario">
         <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
         <span>Añadir</span>
     </button>
 </div>
 {% endblock %}
 
-
 {% block content %}
-<template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}"
-    data-delete="{{ r_delete }}"></template>
+<template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-updatePropio="{{ r_updatePropio }}"
+    data-update="{{ r_updateAdmin }}" data-delete="{{ r_delete }}" data-vinculo="{{ vinculo }}">
+</template>
 
 <!-- Formulario Emergente -->
-<div class="emergente" id="modal-periodo">
+<div class="emergente" id="modal-usuario">
     <div class="form__background">
         <button type="button" class="close">
             <span>&times;</span>
         </button>
         <div class="form__image">
-            <img src="{{ url_for('static', filename='image/periodo.png') }}" alt="Icono">
+            <img src="{{ url_for('static', filename='image/usuario.png') }}" alt="Icono">
         </div>
-        <form action="{{ r_add }}" method="POST" class="form form__periodo" id="form-periodo">
+        <form action="{{ r_add }}" method="POST" class="form" id="form-usuario">
             <div class="form__group">
-                <input type="text" class="form__campo--texto" name="Nombre" placeholder="Nombre del Periodo" required>
+                <input type="text" name="Username" placeholder="Nombre de Usuario" class="form__campo--texto" required>
             </div>
             <div class="form__group">
-                <label for="FechaInicio">Fecha de Inicio</label>
-                <input type="date" class="form__campo--fecha" name="FechaInicio" required>
+                <input type="email" name="Correo" placeholder="Correo electrónico" class="form__campo--correo" required>
             </div>
             <div class="form__group">
-                <label for="FechaFin">Fecha de Fin</label>
-                <input type="date" class="form__campo--fecha" name="FechaFin" required>
+                <input type="password" name="Password" placeholder="Contraseña" class="form__campo--texto" required>
             </div>
             <div class="form__group">
-                <select class="form__campo--select" name="Estado">
-                    <option value="Activo">Activo</option>
-                    <option value="Inactivo" selected>Inactivo</option>
+                <label for="Rol">Rol</label>
+                <select name="Rol" id="rol-select" class="form__campo--select" required>
+                    <option value="Invitado" selected>Invitado</option>
+                    <option value="Estudiante">Estudiante</option>
+                    <option value="Profesor">Profesor</option>
+                    <option value="Admin">Admin</option>
                 </select>
+            </div>
+            <div class="form__group">
+                <label for="Estado">Estado</label>
+                <select name="Estado" class="form__campo--select">
+                    <option value="Activo" selected>Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+            </div>
+            <div class="form__group">
+                <label for="Vinculo">Datos Vinculados</label>
+                <select name="Vinculo" id="vinculo-select" class="form__campo--select" disabled></select>
             </div>
             <div class="form__buttons">
                 <button type="submit" class="btn btn__save" id="btn-submit">
@@ -61,23 +71,24 @@
     </div>
 </div>
 
-<!-- Tarjetas de Periodos -->
+<!-- Tarjetas de Usuarios -->
 <div class="cards">
     {% if registros %}
-    {% for reg in registros %}
+    {% for user in registros %}
     <div class="card">
         <div class="card__content">
-            <h3 class="card__text card__title">{{ reg.Nombre }}</h3>
-            <p class="card__text"><b>Inicio:</b> {{ reg.FechaInicio }}</p>
-            <p class="card__text"><b>Fin:</b> {{ reg.FechaFin }}</p>
-            <p class="card__text"><b>Estado:</b> {{ reg.Estado }}</p>
+            <h3 class="card__text card__title">{{ user.Username }}</h3>
+            <p class="card__text"><b>Correo:</b> {{ user.Correo }}</p>
+            <p class="card__text"><b>Rol:</b> {{ user.Rol }}</p>
+            <p class="card__text"><b>Estado:</b> {{ user.Estado }}</p>
+            <p class="card__text"><b>Vinculado:</b> {{ user.UsuarioVinculado }}</p>
         </div>
         <div class="card__btn">
-            <button type="button" class="btn btn__edit" data-id="{{ reg.idPeriodo }}" data-name="periodo">
+            <button type="button" class="btn btn__edit" data-id="{{ user.idUsuario }}" data-name="usuario">
                 <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
                 <span>Editar</span>
             </button>
-            <button type="button" class="btn btn__delete" data-id="{{ reg.idPeriodo }}">
+            <button type="button" class="btn btn__delete" data-id="{{ user.idUsuario }}">
                 <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
                 <span>Borrar</span>
             </button>
@@ -85,8 +96,12 @@
     </div>
     {% endfor %}
     {% else %}
-    <p>No hay periodos registrados actualmente</p>
+    <p>No hay usuarios registrados actualmente.</p>
     {% endif %}
 </div>
+{% endblock %}
 
+{% block sripts %}
+<script src="{{ url_for('static', filename='js/emergente.js') }}"></script>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
 {% endblock %}

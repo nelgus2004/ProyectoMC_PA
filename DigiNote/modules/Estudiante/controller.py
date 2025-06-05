@@ -15,7 +15,6 @@ class EstudianteController:
                     Nombre=request.form['Nombre'].strip().title(),
                     Apellido=request.form['Apellido'].strip().title(),
                     FechaNacimiento=request.form['FechaNacimiento'],
-                    Correo=request.form['Correo'],
                     Telefono=request.form.get('Telefono'),
                     Direccion=request.form.get('Direccion', ''),
                     Observacion=request.form.get('Observacion')
@@ -41,7 +40,6 @@ class EstudianteController:
                 estudiante.Nombre = request.form['Nombre'].strip().title()
                 estudiante.Apellido = request.form['Apellido'].strip().title()
                 estudiante.FechaNacimiento = request.form['FechaNacimiento']
-                estudiante.Correo = request.form['Correo']
                 estudiante.Telefono = request.form.get('Telefono')
                 estudiante.Direccion = request.form.get('Direccion', '')
                 estudiante.Observacion = request.form.get('Observacion')
@@ -96,7 +94,7 @@ class EstudianteController:
                 'Nombre': est.Nombre,
                 'Apellido': est.Apellido,
                 'FechaNacimiento': est.FechaNacimiento.strftime("%Y-%m-%d") if est.FechaNacimiento else None,
-                'Correo': est.Correo,
+                
                 'Telefono': est.Telefono,
                 'Direccion': est.Direccion,
                 'Observacion': est.Observacion,

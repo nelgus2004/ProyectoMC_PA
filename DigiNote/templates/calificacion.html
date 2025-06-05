@@ -19,8 +19,8 @@
 
 {% block content %}
 <!-- Rutas -->
-<template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" 
-    data-update="{{ r_update }}" data-delete="{{ r_delete }}" >
+<template id="rutas" data-add="{{ r_addFinal }}" data-get="{{ r_get }}" data-update="{{ r_update }}"
+    data-delete="{{ r_delete }}" data-addQuimestre="{{ r_addQuimestre }}" data-asignaciones="{{ r_asignaciones }}">
 </template>
 
 <!-- Formulario Emergente -->
@@ -33,44 +33,29 @@
             <img src="{{ url_for('static', filename='image/notas.png') }}" alt="Icono">
         </div>
 
-        <form action="{{ r_add }}" method="POST" class="form form__calificacion" id="form-calificacion">
+        <form action="{{ r_addFinal }}" method="POST" class="form form__calificacion" id="form-calificacion">
             <div class="form__group">
                 <select class="form__campo--select" name="idMatriculaAsignacion" required>
-                    <option value="" disabled selected>Seleccione Estudiante - Curso</option>
-                    {% for ma in registros.matricula_asignaciones %}
-                    <option value="{{ ma.idMatriculaAsignacion }}">
-                        {{ ma.estudiante_nombre }} - {{ ma.nivel }} {{ ma.paralelo }} - {{ ma.docente_nombre }} - {{ ma.materia_nombre }}
+                    <option value="" disabled selected>Seleccione Estudiante</option>
+                    {% for est in foraneo.estudiantes %}
+                    <option value="{{ est.idEstudiante }}">
+                        {{ est.nombreCompleto }} - {{ est.cedula }}
                     </option>
                     {% endfor %}
                 </select>
             </div>
-
             <div class="form__group">
-                <select class="form__campo--select" name="Quimestre" required>
-                    <option value="" disabled selected>Seleccione Quimestre</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
+                <select class="form__campo--select" name="idMatriculaAsignacion" id="select-materia" required>
+                    <option value="" disabled selected>Seleccione Materia</option>
                 </select>
             </div>
 
-            <div class="form__group">
-                <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaAutonoma" placeholder="Nota Autónoma" required>
-            </div>
+            <div class="placeholder__quimestre" id="modal-quimestre">
 
-            <div class="form__group">
-                <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaPractica" placeholder="Nota Práctica" required>
-            </div>
-
-            <div class="form__group">
-                <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaLeccion" placeholder="Nota Lección" required>
-            </div>
-
-            <div class="form__group">
-                <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaExamen" placeholder="Nota Examen" required>
             </div>
 
             <div class="form__buttons">
-                <button type="submit" class="btn btn__save" id="btn-submit">
+                <button type="submit" class="btn btn__save" id="btn-submit btn-guardar-final">
                     <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
                     <span>Guardar</span>
                 </button>
@@ -79,32 +64,71 @@
     </div>
 </div>
 
+<form action="{{ r_addQuimestre }}" method="POST" id="quimestre-form">
+    <div class="form__group">
+        <select class="form__campo--select" name="Quimestre" required>
+            <option value="" disabled selected>Seleccione Quimestre</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+    </div>
+
+    <div class="form__group">
+        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaAutonoma"
+            placeholder="Nota Autónoma" disabled required>
+    </div>
+
+    <div class="form__group">
+        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaPractica"
+            placeholder="Nota Práctica" disabled required>
+    </div>
+
+    <div class="form__group">
+        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaLeccion"
+            placeholder="Nota Lección" disabled required>
+    </div>
+
+    <div class="form__group">
+        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaExamen"
+            placeholder="Nota Examen" disabled required>
+    </div>
+    <div class="form__buttons"><button type="button" id="btn-guardar-quimestre">
+            <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+        </button>
+    </div>
+
+
+</form>
+
+
 <!-- Tarjetas de Calificaciones -->
 <div class="cards">
     {% if registros.calificaciones %}
-        {% for cal in registros.calificaciones %}
-        <div class="card">
-            <div class="card__content">
-                <h3 class="card__text card__title">
-                    {{ cal.estudiante_nombre }} - {{ cal.nivel }} {{ cal.paralelo }} - {{ cal.materia_nombre }}
-                </h3>
-                <p class="card__text"><b>Docente:</b> {{ cal.docente_nombre }}</p>
-                <p class="card__text"><b>Quimestre:</b> {{ cal.Quimestre }}</p>
-                <p class="card__text"><b>Notas:</b> Autónoma {{ cal.NotaAutonoma }}, Práctica {{ cal.NotaPractica }}, Lección {{ cal.NotaLeccion }}, Examen {{ cal.NotaExamen }}</p>
-                <p class="card__text"><b>Promedio Quimestre:</b> {{ cal.PromedioQuimestre }}</p>
-            </div>
-            <div class="card__btn">
-                <button type="button" class="btn btn__edit" data-id="{{ cal.idCalificacionQuimestre }}" data-name="calificacion">
-                    <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
-                    <span>Editar</span>
-                </button>
-                <button type="button" class="btn btn__delete" data-id="{{ cal.idCalificacionQuimestre }}">
-                    <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
-                    <span>Borrar</span>
-                </button>
-            </div>
+    {% for cal in registros.calificaciones %}
+    <div class="card">
+        <div class="card__content">
+            <h3 class="card__text card__title">
+                {{ cal.estudiante_nombre }} - {{ cal.nivel }} {{ cal.paralelo }} - {{ cal.materia_nombre }}
+            </h3>
+            <p class="card__text"><b>Docente:</b> {{ cal.docente_nombre }}</p>
+            <p class="card__text"><b>Quimestre:</b> {{ cal.Quimestre }}</p>
+            <p class="card__text"><b>Notas:</b> Autónoma {{ cal.NotaAutonoma }}, Práctica {{ cal.NotaPractica }},
+                Lección {{ cal.NotaLeccion }}, Examen {{ cal.NotaExamen }}</p>
+            <p class="card__text"><b>Promedio Quimestre:</b> {{ cal.PromedioQuimestre }}</p>
         </div>
-        {% endfor %}
+        <div class="card__btn">
+            <button type="button" class="btn btn__edit" data-id="{{ cal.idCalificacionQuimestre }}"
+                data-name="calificacion">
+                <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
+                <span>Editar</span>
+            </button>
+            <button type="button" class="btn btn__delete" data-id="{{ cal.idCalificacionQuimestre }}">
+                <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
+                <span>Borrar</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
     {% else %}
     <p>No hay calificaciones registradas actualmente</p>
     {% endif %}
@@ -113,5 +137,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{url_for('static', filename='js/emergente.js')}}"></script>
 <script src="{{ url_for('static', filename='js/miniForms.js') }}"></script>
 {% endblock %}

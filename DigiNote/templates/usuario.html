@@ -3,22 +3,107 @@
 {% block title %}| Usuarios{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
-
-    <!-- Encabezado -->
-    {% block header %}
-        <h1>Gestionar Usuarios</h1>
-        <div class="header__btns">
-            <button class="btn btn__add"> <!--onclick="abrirForm('{# url_for('matricula.add') #}', 'form-matricula', 'modal-matricula')"> -->
-                <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
-                <span>Añadir</span>
-            </button>    
-        </div>
-    {% endblock %}
+{% block header %}
+<h1>Gestionar Usuarios</h1>
+<div class="header__btns">
+    <button class="btn btn__add" data-name="usuario">
+        <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
+        <span>Añadir</span>
+    </button>
+</div>
+{% endblock %}
 
 {% block content %}
-        <h1>Página enconstrucción</h1>
+<template id="rutas"
+    data-add="{{ r_add }}"
+    data-get="{{ r_get }}"
+    data-updatePropio="{{ r_updatePropio }}"
+    data-updateAdmin="{{ r_updateAdmin }}"
+    data-delete="{{ r_delete }}"
+    data-vinculo="{{ vinculo }}">
+</template>
+
+<!-- Formulario Emergente -->
+<div class="emergente" id="modal-usuario">
+    <div class="form__background">
+        <button type="button" class="close">
+            <span>&times;</span>
+        </button>
+        <div class="form__image">
+            <img src="{{ url_for('static', filename='image/usuario.png') }}" alt="Icono">
+        </div>
+        <form action="{{ r_add }}" method="POST" class="form" id="form-usuario">
+            <div class="form__group">
+                <input type="text" name="Username" placeholder="Nombre de Usuario" class="form__campo--texto" required>
+            </div>
+            <div class="form__group">
+                <input type="email" name="Correo" placeholder="Correo electrónico" class="form__campo--correo" required>
+            </div>
+            <div class="form__group">
+                <input type="password" name="Password" placeholder="Contraseña" class="form__campo--texto" required>
+            </div>
+            <div class="form__group">
+                <label for="Rol">Rol</label>
+                <select name="Rol" id="rol-select" class="form__campo--select" required>
+                    <option value="Invitado" selected>Invitado</option>
+                    <option value="Estudiante">Estudiante</option>
+                    <option value="Profesor">Profesor</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <div class="form__group">
+                <label for="Estado">Estado</label>
+                <select name="Estado" class="form__campo--select">
+                    <option value="Activo" selected>Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+            </div>
+            <div class="form__group">
+                <label for="Vinculo">Datos Vinculados</label>
+                    <select id="vinculo-select" class="form__campo--select" disabled></select>
+                    <input type="hidden" id="campo-vinculo" name="" />
+            </div>
+            <div class="form__buttons">
+                <button type="submit" class="btn btn__save" id="btn-submit">
+                    <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+                    <span>Guardar</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tarjetas de Usuarios -->
+<div class="cards">
+    {% if registros %}
+    {% for user in registros %}
+    <div class="card">
+        <div class="card__content">
+            <h3 class="card__text card__title">{{ user.Username }}</h3>
+            <p class="card__text"><b>Correo:</b> {{ user.Correo }}</p>
+            <p class="card__text"><b>Rol:</b> {{ user.Rol }}</p>
+            <p class="card__text"><b>Estado:</b> {{ user.Estado }}</p>
+            <p class="card__text"><b>Vinculado:</b> {{ user.UsuarioVinculado }}</p>
+        </div>
+        <div class="card__btn">
+            <button type="button" class="btn btn__delete" data-id="{{ user.idUsuario }}">
+                <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
+                <span>Borrar</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No hay usuarios registrados actualmente.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block sripts %}
+<script src="{{ url_for('static', filename='js/emergente.js') }}"></script>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
 {% endblock %}

@@ -32,7 +32,6 @@ def get(id):
             'Nombre': profesor.Nombre,
             'Apellido': profesor.Apellido,
             'Telefono': profesor.Telefono,
-            'Correo': profesor.Correo,
             'Especialidad': profesor.Especialidad,
             'Direccion': profesor.Direccion
         })

@@ -13,7 +13,6 @@ class ProfesorController:
             nombre = request.form['Nombre'].strip().title()
             apellido = request.form['Apellido'].strip().title()
             telefono = request.form.get('Telefono') or None
-            correo = request.form.get('Correo') or None
             especialidad = request.form.get('Esspecialidad') or None
             direccion = request.form.get('Direccion') or None
 
@@ -23,7 +22,6 @@ class ProfesorController:
                     Nombre=nombre,
                     Apellido=apellido,
                     Telefono=telefono,
-                    Correo=correo,
                     Especialidad=especialidad,
                     Direccion=direccion
                 )
@@ -49,7 +47,6 @@ class ProfesorController:
                 profesor.Nombre = request.form['Nombre'].strip().title()
                 profesor.Apellido = request.form['Apellido'].strip().title()
                 profesor.Telefono = request.form.get('Telefono') or None
-                profesor.Correo = request.form.get('Correo') or None
                 profesor.Especialidad = request.form.get('Especialidad') or None
                 profesor.Direccion = request.form.get('Direccion') or None
 

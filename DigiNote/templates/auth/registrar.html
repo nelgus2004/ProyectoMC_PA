@@ -1,0 +1,34 @@
+{% extends 'auth/baseAuth.html' %}
+
+{% block title %} | Registrarse {% endblock %}
+
+{% block content %}
+<h2 class="auth__title">Registrar Estudiante</h2>
+
+<div class="form__auth--background">
+    <div class="form__image">
+        <img src="{{ url_for('static', filename='image/logo64px.png') }}" alt="Icono">
+    </div>
+    <form method="POST" action="{{ url_for('auth.add_usuario') }}" class="form form__register">
+        <div class="form__group">
+            <label for="cedula">Nombre de Usuario:</label>
+            <input type="text" class="form__campo--texto" name="Username" id="Username" required>
+        </div>
+        <div class="form__group">
+            <label for="correo">Correo electrónico:</label>
+            <input type="email" class="form__campo--correo" name="Correo" id="Correo" required>
+        </div>
+        <div class="form__group">
+            <label for="clave">Contraseña:</label>
+            <input type="password" class="form__campo--texto" name="Password" id="Password" required>
+        </div>
+
+        <input type="hidden" name="Rol" id="Rol" value="Invitado" style="display: none;">
+        <input type="hidden" name="Estado" id="Estado" value="Activo" style="display: none;">
+
+        <div class="form__buttons">
+            <button type="submit" class="btn btn__register">Registrarse</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

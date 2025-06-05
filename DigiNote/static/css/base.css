@@ -48,9 +48,12 @@ html {
   font-style: normal;
   font-size: 16px;
   background: var(--blanco);
+  overflow: hidden;
+}
+
+.flex__body {
   display: flex;
   flex-direction: row;
-  overflow: hidden;
 }
 
 /* Contenedor Principal */
@@ -158,8 +161,8 @@ html {
 }
 
 .btn__save {
-  width: 6.2rem;
   background-color: var(--azul);
+  width: 6.2rem;
 }
 
 .btn__save:hover {
@@ -182,6 +185,17 @@ html {
 .btn__danger:hover,
 .btn__delete:hover {
   background-color: #dc5966;
+}
+
+/* Textos especificos */
+.text__info {
+  color: var(--azul);
+  font-weight: 500;
+}
+
+.text__danger {
+  color: var(--rojo);
+  font-weight: 500;
 }
 
 /* Contenido */

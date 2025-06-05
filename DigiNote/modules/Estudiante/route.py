@@ -33,7 +33,6 @@ def get(id):
             'Nombre': result.Nombre,
             'Apellido': result.Apellido,
             'FechaNacimiento': result.FechaNacimiento.isoformat(),
-            'Correo': result.Correo,
             'Telefono': result.Telefono,
             'Direccion': result.Direccion,
             'Observacion': result.Observacion,

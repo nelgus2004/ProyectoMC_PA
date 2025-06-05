@@ -1,0 +1,31 @@
+{% extends 'auth/baseAuth.html' %}
+
+{% block title %} | Iniciar Sesión {% endblock %}
+
+{% block content %}
+<h2 class="auth__title">Iniciar Sesión</h2>
+
+<div class="form__auth--background">
+    <div class="form__image">
+        <img src="{{ url_for('static', filename='image/logo64px.png') }}" alt="Icono">
+    </div>
+    <form method="POST" action="{{ url_for('auth.login_autenticar') }}" class="form form__login" id="form-login">
+        <div class="form__group">
+            <label for="Profile">Correo electrónico o Nombre de usuario:</label>
+            <input type="text" class="form__campo--texto" name="Profile" id="Profile" required>
+        </div>
+        <div class="form__group">
+            <label for="Password">Contraseña:</label>
+            <input type="password" class="form__campo--texto" name="Password" id="Password" required>
+        </div>
+        <div class="form__buttons">
+            <button type="submit" class="btn btn__login" alt="login">Iniciar Sesión</button>
+        </div>
+    </form>
+
+    <div class="form__footer">
+        <a href="{{ url_for('auth.register_external') }}" class="text__info">¿No tienes cuenta? Regístrate</a>
+    </div>
+</div>
+
+{% endblock %}

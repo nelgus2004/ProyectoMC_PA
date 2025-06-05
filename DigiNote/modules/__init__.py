@@ -17,5 +17,5 @@ all_routes = [
     (estudiante_bp, '/app/estudiante'),
     (matricula_bp, '/app/matricula'),
     (calificacion_bp, '/app/calificacion'),
-    (usuario_bp, '/app/usuario')
+    (usuario_bp, '/app/auth')
 ]

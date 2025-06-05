@@ -19,7 +19,7 @@
     {% block head %}{% endblock %}
 </head>
 
-<body>
+<body class="flex__body">
     <!-- Menú Principal -->
     <nav class="sidebar">
         <div class="sidebar__logo">
@@ -81,27 +81,19 @@
             </li>
             <!-- Usuarios -->
             <li class="sidebar__options--link {% if active_page == 'user' %}active{% endif %}">
-                <a href="{{ url_for('auth.show') }}">
+                <a href="{{ url_for('auth.show_usuario') }}">
                     <img src="{{ url_for('static', filename='image/usuario.png') }}" alt="Icono">
                     <p>Usuarios</p>
                 </a>
             </li>
             <!-- Cerrar sesión -->
             <li class="sidebar__options--link">
-                <form action="{{ url_for('auth.logout') }}" class="sidebar__form--logout" method="POST">
-                    <button type="submit">
+                <a href="{{ url_for('auth.logout') }}">
                         <img src="{{ url_for('static', filename='image/logout.png') }}" alt="Icono">
                         <p>Cerrar Sesión</p>
-                    </button>
-                </form>
+                </a>
             </li>
         </ul>
-        {#<!--
-            {% if current_user.is_authenticated %}
-            <form action="{{ url_for('logout') }}" method="POST"> -->#}
-        {#<!--
-            {#</form>
-            {% endif %} -->#}
 
     </nav>
 
@@ -117,6 +109,7 @@
             <!-- Mensajes de Sistema -->
             {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
             <div class="alert alert__{{ categoria }}" role="alert">
+                <span>{{ categoria }}</span>
                 <span>{{ mensaje }}</span>
                 <button type="button" class="close" data-dismiss="alert" onclick="cerrarAlert(this)">
                     <span aria-hidden="true">&times;</span>
@@ -129,7 +122,7 @@
     </div>
     <!-- Scripts -->
     {% block sripts %}{% endblock %}
-    <script src="{{url_for('static', filename='js/scripts.js')}}"></script>
+    <script src="{{url_for('static', filename='js/alertas.js')}}"></script>
 </body>
 
 </html>
