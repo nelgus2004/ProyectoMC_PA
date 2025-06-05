@@ -47,7 +47,7 @@ def delete(id):
     flash(*resultado)
     return redirect(url_for('calificacion.show'))
 
-@calificacion_bp.route('/asignaciones/<int:id_estudiante>')
+@calificacion_bp.route('/asignaciones/<int:id_estudiante>', methods=['POST', 'GET'])
 def obtener_asignaciones(id_estudiante):
     datos = controller.get_asignaciones_por_estudiante(id_estudiante)
     return jsonify(datos)

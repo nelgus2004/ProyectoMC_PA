@@ -23,7 +23,7 @@ class CalificacionesController:
                 asignacion = final.matricula_asignacion
                 matricula = asignacion.matricula
                 estudiante = matricula.estudiante
-                curso = asignacion.asignacion
+                curso = asignacion.asignacion_curso
                 profesor = curso.profesor
                 materia = curso.materia
 
@@ -70,11 +70,14 @@ class CalificacionesController:
 
                 promedio = round((autonoma + practica + leccion + examen) / 4, 2)
 
-                asignacionCurso = db.session.query(MatriculaAsignacion).get(idMatriculaAsignacion).asi
+                asignacionCurso = db.session.query(MatriculaAsignacion).get(idMatriculaAsignacion).asignaciones_curso
                 final = CalificacionFinal(
                     idMatriculaAsignacion=idMatriculaAsignacion,
-                    idAsignacionCurso=asignacionCurso.idAsignacionCurso
-)
+                    idAsignacionCurso=asignacionCurso.idAsignacion
+                )
+                
+                db.session.add(final)
+                db.session.flush()
 
                 nueva = CalificacionesQuimestre(
                     idCalificacionFinal=final.idCalificacionFinal,
@@ -217,7 +220,7 @@ class CalificacionesController:
         try:
             asignaciones = db.session.query(
                 MatriculaAsignacion.idMatriculaAsignacion,
-                AsignacionCurso.idAsignacionCurso,
+                AsignacionCurso.idAsignacion,
                 Materia.Nombre.label('nombre_materia'),
                 Profesor.Nombre.label('nombre_profesor'),
                 Profesor.Apellido.label('apellido_profesor'),
@@ -236,7 +239,7 @@ class CalificacionesController:
             for a in asignaciones:
                 resultado.append({
                     'idMatriculaAsignacion': a.idMatriculaAsignacion,
-                    'idAsignacionCurso': a.idAsignacionCurso,
+                    'idAsignacionCurso': a.idAsignacion,
                     'materia': a.nombre_materia,
                     'profesor': f'{a.nombre_profesor} {a.apellido_profesor}',
                     'nivel': a.Nivel,

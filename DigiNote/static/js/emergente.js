@@ -11,7 +11,6 @@ if (window.location.pathname !== "/app/inicio/") {
 
 // FORMULARIO EMERGENTE
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('si me estoy cargando')
 
   // Botones de Añadir (abrir formulario vacío)
   document.querySelectorAll('.btn__add').forEach(btn => {
