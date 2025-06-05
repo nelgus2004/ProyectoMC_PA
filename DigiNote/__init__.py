@@ -24,8 +24,8 @@ def create_app(config=None) -> Flask:
         from .modules.Usuario.controller import crear_superadmin
         crear_superadmin()
     
-    print("\nLista de rutas registradas:")
-    for rule in app.url_map.iter_rules():
-        print(f" * Endpoint: {rule.endpoint} -> URL: {rule}")
+#    print("\nLista de rutas registradas:")
+#    for rule in app.url_map.iter_rules():
+#        print(f" * Endpoint: {rule.endpoint} -> URL: {rule}")
     
     return app
