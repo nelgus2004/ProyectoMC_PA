@@ -49,12 +49,6 @@ class CalificacionesController:
         if request.method == 'POST':
             try:
                 idMatriculaAsignacion = int(request.form.get('idMatriculaAsignacion'))
-                autonoma = float(request.form.get('NotaAutonoma', 0))
-                practica = float(request.form.get('NotaPractica', 0))
-                leccion = float(request.form.get('NotaLeccion', 0))
-                examen = float(request.form.get('NotaExamen', 0))
-
-                promedio = round((autonoma + practica + leccion + examen) / 4, 2)
 
                 existente = Calificacion.query.filter_by(idMatriculaAsignacion=idMatriculaAsignacion).first()
 
@@ -66,17 +60,19 @@ class CalificacionesController:
                     )
                     db.session.add(existente)
 
-                existente.NotaAutonoma1 = autonoma
-                existente.NotaPractica1 = practica
-                existente.NotaLeccion1 = leccion
-                existente.NotaExamen1 = examen
-                existente.PromQuimestre1 = promedio
 
-                existente.NotaAutonoma2 = autonoma
-                existente.NotaPractica2 = practica
-                existente.NotaLeccion2 = leccion
-                existente.NotaExamen2 = examen
-                existente.PromQuimestre2 = promedio
+
+                existente.NotaAutonoma1 = float(request.form.get('NotaAutonoma1', 0))
+                existente.NotaPractica1 = float(request.form.get('NotaPractica1', 0))
+                existente.NotaLeccion1 = float(request.form.get('NotaLeccion1', 0))
+                existente.NotaExamen1 = float(request.form.get('NotaExamen1', 0))
+                existente.PromQuimestre1 = round((existente.NotaAutonoma1 + existente.NotaPractica1 + existente.NotaLeccion1 + existente.NotaExamen1) / 4, 2)
+
+                existente.NotaAutonoma2 = float(request.form.get('NotaAutonoma2', 0))
+                existente.NotaPractica2 = float(request.form.get('NotaPractica2', 0))
+                existente.NotaLeccion2 = float(request.form.get('NotaLeccion2', 0))
+                existente.NotaExamen2 = float(request.form.get('NotaExamen2', 0))
+                existente.PromQuimestre2 = round((existente.NotaAutonoma2 + existente.NotaPractica2 + existente.NotaLeccion2 + existente.NotaExamen2) / 4, 2)
 
                 q1 = existente.PromQuimestre1 or 0
                 q2 = existente.PromQuimestre2 or 0
@@ -122,23 +118,29 @@ class CalificacionesController:
                 if not calif:
                     return ('No se encontró la calificación para editar.', 'info')
 
-                autonoma = float(request.form.get('NotaAutonoma', 0))
-                practica = float(request.form.get('NotaPractica', 0))
-                leccion = float(request.form.get('NotaLeccion', 0))
-                examen = float(request.form.get('NotaExamen', 0))
-                promedio = round((autonoma + practica + leccion + examen) / 4, 2)
+                autonoma1 = float(request.form.get('NotaAutonoma1', 0))
+                practica1 = float(request.form.get('NotaPractica1', 0))
+                leccion1 = float(request.form.get('NotaLeccion1', 0))
+                examen1 = float(request.form.get('NotaExamen1', 0))
+                promedio1 = round((autonoma1 + practica1 + leccion1 + examen1) / 4, 2)
 
-                calif.NotaAutonoma1 = autonoma
-                calif.NotaPractica1 = practica
-                calif.NotaLeccion1 = leccion
-                calif.NotaExamen1 = examen
-                calif.PromQuimestre1 = promedio
+                calif.NotaAutonoma1 = autonoma1
+                calif.NotaPractica1 = practica1
+                calif.NotaLeccion1 = leccion1
+                calif.NotaExamen1 = examen1
+                calif.PromQuimestre1 = promedio1
+                
+                autonoma2 = float(request.form.get('NotaAutonoma2', 0))
+                practica2 = float(request.form.get('NotaPractica2', 0))
+                leccion2 = float(request.form.get('NotaLeccion2', 0))
+                examen2 = float(request.form.get('NotaExamen2', 0))
+                promedio2 = round((autonoma2 + practica2 + leccion2 + examen2) / 4, 2)
 
-                calif.NotaAutonoma2 = autonoma
-                calif.NotaPractica2 = practica
-                calif.NotaLeccion2 = leccion
-                calif.NotaExamen2 = examen
-                calif.PromQuimestre2 = promedio
+                calif.NotaAutonoma2 = autonoma2
+                calif.NotaPractica2 = practica2
+                calif.NotaLeccion2 = leccion2
+                calif.NotaExamen2 = examen2
+                calif.PromQuimestre2 = promedio2
 
                 q1 = calif.PromQuimestre1 or 0
                 q2 = calif.PromQuimestre2 or 0

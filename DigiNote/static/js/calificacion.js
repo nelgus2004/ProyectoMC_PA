@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const text = await res.text();
 
             if (res.ok) {
-                alert('Calificación guardada correctamente.');
                 location.reload();
             } else {
                 console.error('Error en respuesta:', text);
