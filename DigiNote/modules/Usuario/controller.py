@@ -251,7 +251,7 @@ class AuthController:
 
         return {'mensaje': ('Petición de usuario estudiante enviada', 'info')}
 
-    def obtener_vinculado_por_rol(rol):
+    def obtener_vinculado_por_rol(self, rol):
         if rol == 'Estudiante':
             registros = Estudiante.query.filter(Estudiante.usuario == None).all()
             return { 'vinculado': [{'id': e.idEstudiante, 'nombre': f'{e.Apellido} {e.Nombre}'} for e in registros] }
