@@ -1,9 +1,6 @@
-const div = document.getElementById('rutas');
-let rutas = {};
+const rutaDelete = '';
 if (window.location.pathname !== "/app/inicio/") {
-  rutas = {
-    deleteOther: div.dataset.delete_other || null
-  };
+  const rutaDelete = document.getElementById('rutas').dataset.delete_other;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -63,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const result = await response.json();
-        console.log(result);
 
         if (result.id) {
           const option = document.createElement('option');
@@ -96,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     if (confirm("¿Seguro que desea eliminar el curso seleccionado?")) {
-      window.location.href = `${rutas.deleteOther}/${idCurso}`;
+      window.location.href = `${rutaDelete}/${idCurso}`;
     }
   });
 });

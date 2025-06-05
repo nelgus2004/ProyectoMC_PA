@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
           vinculoSelect.innerHTML = '<option value="">Seleccione una opción</option>';
           data.vinculado.forEach(item => {
-            console.log(item)
             vinculoSelect.innerHTML += `<option value="${item.id}">${item.nombre}</option>`;
           });
         });

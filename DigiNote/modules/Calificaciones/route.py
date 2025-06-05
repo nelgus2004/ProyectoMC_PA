@@ -18,7 +18,7 @@ def show():
         r_get=url_for('calificacion.get_calificacion', id_matricula=0, quimestre=0).rsplit('/', 1)[0],
         r_update=url_for('calificacion.update', id=0).rsplit('/', 1)[0],
         r_delete=url_for('calificacion.delete', id=0).rsplit('/', 1)[0],
-        r_asignaciones=url_for('calificacion.obtener_asignaciones', idEstudiante=0).rsplit('/', 1)[0]
+        r_asignaciones=url_for('calificacion.obtener_asignaciones', id_estudiante=0).rsplit('/', 1)[0]
     )
 
 @calificacion_bp.route('/add', methods=['POST'])
@@ -33,13 +33,7 @@ def get_calificacion(id_matricula, quimestre):
     if not calificacion:
         return jsonify({})
 
-    return jsonify({
-        'idCalificacionQuimestre': calificacion['idCalificacionQuimestre'],
-        'NotaAutonoma': calificacion['NotaAutonoma'],
-        'NotaPractica': calificacion['NotaPractica'],
-        'NotaLeccion': calificacion['NotaLeccion'],
-        'NotaExamen': calificacion['NotaExamen'],
-    })
+    return jsonify(calificacion)
 
 @calificacion_bp.route('/update/<int:id>', methods=['POST'])
 def update(id):
@@ -53,7 +47,7 @@ def delete(id):
     flash(*resultado)
     return redirect(url_for('calificacion.show'))
 
-@calificacion_bp.route('/calificacion/asignaciones/<int:id_estudiante>')
+@calificacion_bp.route('/asignaciones/<int:id_estudiante>')
 def obtener_asignaciones(id_estudiante):
     datos = controller.get_asignaciones_por_estudiante(id_estudiante)
     return jsonify(datos)

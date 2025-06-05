@@ -1,33 +1,21 @@
-const div = document.getElementById('rutas');
-let rutas = {};
-if (window.location.pathname !== "/app/inicio/") {
-  rutas = {
-    add: div.dataset.add,
-    get: div.dataset.get,
-    update: div.dataset.update,
-    delete: div.dataset.delete,
-    asignacion: div.dataset.asignaciones
-  };
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-  const estudianteSelect = document.getElementById('select-estudiante');
+  const estudianteSelect = document.querySelector('[name="idMatriculaAsignacion"]');
   const materiaSelect = document.getElementById('select-materia');
-  const quimestreSelect = document.getElementById('quimestre-select');
-  const form = document.getElementById('form-quimestre');
-  const notaInputs = ['NotaAutonoma', 'NotaPractica', 'NotaLeccion', 'NotaExamen'];
-  const promedioInput = form.querySelector('[name="PromedioQuimestre"]');
+  const quimestreSelect = document.querySelector('[name="Quimestre"]');
+  const btnGuardarQuimestre = document.getElementById('btn-guardar-quimestre');
+  const btnSubmit = document.querySelector('#btn-submit');
+  const form = document.getElementById('form-calificacion');
+  const rutaAsignaciones = `/app/calificacion/asignaciones/`;
   const rutaGet = rutas.get;
   const rutaAdd = rutas.add;
 
-  const extraForm = document.getElementById('quimestre-form');
-  const placeholder = document.getElementById('modal-quimestre');
-  placeholder.appendChild(extraForm);
+  const notaInputs = ['NotaAutonoma', 'NotaPractica', 'NotaLeccion', 'NotaExamen'];
+  const promedioInput = form.querySelector('[name="PromedioQuimestre"]');
 
   let idMatriculaAsignacion = null;
+  let datosTemporales = { "1": null, "2": null };
 
-  // Inicializa el formulario deshabilitado
-  toggleForm(false);
+  toggleNotas(false);
   materiaSelect.disabled = true;
   quimestreSelect.disabled = true;
 
@@ -39,10 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     materiaSelect.disabled = true;
     quimestreSelect.value = '';
     quimestreSelect.disabled = true;
-    toggleForm(false);
     form.reset();
+    datosTemporales = { "1": null, "2": null };
 
-    fetch(`${rutas.asignacion}/${idEstudiante}`)
+    fetch(`${rutaAsignaciones}/${idEstudiante}`)
       .then(res => res.json())
       .then(data => {
         materiaSelect.innerHTML = '<option value="" disabled selected>Seleccione una materia</option>';
@@ -53,10 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
           materiaSelect.appendChild(opt);
         });
         materiaSelect.disabled = false;
-      })
-      .catch(err => {
-        console.error(' * Error al cargar materias:', err);
-        materiaSelect.innerHTML = '<option disabled selected>Error al cargar</option>';
       });
   });
 
@@ -64,76 +48,114 @@ document.addEventListener('DOMContentLoaded', () => {
     idMatriculaAsignacion = materiaSelect.value;
     quimestreSelect.value = '';
     quimestreSelect.disabled = !idMatriculaAsignacion;
-    toggleForm(false);
+    toggleNotas(false);
     form.reset();
   });
 
   quimestreSelect.addEventListener('change', () => {
     const quimestre = quimestreSelect.value;
     if (!quimestre || !idMatriculaAsignacion) {
-      toggleForm(false);
+      toggleNotas(false);
       return;
     }
 
-    toggleForm(true);
     form.reset();
-    form.querySelector('[name="Quimestre"]').value = quimestre;
-    form.querySelector('[name="idMatriculaAsignacion"]').value = idMatriculaAsignacion;
+    toggleNotas(true);
 
-    fetch(`${rutaGet}/${idMatriculaAsignacion}/${quimestre}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.idCalificacionQuimestre) {
-          notaInputs.forEach(nombre => {
-            form.querySelector(`[name="${nombre}"]`).value = data[nombre] || 0;
-          });
-          calcularPromedio();
-        }
-      });
+    // Precargar datos si ya se guardaron temporalmente
+    if (datosTemporales[quimestre]) {
+      cargarEnFormulario(datosTemporales[quimestre]);
+    } else {
+      // Cargar del backend si existe
+      fetch(`${rutaGet}/${idMatriculaAsignacion}/${quimestre}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.idQuimestre) {
+            cargarEnFormulario(data);
+            calcularPromedio();
+          }
+        });
+    }
   });
 
   notaInputs.forEach(nombre => {
-    const input = form.querySelector(`[name="${nombre}"]`);
-    input.addEventListener('input', calcularPromedio);
+    form.querySelector(`[name="${nombre}"]`).addEventListener('input', calcularPromedio);
+  });
+
+  btnGuardarQuimestre.addEventListener('click', () => {
+    const quimestre = quimestreSelect.value;
+    if (!quimestre) return;
+
+    const datos = {
+      Quimestre: quimestre,
+      idMatriculaAsignacion,
+      PromedioQuimestre: promedioInput.value
+    };
+    notaInputs.forEach(nombre => {
+      datos[nombre] = form.querySelector(`[name="${nombre}"]`).value || 0;
+    });
+
+    datosTemporales[quimestre] = datos;
+    alert(`Notas del Quimestre ${quimestre} guardadas temporalmente.`);
+    form.reset();
+    toggleNotas(false);
+    quimestreSelect.value = '';
   });
 
   form.addEventListener('submit', e => {
     e.preventDefault();
-    const datos = {};
-    new FormData(form).forEach((v, k) => datos[k] = v || 0);
+
+    const quim1 = datosTemporales["1"];
+    const quim2 = datosTemporales["2"];
+
+    if (!quim1 && !quim2) {
+      return alert("Debe guardar al menos un quimestre.");
+    }
+
+    const payload = {
+      idMatriculaAsignacion,
+      quimestres: []
+    };
+
+    if (quim1) payload.quimestres.push(quim1);
+    if (quim2) payload.quimestres.push(quim2);
 
     fetch(rutaAdd, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(datos)
+      body: JSON.stringify(payload)
     })
       .then(res => res.json())
       .then(resp => {
-        alert(resp.msg || 'Calificación guardada correctamente');
+        alert(resp.msg || 'Calificaciones guardadas correctamente');
         form.reset();
-        toggleForm(false);
-        quimestreSelect.value = '';
+        quimestreSelect.disabled = true;
+        materiaSelect.disabled = true;
+        toggleNotas(false);
+        datosTemporales = { "1": null, "2": null };
       })
-      .catch(err => {
-        console.error(' * Error al guardar calificación:', err);
-      });
+      .catch(err => console.error(' * Error al guardar calificaciones:', err));
   });
+
+  function toggleNotas(habilitar) {
+    notaInputs.forEach(nombre => {
+      const input = form.querySelector(`[name="${nombre}"]`);
+      if (input) input.disabled = !habilitar;
+    });
+  }
+
+  function cargarEnFormulario(datos) {
+    notaInputs.forEach(nombre => {
+      form.querySelector(`[name="${nombre}"]`).value = datos[nombre] || 0;
+    });
+    calcularPromedio();
+  }
 
   function calcularPromedio() {
     let suma = 0;
-    let count = 0;
     notaInputs.forEach(nombre => {
-      const val = parseFloat(form.querySelector(`[name="${nombre}"]`).value) || 0;
-      suma += val;
-      count += 1;
+      suma += parseFloat(form.querySelector(`[name="${nombre}"]`).value) || 0;
     });
-    promedioInput.value = (suma / count).toFixed(2);
-  }
-
-  function toggleForm(habilitar) {
-    form.querySelectorAll('input, select, button').forEach(el => {
-      if (['Quimestre'].includes(el.name)) return;
-      el.disabled = !habilitar;
-    });
+    promedioInput.value = (suma / notaInputs.length).toFixed(2);
   }
 });

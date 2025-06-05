@@ -19,8 +19,8 @@
 
 {% block content %}
 <!-- Rutas -->
-<template id="rutas" data-add="{{ r_addFinal }}" data-get="{{ r_get }}" data-update="{{ r_update }}"
-    data-delete="{{ r_delete }}" data-addQuimestre="{{ r_addQuimestre }}" data-asignaciones="{{ r_asignaciones }}">
+<template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}"
+    data-delete="{{ r_delete }}" data-asignaciones="{{ r_asignaciones }}">
 </template>
 
 <!-- Formulario Emergente -->
@@ -33,72 +33,75 @@
             <img src="{{ url_for('static', filename='image/notas.png') }}" alt="Icono">
         </div>
 
-        <form action="{{ r_addFinal }}" method="POST" class="form form__calificacion" id="form-calificacion">
-            <div class="form__group">
-                <select class="form__campo--select" name="idMatriculaAsignacion" required>
-                    <option value="" disabled selected>Seleccione Estudiante</option>
-                    {% for est in foraneo.estudiantes %}
-                    <option value="{{ est.idEstudiante }}">
-                        {{ est.nombreCompleto }} - {{ est.cedula }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form__group">
-                <select class="form__campo--select" name="idMatriculaAsignacion" id="select-materia" required>
-                    <option value="" disabled selected>Seleccione Materia</option>
-                </select>
+        <form action="{{ r_add }}" method="POST" class="form form__calificacion" id="form-calificacion">
+            <div class="placeholder__estudiante">
+                <div class="form__group">
+                    <select class="form__campo--select" name="idMatriculaAsignacion" required>
+                        <option value="" disabled selected>Seleccione Estudiante</option>
+                        {% for est in foraneo.estudiantes %}
+                        <option value="{{ est.idEstudiante }}">
+                            {{ est.nombreCompleto }} - {{ est.cedula }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form__group">
+                    <select class="form__campo--select" name="idMatriculaAsignacion" id="select-materia" required>
+                        <option value="" disabled selected>Seleccione Materia</option>
+                    </select>
+                </div>
+
+                <div class="form__buttons">
+                    <button type="submit" class="btn btn__save" id="btn-submit btn-guardar-final">
+                        <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+                        <span>Guardar</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="placeholder__quimestre" id="modal-quimestre">
+            <div class="placeholder__notas" id="modal-quimestre">
 
-            </div>
+                <div class="fila-1">
+                    <div class="form__group">
+                        <select class="form__campo--select" name="Quimestre" required>
+                            <option value="" disabled selected>Seleccione Quimestre</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                    <div class="form__buttons">
+                        <button type="button" id="btn-guardar-quimestre" class="btn btn__save">
+                            <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
+                        </button>
+                    </div>
+                </div>
+                <div class="filas">
+                    <div class="form__group">
+                        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaAutonoma"
+                            placeholder="Nota Autónoma" disabled required>
+                    </div>
 
-            <div class="form__buttons">
-                <button type="submit" class="btn btn__save" id="btn-submit btn-guardar-final">
-                    <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
-                    <span>Guardar</span>
-                </button>
+                    <div class="form__group">
+                        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaPractica"
+                            placeholder="Nota Práctica" disabled required>
+                    </div>
+
+                    <div class="form__group">
+                        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaLeccion"
+                            placeholder="Nota Lección" disabled required>
+                    </div>
+
+                    <div class="form__group">
+                        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaExamen"
+                            placeholder="Nota Examen" disabled required>
+                    </div>
+                        <input type="hidden" class="form__campo--texto" name="PromedioQuimestre" disabled>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<form action="{{ r_addQuimestre }}" method="POST" id="quimestre-form">
-    <div class="form__group">
-        <select class="form__campo--select" name="Quimestre" required>
-            <option value="" disabled selected>Seleccione Quimestre</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-        </select>
-    </div>
-
-    <div class="form__group">
-        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaAutonoma"
-            placeholder="Nota Autónoma" disabled required>
-    </div>
-
-    <div class="form__group">
-        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaPractica"
-            placeholder="Nota Práctica" disabled required>
-    </div>
-
-    <div class="form__group">
-        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaLeccion"
-            placeholder="Nota Lección" disabled required>
-    </div>
-
-    <div class="form__group">
-        <input type="number" min="0" max="10" step="0.01" class="form__campo--texto" name="NotaExamen"
-            placeholder="Nota Examen" disabled required>
-    </div>
-    <div class="form__buttons"><button type="button" id="btn-guardar-quimestre">
-            <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
-        </button>
-    </div>
-
-
-</form>
 
 
 <!-- Tarjetas de Calificaciones -->
@@ -136,7 +139,7 @@
 
 {% endblock %}
 
-{% block scripts %}
+{% block sripts %}
 <script src="{{url_for('static', filename='js/emergente.js')}}"></script>
-<script src="{{ url_for('static', filename='js/miniForms.js') }}"></script>
+<script src="{{url_for('static', filename='js/calificacion.js')}}"></script>
 {% endblock %}

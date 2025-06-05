@@ -105,33 +105,34 @@ class CalificacionesController:
                 print(f' * Error al registrar calificación: {e}')
                 return ('ERROR: No se pudo registrar la calificación.', 'danger')
 
-    def get_calificacion_by_id(self, id_matricula, quimestre):
+    def get_calificacion_by_id(self, id_matricula_asignacion, quimestre):
         try:
-            calif = CalificacionesQuimestre.query.filter_by(idMatriculaAsignacion=id_matricula, Quimestre=quimestre).first()
-            if not calif:
+            calif_final = CalificacionFinal.query.filter_by(idMatriculaAsignacion=id_matricula_asignacion).first()
+            if not calif_final:
                 return {}
 
-            resultado = calif.to_dict()
-            
-            # Agregamos datos relacionados
-            final = calif.calificacion_final
-            asignacion = final.matricula_asignacion
-            matricula = asignacion.matricula
-            estudiante = matricula.estudiante
-            curso = asignacion.asignacion_curso
-            profesor = curso.docente
-            materia = curso.materia
+            calif_quimestre = CalificacionesQuimestre.query.filter_by(
+                idCalificacionFinal=calif_final.idCalificacionFinal,
+                Quimestre=quimestre
+            ).first()
 
-            resultado['estudiante_nombre'] = estudiante.nombre
-            resultado['paralelo'] = curso.paralelo
-            resultado['nivel'] = curso.nivel
-            resultado['profesor_nombre'] = profesor.nombre
-            resultado['materia_nombre'] = materia.nombre
+            if not calif_quimestre:
+                return {}
 
-            return resultado
+            return {
+                'idQuimestre': calif_quimestre.idQuimestre,
+                'Quimestre': calif_quimestre.Quimestre,
+                'NotaAutonoma': float(calif_quimestre.NotaAutonoma),
+                'NotaPractica': float(calif_quimestre.NotaPractica),
+                'NotaLeccion': float(calif_quimestre.NotaLeccion),
+                'NotaExamen': float(calif_quimestre.NotaExamen),
+                'PromedioQuimestre': float(calif_quimestre.PromedioQuimestre)
+            }
+
         except SQLAlchemyError as e:
-            print(f' * Error al obtener calificación: {e}')
+            print(f' * Error al obtener calificación del quimestre: {e}')
             return {}
+
 
     def update_calificacion(self, id, request):
         if request.method == 'POST':

@@ -11,6 +11,7 @@ if (window.location.pathname !== "/app/inicio/") {
 
 // FORMULARIO EMERGENTE
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('si me estoy cargando')
 
   // Botones de Añadir (abrir formulario vacío)
   document.querySelectorAll('.btn__add').forEach(btn => {
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn.closest('.edit__foreign')) return;
     btn.addEventListener('click', () => {
       const name = btn.dataset.name;
+      console.log(name)
       añadirRegistro(`form-${name}`);
     });
   });

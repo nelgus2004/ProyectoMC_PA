@@ -159,6 +159,8 @@
 
 #mini-form .form {
     gap: 3px;
+    display:flex;
+    flex-direction: row;
 }
 
 #mini-form .form__buttons,
@@ -184,6 +186,7 @@
 
 #mini-form .form__buttons {
     justify-content: flex-end;
+    width: 50%;
 }
 
 #mini-form .form__buttons button {
@@ -235,4 +238,63 @@
 .form__group select:valid {
     border: 2px solid var(--verde);
     background-color: var(--blanco);
+}
+
+#modal-calificacion .form__background {
+    width: 35vw;
+}
+
+#modal-quimestre {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 15vw;
+}
+
+#modal-quimestre > .fila-1 {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#modal-quimestre .fila-1 .form__group {
+    width: 70%;
+}
+
+#modal-quimestre .fila-1 .form__buttons {
+    width: 28%;
+}
+
+#modal-quimestre .fila-1 .btn__save {
+    height: 2rem;
+    width: 2rem;
+}
+
+#modal-quimestre .fila-1 .btn__save img {
+    margin: 0;
+}
+
+#modal-quimestre .filas {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+#modal-quimestre .filas .form__group {
+    width: 45%;
+    margin: 5px;
+}
+
+
+
+.form__calificacion{
+    display: flex;
+    flex-direction: row;
+    width: 34vw;
+}
+
+.placeholder__estudiante{
+    display: flex;
+    flex-direction: column;
+    width: 14vw;
+    gap: 6px;
 }
