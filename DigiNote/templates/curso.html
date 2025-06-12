@@ -9,21 +9,19 @@
 
 
 <!-- Encabezado -->
-
-{% block header %}
-<h1>Gestionar Cursos</h1>
-<div class="header__btns">
-    <button class="btn btn__add" data-name="curso">
-        <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
-        <span>Añadir</span>
-    </button>
-</div>
+{% block headerTitle %}Gestionar Cursos{% endblock %}
+{% block headerBtn %}
+<button class="btn btn__add" data-name="curso">
+    <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
+    <span>Añadir</span>
+</button>
 {% endblock %}
+
 
 {% block content %}
 <!-- Rutas -->
-<template id="rutas" data-delete_other="{{ r_deleteCurso }}" data-add="{{ r_add }}" data-get="{{ r_get }}" 
-    data-update="{{ r_update }}" data-delete="{{ r_delete }}" >
+<template id="rutas" data-delete_other="{{ r_deleteCurso }}" data-add="{{ r_add }}" data-get="{{ r_get }}"
+    data-update="{{ r_update }}" data-delete="{{ r_delete }}">
 </template>
 
 <!-- Formulario Emergente -->

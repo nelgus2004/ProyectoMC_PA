@@ -7,23 +7,18 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
-{% block header %}
-<h1>Gestionar Usuarios</h1>
-<div class="header__btns">
-    <button class="btn btn__add" data-name="usuario">
-        <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
-        <span>Añadir</span>
-    </button>
-</div>
+<!-- Encabezado -->
+{% block headerTitle %}Gestionar Usuarios{% endblock %}
+{% block headerBtn %}
+<button class="btn btn__add" data-name="usuario">
+    <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
+    <span>Añadir</span>
+</button>
 {% endblock %}
 
 {% block content %}
-<template id="rutas"
-    data-add="{{ r_add }}"
-    data-get="{{ r_get }}"
-    data-updatePropio="{{ r_updatePropio }}"
-    data-update="{{ r_update }}"
-    data-delete="{{ r_delete }}">
+<template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-updatePropio="{{ r_updatePropio }}"
+    data-update="{{ r_update }}" data-delete="{{ r_delete }}">
 </template>
 
 <!-- Formulario Emergente -->
@@ -63,8 +58,8 @@
             </div>
             <div class="form__group">
                 <label for="Vinculo">Datos Vinculados</label>
-                    <select id="vinculo-select" class="form__campo--select" disabled></select>
-                    <input type="hidden" id="campo-vinculo" name="" />
+                <select id="vinculo-select" class="form__campo--select" disabled></select>
+                <input type="hidden" id="campo-vinculo" name="" />
             </div>
             <div class="form__buttons">
                 <button type="submit" class="btn btn__save" id="btn-submit">
