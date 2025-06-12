@@ -43,6 +43,7 @@ class AuthController:
                 session['usuario_id'] = usuario.idUsuario
                 session['Username'] = usuario.Username
                 session['Correo'] = usuario.Correo
+                print(f"mensaje': (f'Bienvenido, {usuario.Username}!', 'successful")
                 return{'mensaje': (f'Bienvenido, {usuario.Username}!', 'successful'),
                        'exito': True}
             else:

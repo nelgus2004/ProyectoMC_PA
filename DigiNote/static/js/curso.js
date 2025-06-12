@@ -1,7 +1,5 @@
-const rutaDelete = '';
-if (window.location.pathname !== "/app/inicio/") {
-  const rutaDelete = document.getElementById('rutas').dataset.delete_other;
-}
+const rutaDelete = window.location.pathname !== "/app/inicio/" 
+  ? document.getElementById('rutas').dataset.delete_other : '';
 
 document.addEventListener('DOMContentLoaded', () => {
   const miniForm = document.getElementById('mini-form');

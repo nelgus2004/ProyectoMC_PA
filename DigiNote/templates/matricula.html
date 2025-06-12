@@ -47,7 +47,7 @@
             <div class="form__group">
                 <select class="form__campo--select filtro" name="Nivel" required
                     data-items='{{ foraneo.asignaciones | tojson | safe }}' data-selected='{{ registros.Nivel }}'
-                    data-filtrar-por="Nivel" data-valor="idAsignacion" data-texto="Materia - Paralelo">
+                    data-filtrar-por="Nivel" data-valor="idCursoAsignacion" data-texto="Materia - Paralelo">
                     <option value="" disabled>Seleccione el Nivel</option>
                     <option value="1ro">1ro</option>
                     <option value="2do">2do</option>
@@ -58,18 +58,17 @@
             <div class="form__group">
                 <select class="form__campo--select filtro" name="Paralelo" required
                     data-items='{{ foraneo.asignaciones | tojson | safe }}' data-selected='{{ registros.Paralelo }}'
-                    data-filtrar-por="Paralelo" data-valor="idAsignacion" data-texto="Materia - Nivel - Paralelo">
+                    data-filtrar-por="Paralelo" data-valor="idCursoAsignacion" data-texto="Materia - Nivel - Paralelo">
                     <option value="" disabled>Seleccione el Paralelo</option>
                     <option value="A">A</option>
                     <option value="B">B</option>
                 </select>
             </div>
 
-
             <!-- Asignaciones (múltiples cursos) -->
             <div class="form__group multiselect">
-                <label for="idAsignacion">Seleccione los Cursos:</label>
-                <select class="form__campo--select lista" name="idAsignacion" multiple required size="5">
+                <label for="idCursoAsignacion">Seleccione los Cursos:</label>
+                <select class="form__campo--select lista" name="idCursoAsignacion" multiple required size="5">
                 </select>
                 <small>Usa Ctrl (Windows) o Cmd (Mac) para seleccionar varios</small>
             </div>
@@ -95,15 +94,17 @@
     {% for reg in registros %}
     <div class="card">
         <div class="card__content">
-            <h3 class="card__text card__title">{{ reg.Apellido }} {{ reg.Nombre }}</h3>
-            <p class="card__text"><b>Fecha de Matrícula:</b> {{ reg.FechaMatricula }}</p>
-            <p class="card__text"><b>Nivel:</b> {{ reg.Nivel }}</p>
-            <p class="card__text"><b>Promedio Anual:</b> {{ reg.PromedioAnual }}</p>
+            <h3 class="card__text card__title">{{ reg.cedula }}</h3>
+            <p class="card__text"><b>Estudiante:</b> {{ reg.estudiante }}</p>
+            <p class="card__text"><b>Fecha de Matrícula:</b> {{ reg.fecha_matricula }}</p>
+            <p class="card__text"><b>Nivel:</b> {{ reg.nivel }}</p>
+            <p class="card__text"><b>Paralelo:</b> {{ reg.paralelo }}</p>
+            <p class="card__text"><b>Promedio Anual:</b> {{ reg.promedio_anual }}</p>
             <div class="card__text">
                 <b>Materias:</b>
                 <ul class="card__text--list">
-                    {% for asigd in materias[reg.idMatricula] %}
-                    <li> {{ asigd.Profesor }} - {{ asigd.Materia }} - {{ asigd.Paralelo }} - {{ asigd.Nivel }}</li>
+                    {% for asig in reg.asignaciones %}
+                    <li> {{ asig.profesor }} - {{ asig.materia }} - {{ asig.nivel }} - {{ asig.paralelo }} - {{ asig.Nivel }}</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -128,6 +129,5 @@
 {% endblock %}
 
 {% block sripts %}
-<script src="{{url_for('static', filename='js/emergente.js')}}"></script>
 <script src="{{url_for('static', filename='js/matricula.js')}}"></script>
 {% endblock %}

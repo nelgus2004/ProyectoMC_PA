@@ -1,5 +1,6 @@
 from flask import request
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import func
 from DigiNote.database import db
 from DigiNote.database.models import Calificacion, MatriculaAsignacion, Matricula, Estudiante, AsignacionCurso, Curso, Materia, Profesor, PeriodoLectivo
 
@@ -9,41 +10,35 @@ class CalificacionesController:
 
     def show_calificaciones(self):
         try:
-            calificaciones = db.session.query(Calificacion).all()
-            resultados = []
+            estudiantes = db.session.query(
+                Estudiante.idEstudiante,
+                Estudiante.Cedula,
+                Estudiante.Nombre,
+                Estudiante.Apellido,
+                Matricula.Nivel,
+                Matricula.Paralelo,
+                Matricula.PromedioAnual
+            ).join(Matricula, Matricula.idEstudiante == Estudiante.idEstudiante)\
+            .join(MatriculaAsignacion, MatriculaAsignacion.idMatricula == Matricula.idMatricula)\
+            .join(PeriodoLectivo, PeriodoLectivo.idPeriodo == Matricula.idPeriodo)\
+            .filter(PeriodoLectivo.Estado == 'Activo') \
+            .group_by(Estudiante.idEstudiante)\
+            .all()
+            
+            resultado = [{
+                'idEstudiante': est.idEstudiante,
+                'nombreCompleto': f'{est.Nombre} {est.Apellido}',
+                'cedula': est.Cedula,
+                'nivel': est.Nivel,
+                'paralelo': est.Paralelo,
+                'promedio': float(est.PromedioAnual) if est.PromedioAnual else 0
+            } for est in estudiantes]
 
-            for c in calificaciones:
-                asignacion = c.matricula_asignacion
-                estudiante = asignacion.matricula.estudiante
-                curso_asignado = c.asignaciones_curso
-                curso = curso_asignado.curso
-                profesor = curso_asignado.profesor
-                materia = curso_asignado.materia
-
-                resultados.append({
-                    'Estudiante': f"{estudiante.Nombre} {estudiante.Apellido}",
-                    'Cedula': estudiante.Cedula,
-                    'Materia': materia.Nombre,
-                    'Profesor': f"{profesor.Nombre} {profesor.Apellido}",
-                    'Nivel': curso.Nivel,
-                    'Paralelo': curso.Paralelo,
-                    'NotaAutonoma1': float(c.NotaAutonoma1),
-                    'NotaPractica1': float(c.NotaPractica1),
-                    'NotaLeccion1': float(c.NotaLeccion1),
-                    'NotaExamen1': float(c.NotaExamen1),
-                    'PromQuimestre1': float(c.PromQuimestre1),
-                    'NotaAutonoma2': float(c.NotaAutonoma2),
-                    'NotaPractica2': float(c.NotaPractica2),
-                    'NotaLeccion2': float(c.NotaLeccion2),
-                    'NotaExamen2': float(c.NotaExamen2),
-                    'PromQuimestre2': float(c.PromQuimestre2),
-                    'PromedioFinal': float(c.PromedioFinal),
-                })
-
-            return resultados
+            return resultado
         except SQLAlchemyError as e:
-            print(f" * Error al mostrar calificaciones: {e}")
-            return []
+            print(f' * Error al mostrar calificaciones: {e}')
+            return []            
+             
 
     def add_calificacion(self, request):
         if request.method == 'POST':
@@ -53,13 +48,12 @@ class CalificacionesController:
                 existente = Calificacion.query.filter_by(idMatriculaAsignacion=idMatriculaAsignacion).first()
 
                 if not existente:
-                    idAsignacionCurso = MatriculaAsignacion.query.get(idMatriculaAsignacion).asignaciones_curso.idAsignacion
+                    idCursoAsignacion = MatriculaAsignacion.query.get(idMatriculaAsignacion).asignaciones_curso.idCursoAsignacion
                     existente = Calificacion(
                         idMatriculaAsignacion=idMatriculaAsignacion,
-                        idAsignacionCurso=idAsignacionCurso
+                        idAsignacionCurso=idCursoAsignacion
                     )
                     db.session.add(existente)
-
 
 
                 existente.NotaAutonoma1 = float(request.form.get('NotaAutonoma1', 0))
@@ -76,39 +70,91 @@ class CalificacionesController:
 
                 q1 = existente.PromQuimestre1 or 0
                 q2 = existente.PromQuimestre2 or 0
-                existente.PromedioFinal = round((q1 + q2) / 2, 2)
 
                 db.session.commit()
-                return ('Calificación registrada correctamente', 'success')
+                
+                id_matricula = db.session.query(MatriculaAsignacion.idMatricula).filter_by(idMatriculaAsignacion=idMatriculaAsignacion).scalar()
+                self.actualizar_promedio_anual(id_matricula=id_matricula)
+
+                
+                return { 'mensaje': ('Calificación registrada correctamente', 'success') }
 
             except SQLAlchemyError as e:
                 db.session.rollback()
-                print(f" * Error al registrar calificación: {e}")
-                return ('ERROR: No se pudo registrar la calificación.', 'danger')
+                print(f' * Error al registrar calificación: {e}')
+                return { 'mensaje': ('No se pudo registrar la calificación.', 'danger') }
 
-    def get_calificacion_by_id(self, id_matricula_asignacion):
+
+    def get_calificacion_by_id(self, id_estudiante):
         try:
-            c = Calificacion.query.filter_by(idMatriculaAsignacion=id_matricula_asignacion).first()
-            if not c:
-                return {}
-
-            return {
-                'NotaAutonoma1': float(c.NotaAutonoma1),
-                'NotaPractica1': float(c.NotaPractica1),
-                'NotaLeccion1': float(c.NotaLeccion1),
-                'NotaExamen1': float(c.NotaExamen1),
-                'PromQuimestre1': float(c.PromQuimestre1),
-                'NotaAutonoma2': float(c.NotaAutonoma2),
-                'NotaPractica2': float(c.NotaPractica2),
-                'NotaLeccion2': float(c.NotaLeccion2),
-                'NotaExamen2': float(c.NotaExamen2),
-                'PromQuimestre2': float(c.PromQuimestre2),
-                'PromedioFinal': float(c.PromedioFinal),
+            matricula = db.session.query(Matricula)\
+                .filter(Matricula.idEstudiante == id_estudiante)\
+                .order_by(Matricula.FechaMatricula.desc())\
+                .first()
+            
+            if not matricula:
+                return {'mensaje': (f'El estudiante no tiene matrículas registradas', 'danger')}
+            
+            calificaciones = db.session.query(
+                Materia.Nombre.label('materia'),
+                Profesor.Nombre.label('profesor_nombre'),
+                Profesor.Apellido.label('profesor_apellido'),
+                Calificacion
+            )\
+            .select_from(Calificacion)\
+            .join(MatriculaAsignacion, Calificacion.idMatriculaAsignacion == MatriculaAsignacion.idMatriculaAsignacion)\
+            .join(AsignacionCurso, MatriculaAsignacion.idCursoAsignacion == AsignacionCurso.idCursoAsignacion)\
+            .join(Materia, AsignacionCurso.idMateria == Materia.idMateria)\
+            .join(Profesor, AsignacionCurso.idProfesor == Profesor.idProfesor)\
+            .filter(MatriculaAsignacion.idMatricula == matricula.idMatricula)\
+            .all()
+            
+            resultado = {
+                'idEstudiante': matricula.idEstudiante,
+                'estudiante': f'{matricula.estudiante.Nombre} {matricula.estudiante.Apellido}',
+                'cedula': matricula.estudiante.Cedula,
+                'nivel': matricula.Nivel,
+                'paralelo': matricula.Paralelo,
+                'materias': []
             }
+              
+            for materia, profesor_nombre, profesor_apellido, calificacion in calificaciones:
+                resultado['materias'].append({
+                    'idCalificacion': calificacion.idCalificacion,
+                    'idMatriculaAsignacion': calificacion.idMatriculaAsignacion,
+                    'materia': materia,
+                    'profesor': f'{profesor_nombre} {profesor_apellido}',
+                    'notas': {
+                        'primer_quimestre': {
+                            'autonoma': float(calificacion.NotaAutonoma1),
+                            'practica': float(calificacion.NotaPractica1),
+                            'leccion': float(calificacion.NotaLeccion1),
+                            'examen': float(calificacion.NotaExamen1),
+                            'promedio': float(calificacion.PromQuimestre1)
+                        },
+                        'segundo_quimestre': {
+                            'autonoma': float(calificacion.NotaAutonoma2),
+                            'practica': float(calificacion.NotaPractica2),
+                            'leccion': float(calificacion.NotaLeccion2),
+                            'examen': float(calificacion.NotaExamen2),
+                            'promedio': float(calificacion.PromQuimestre2)
+                        },
+                        'final': float(calificacion.PromedioFinal)
+                    }
+                })
+            
+            mensaje = (f'Calificaciones de {resultado.get("estudiante", "estudiante")} encontrados', 'info')
+            
+            if not resultado['materias']:
+                mensaje = (f'El estudiante {resultado.get("estudiante", "estudiante")} no tiene matrículas asignadas', 'danger')
+            
+            return { 'mensaje': mensaje,
+                     'resultado': resultado }
 
         except SQLAlchemyError as e:
-            print(f" * Error al obtener calificación: {e}")
-            return {}
+            print(f'Error al obtener calificaciones: {e}')
+            return { 'mensaje': ('Ocurrió un error al obtener las calificaciones', 'error') }
+
 
     def update_calificacion(self, id_matricula_asignacion, request):
         if request.method == 'POST':
@@ -116,7 +162,7 @@ class CalificacionesController:
                 calif = Calificacion.query.filter_by(idMatriculaAsignacion=id_matricula_asignacion).first()
 
                 if not calif:
-                    return ('No se encontró la calificación para editar.', 'info')
+                    return { 'mensaje': ('No se encontró la calificación para editar.', 'info') }
 
                 autonoma1 = float(request.form.get('NotaAutonoma1', 0))
                 practica1 = float(request.form.get('NotaPractica1', 0))
@@ -146,53 +192,37 @@ class CalificacionesController:
                 q2 = calif.PromQuimestre2 or 0
                 calif.PromedioFinal = round((q1 + q2) / 2, 2)
 
+                id_matricula = db.session.query(MatriculaAsignacion.idMatricula).filter_by(idMatriculaAsignacion=id_matricula_asignacion).scalar()
+                self.actualizar_promedio_anual(id_matricula=id_matricula)
+                
                 db.session.commit()
-                return ('Calificación actualizada correctamente', 'success')
+                return { 'mensaje': ('Calificación actualizada correctamente', 'successful') }
 
             except SQLAlchemyError as e:
                 db.session.rollback()
-                print(f" * Error al actualizar calificación: {e}")
-                return ('ERROR: No se pudo actualizar la calificación.', 'danger')
+                print(f' * Error al actualizar calificación: {e}')
+                return { 'mensaje': ('No se pudo actualizar la calificación', 'danger') }
 
     def delete_calificacion(self, id_matricula_asignacion):
         try:
             calif = Calificacion.query.filter_by(idMatriculaAsignacion=id_matricula_asignacion).first()
             if not calif:
-                return ('No se encontró la calificación para eliminar.', 'info')
+                return { 'mensaje': ('No se encontró la calificación para eliminar', 'info') }
 
             db.session.delete(calif)
             db.session.commit()
-            return ('Calificación eliminada correctamente.', 'success')
+            return { 'mensaje': ('Calificación eliminada correctamente', 'successfuls') }
         except SQLAlchemyError as e:
             db.session.rollback()
-            print(f" * Error al eliminar calificación: {e}")
-            return ('ERROR: No se pudo eliminar la calificación.', 'danger')
+            print(f' * Error al eliminar calificación: {e}')
+            return { 'mensaje': ('No se pudo eliminar la calificación', 'danger') }
 
-    def foreign_records(self):
-        try:
-            estudiantes = db.session.query(
-                Estudiante.idEstudiante,
-                Estudiante.Cedula,
-                Estudiante.Nombre,
-                Estudiante.Apellido
-            ).join(Estudiante.matriculas) \
-            .join(Matricula.matricula_asignacion) \
-            .join(MatriculaAsignacion.asignaciones_curso) \
-            .join(AsignacionCurso.periodo) \
-            .filter(PeriodoLectivo.Estado == 'Activo') \
-            .distinct() \
-            .all()
-
-            return {'estudiantes': [dict(idEstudiante=e.idEstudiante, nombreCompleto=e.Nombre + ' ' + e.Apellido, cedula = e.Cedula) for e in estudiantes]}
-        except SQLAlchemyError as e:
-            print(f" * Error en foreign_records (filtrando con matrícula activa): {e}")
-            return {'estudiantes': [] }
         
     def get_asignaciones_por_estudiante(self, id_estudiante):
         try:
             asignaciones = db.session.query(
                 MatriculaAsignacion.idMatriculaAsignacion,
-                AsignacionCurso.idAsignacion,
+                AsignacionCurso.idCursoAsignacion,
                 Materia.Nombre.label('nombre_materia'),
                 Profesor.Nombre.label('nombre_profesor'),
                 Profesor.Apellido.label('apellido_profesor'),
@@ -211,7 +241,7 @@ class CalificacionesController:
             for a in asignaciones:
                 resultado.append({
                     'idMatriculaAsignacion': a.idMatriculaAsignacion,
-                    'idAsignacionCurso': a.idAsignacion,
+                    'idCursoAsignacion': a.idCursoAsignacion,
                     'materia': a.nombre_materia,
                     'profesor': f'{a.nombre_profesor} {a.apellido_profesor}',
                     'nivel': a.Nivel,
@@ -222,3 +252,12 @@ class CalificacionesController:
         except SQLAlchemyError as e:
             print(f' * Error al obtener asignaciones del estudiante: {e}')
             return []
+    
+    def actualizar_promedio_anual(self, id_matricula):
+        promedio = db.session.query(
+            func.avg(Calificacion.PromedioFinal)
+        ).filter_by(idMatricula=id_matricula).scalar()
+
+        matricula = db.session.get(Matricula, id_matricula)
+        matricula.PromedioAnual = float(promedio) if promedio is not None else 0.0
+        db.session.commit()

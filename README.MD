@@ -23,3 +23,10 @@ SELECT user, host FROM mysql.user;
 SHOW GRANTS FOR 'adminNotes'@'localhost';
 
 ```
+
+Usuario Administrador por defecto
+```bash
+Usuario =   superAdmin
+Correro =   admin@diginote.com
+Contraseña =   admin123
+```

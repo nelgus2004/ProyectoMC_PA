@@ -242,6 +242,13 @@
 
 #modal-calificacion .form__background {
     width: 35vw;
+    margin-top: 8rem;
+}
+
+#modal-calificacion .form__calificacion{
+    display: flex;
+    flex-direction: row;
+    width: 34vw;
 }
 
 #modal-quimestre {
@@ -282,14 +289,6 @@
 #modal-quimestre .filas .form__group {
     width: 45%;
     margin: 5px;
-}
-
-
-
-.form__calificacion{
-    display: flex;
-    flex-direction: row;
-    width: 34vw;
 }
 
 .placeholder__estudiante{

@@ -7,7 +7,6 @@ controller  = indexController()
 @index_bp.route('/')
 def index():
     if 'usuario_id' not in session:
-        print('hola')
         return redirect(url_for('auth.login'))
     return redirect(url_for('inicio.menu'))
 

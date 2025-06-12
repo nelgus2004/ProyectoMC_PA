@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn.closest('.edit__foreign')) return;
     btn.addEventListener('click', () => {
       const name = btn.dataset.name;
-      console.log(name)
       añadirRegistro(`form-${name}`);
     });
   });
@@ -68,7 +67,8 @@ function añadirRegistro(formId) {
 function borrarRegistro(id, btn) {
   const url = `${rutas.delete}/${id}`;
   const confirmMsg = btn.dataset.confirm || "¿Seguro que quieres eliminar este registro?";
-  console.log(url)
+  console.log('fui invocado')
+  console.log(confirmMsg)
   if (confirm(confirmMsg)) {
     window.location.href = url;
   }
@@ -124,3 +124,7 @@ function cerrarForm() {
   const modal = document.querySelector('.emergente[style*="block"]');
   if (modal) modal.style.display = "none";
 }
+
+
+
+

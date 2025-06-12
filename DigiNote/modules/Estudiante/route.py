@@ -20,7 +20,7 @@ def show():
 @estudiante_bp.route('/add_estudiante', methods=['POST'])
 def add():
     result = controller.add_estudiante(request)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('estudiante.show'))
 
 @estudiante_bp.route('/get_estudiante/<int:id>', methods=['GET'])
@@ -43,13 +43,13 @@ def get(id):
 @estudiante_bp.route('/update_estudiante/<int:id>', methods=['POST'])
 def update(id):
     result = controller.update_estudiante(id, request)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('estudiante.show'))
 
 @estudiante_bp.route('/delete_estudiante/<int:id>', methods=['POST', 'GET'])
 def delete(id):
     result = controller.delete_estudiante(id)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('estudiante.show'))
 
 @estudiante_bp.route('/data_estudiantes', methods=['GET'])

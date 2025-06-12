@@ -12,7 +12,7 @@ class CursoController:
         try:
             # Cursos asignados
             data = db.session.query(
-                AsignacionCurso.idAsignacion,
+                AsignacionCurso.idCursoAsignacion,
                 Curso.Nivel,
                 Curso.Paralelo,
                 AsignacionCurso.HoraEntrada,
@@ -31,14 +31,11 @@ class CursoController:
 
             cursos = db.session.query(Curso).all()
  
-            return {
-                'asignacion': data,
-                'cursos': cursos
-            }
+            return { 'asignacion': data,  'cursos': cursos }
 
         except SQLAlchemyError as e:
             print(f' * Error al obtener cursos: {e}')
-            return {'asignaciones': [], 'cursos': []}
+            return {'asignacion': [], 'cursos': []}
 
     def add_curso(self, request):
         if request.method == 'POST':
@@ -54,11 +51,11 @@ class CursoController:
                 )
                 db.session.add(curso)
                 db.session.commit()
-                return ('Curso añadido correctamente', 'successful')
+                return { 'mensaje': ('Curso añadido correctamente', 'successful') }
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f' * Error al añadir curso: {e}')
-                return ('ERROR: No se pudo añadir el curso.', 'danger')
+                return { 'mensaje': ('No se pudo añadir el curso.', 'danger') }
 
     def get_curso_by_id(self, id):
         curso = db.session.get(AsignacionCurso, id)
@@ -86,9 +83,9 @@ class CursoController:
             try:
                 curso = db.session.get(AsignacionCurso, id)
                 if not curso:
-                    return ('No se encontró el curso para editar.', 'info')
+                    return { 'mensaje': ('No se encontró el curso para editar.', 'info') }
 
-                idCurso=request.form.get('idCurso')
+                curso.idCurso=request.form.get('idCurso')
                 curso.HoraEntrada = request.form['HoraEntrada']
                 curso.HoraSalida = request.form['HoraSalida']
                 curso.Aula = request.form.get('Aula')
@@ -97,24 +94,24 @@ class CursoController:
                 curso.idMateria = request.form.get('idMateria')
 
                 db.session.commit()
-                return ('Curso editado correctamente', 'info')
+                return { 'mensaje': ('Curso editado correctamente', 'info') }
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f' * Error al editar curso: {e}')
-                return ('ERROR: No se pudo editar el curso.', 'danger')
+                return { 'mensaje': ('No se pudo editar el curso', 'danger') }
 
     def delete_curso(self, id):
         try:
             curso = db.session.get(AsignacionCurso, id)
             if not curso:
-                return ('No se encontró el curso para eliminar.', 'info')
+                return { 'mensaje': ('No se encontró el curso para eliminar.', 'info') }
             db.session.delete(curso)
             db.session.commit()
-            return ('Curso eliminado correctamente', 'danger')
+            return { 'mensaje': ('Curso eliminado correctamente', 'successful') }
         except SQLAlchemyError as e:
             db.session.rollback()
             print(f' * Error al eliminar curso: {e}')
-            return ('ERROR: No se pudo eliminar el curso.', 'danger')
+            return { 'mensaje': ('No se pudo eliminar el curso', 'danger') }
 
     def add_paralelo(self, request):
             if request.method == 'POST':
@@ -126,30 +123,27 @@ class CursoController:
                     db.session.add(nuevo)
                     db.session.commit()
                     
-                    mensaje = ('Paralelo añadido correctamente', 'successful')
-                    datos = {'id': nuevo.idCurso, 'nombre': f"{nuevo.Nivel} {nuevo.Paralelo}"}
-
-                    return mensaje, datos
+                    return { 'mensaje': ('Paralelo añadido correctamente', 'successful'),
+                            'datos': {'id': nuevo.idCurso, 'nombre': f"{nuevo.Nivel} {nuevo.Paralelo}"}
+                            }
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print(f' * Error al añadir paralelo: {e}')
-                    mensaje = ('ERROR: No se pudo añadir el paralelo.', 'danger')
-                    datos = {}
 
-                    return mensaje, datos
+                    return { 'mensaje': ('No se pudo añadir el paralelo', 'danger'), 'datos': {} }
 
     def delete_paralelo(self, id):
         try:
             paralelo = db.session.get(Curso, id)
             if not paralelo:
-                return ('No se encontró el paralelo para eliminar.', 'info')
+                return { 'mensaje': ('No se encontró el paralelo para eliminar.', 'info') }
             db.session.delete(paralelo)
             db.session.commit()
-            return ('Paralelo eliminado correctamente', 'danger')
+            return { 'mensaje': ('Paralelo eliminado correctamente', 'successful') }
         except SQLAlchemyError as e:
             db.session.rollback()
             print(f' * Error al eliminar paralelo: {e}')
-            return ('ERROR: No se pudo eliminar el paralelo.', 'danger')
+            return { 'mensaje': ('No se pudo eliminar el paralelo.', 'danger') }
 
 
     def foreign_records(self):

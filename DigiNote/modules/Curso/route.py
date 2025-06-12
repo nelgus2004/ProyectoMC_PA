@@ -7,7 +7,6 @@ controller = CursoController()
 @curso_bp.route('/')
 def show():
     result = controller.show_curso()
-    print(url_for('curso.delete_paralelo', id=0).rsplit('/', 1)[0])
     foreign = controller.foreign_records()
     return render_template(
         'curso.html',
@@ -25,7 +24,7 @@ def show():
 @curso_bp.route('/add_curso', methods=['POST'])
 def add():
     result = controller.add_curso(request)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('curso.show'))
 
 @curso_bp.route('/get_curso/<id>', methods=['GET', 'POST'])
@@ -36,24 +35,24 @@ def get(id):
 @curso_bp.route('/update_curso/<id>', methods=['POST'])
 def update(id):
     result = controller.update_curso(id, request)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('curso.show'))
 
 @curso_bp.route('/delete_curso/<string:id>', methods=['POST', 'GET'])
 def delete(id):
     result = controller.delete_curso(id)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('curso.show'))
 
 @curso_bp.route('/add_paralelo', methods=['POST'])
 def add_paralelo():
-    mensaje, datos = controller.add_paralelo(request)
-    flash(*mensaje)
+    result = controller.add_paralelo(request)
+    flash(*result['mensaje'])
     if request.method == 'POST':
-        return jsonify(datos)
+        return jsonify(result['datos'])
 
 @curso_bp.route('/delete_paralelo/<int:id>', methods=['GET'])
 def delete_paralelo(id):
     result = controller.delete_paralelo(id)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('curso.show'))

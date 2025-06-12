@@ -21,11 +21,11 @@ class EstudianteController:
                 )
                 db.session.add(estudiante)
                 db.session.commit()
-                return ('Estudiante añadido correctamente', 'successful')
+                return { 'mensaje': ('Estudiante añadido correctamente', 'successful') }
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f' * Error al añadir estudiante: {e}')
-                return ('ERROR: No se pudo añadir al estudiante.', 'danger')
+                return { 'mensaje': ('No se pudo añadir al estudiante.', 'danger') }
 
     def get_estudiante_by_id(self, id):
         return Estudiante.query.get(id)
@@ -35,7 +35,7 @@ class EstudianteController:
             try:
                 estudiante = Estudiante.query.get(id)
                 if not estudiante:
-                    return ('Estudiante no encontrado', 'danger')
+                    return { 'mensaje': ('Estudiante no encontrado', 'danger') }
                 estudiante.Cedula = request.form['Cedula']
                 estudiante.Nombre = request.form['Nombre'].strip().title()
                 estudiante.Apellido = request.form['Apellido'].strip().title()
@@ -44,24 +44,24 @@ class EstudianteController:
                 estudiante.Direccion = request.form.get('Direccion', '')
                 estudiante.Observacion = request.form.get('Observacion')
                 db.session.commit()
-                return ('Estudiante editado correctamente', 'info')
+                return { 'mensaje': ('Estudiante editado correctamente', 'info') }
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f' * Error al actualizar estudiante: {e}')
-                return ('ERROR: No se pudo actualizar el estudiante.', 'danger')
+                return { 'mensaje': ('No se pudo actualizar el estudiante.', 'danger') }
 
     def delete_estudiante(self, id):
         try:
             estudiante = Estudiante.query.get(id)
             if not estudiante:
-                return ('No se encontró el estudiante para eliminar', 'info')
+                return { 'mensaje': ('No se encontró el estudiante para eliminar', 'info') }
             db.session.delete(estudiante)
             db.session.commit()
-            return ('Estudiante eliminado correctamente', 'danger')
+            return { 'mensaje': ('Estudiante eliminado correctamente', 'successful') }
         except SQLAlchemyError as e:
             db.session.rollback()
             print(f' * Error al eliminar estudiante: {e}')
-            return ('ERROR: No se pudo eliminar el estudiante.', 'danger')
+            return { 'mensaje': ('ERROR: No se pudo eliminar el estudiante.', 'danger') }
         
     def all_data_estudiantes(self, nivel=None, paralelo=None, id_periodo=None):
         query = db.session.query(

@@ -7,29 +7,13 @@ controller = MatriculaController()
 
 @matricula_bp.route('/')
 def show():
-    matriculas, asignaciones = controller.show_matricula()
-
-    # Agrupar asignaciones por matrícula
-    matricula_materias = {}
-    for asig in asignaciones:
-        idM = asig[0]
-        materia_info = {
-            'Materia': asig[1],
-            'Paralelo': asig[2],
-            'Nivel': asig[3],
-            'Profesor': f"{asig[4]} {asig[5]}"
-        }
-        if idM not in matricula_materias:
-            matricula_materias[idM] = []
-        matricula_materias[idM].append(materia_info)
-
+    result = controller.show_matricula()
     foreign = controller.foreign_records() or ''
     fecha_actual = date.today().isoformat()
 
     return render_template(
         'matricula.html',
-        registros=matriculas,
-        materias=matricula_materias,
+        registros=result['matriculas'],
         fecha_actual=fecha_actual,
         foraneo=foreign,
         active_page='matr',
@@ -42,7 +26,7 @@ def show():
 @matricula_bp.route('/add_matricula', methods=['POST'])
 def add():
     result = controller.add_matricula(request)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('matricula.show'))
 
 @matricula_bp.route('/get_matricula/<id>', methods=['GET'])
@@ -53,11 +37,11 @@ def get(id):
 @matricula_bp.route('/update_matricula/<id>', methods=['POST'])
 def update(id):
     result = controller.update_matricula(id, request)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('matricula.show'))
 
 @matricula_bp.route('/delete_matricula/<string:id>', methods=['POST', 'GET'])
 def delete(id):
     result = controller.delete_matricula(id)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('matricula.show'))

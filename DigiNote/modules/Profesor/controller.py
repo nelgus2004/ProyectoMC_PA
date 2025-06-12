@@ -13,7 +13,7 @@ class ProfesorController:
             nombre = request.form['Nombre'].strip().title()
             apellido = request.form['Apellido'].strip().title()
             telefono = request.form.get('Telefono') or None
-            especialidad = request.form.get('Esspecialidad') or None
+            especialidad = request.form.get('Especialidad') or None
             direccion = request.form.get('Direccion') or None
 
             try:

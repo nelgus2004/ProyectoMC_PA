@@ -1,4 +1,5 @@
 from DigiNote.database import db
+from sqlalchemy import func
 from datetime import datetime
 
 class Estudiante(db.Model):
@@ -16,7 +17,7 @@ class Estudiante(db.Model):
     Direccion = db.Column(db.Text, nullable=False)
     Observacion = db.Column(db.Text)
 
-    matriculas = db.relationship('Matricula', back_populates='estudiante', cascade='all, delete-orphan')
+    matricula = db.relationship('Matricula', back_populates='estudiante', cascade='all, delete-orphan')
     usuario = db.relationship('Usuario', back_populates='estudiante', uselist=False)
 
 
@@ -78,6 +79,7 @@ class PeriodoLectivo(db.Model):
     Estado = db.Column(db.Enum('Activo', 'Inactivo'), default='Inactivo')
 
     asignaciones_curso = db.relationship('AsignacionCurso', back_populates='periodo', cascade='all, delete-orphan')
+    matriculas = db.relationship("Matricula", backref="periodo")
 
 
 class Curso(db.Model):
@@ -102,7 +104,7 @@ class AsignacionCurso(db.Model):
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
-    idAsignacion = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    idCursoAsignacion = db.Column(db.Integer, primary_key=True, autoincrement=True)
     idProfesor = db.Column(db.Integer, db.ForeignKey('profesor.idProfesor', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     idMateria = db.Column(db.Integer, db.ForeignKey('materia.idMateria', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     idCurso = db.Column(db.Integer, db.ForeignKey('curso.idCurso', ondelete='SET NULL', onupdate='CASCADE'), nullable=True)
@@ -112,7 +114,6 @@ class AsignacionCurso(db.Model):
     idPeriodo = db.Column(db.Integer, db.ForeignKey('periodo_lectivo.idPeriodo', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
 
     matricula_asignacion = db.relationship('MatriculaAsignacion', back_populates='asignaciones_curso', cascade='all, delete-orphan')
-    calificacion = db.relationship('Calificacion', back_populates='asignaciones_curso', cascade='all, delete-orphan')
     profesor = db.relationship('Profesor', back_populates='asignaciones_curso')
     materia = db.relationship('Materia', back_populates='asignaciones_curso')
     curso = db.relationship('Curso', back_populates='asignaciones_curso')
@@ -131,15 +132,17 @@ class Matricula(db.Model):
     Nivel = db.Column(db.Enum('1ro', '2do', '3ro'), nullable=False)
     Paralelo = db.Column(db.String(10), nullable=False)
     PromedioAnual = db.Column(db.Numeric(5, 2), default=0)
+    idPeriodo = db.Column(db.Integer, db.ForeignKey('periodo_lectivo.idPeriodo', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
 
-    estudiante = db.relationship('Estudiante', back_populates='matriculas')
+    estudiante = db.relationship('Estudiante', back_populates='matricula')
     matricula_asignacion = db.relationship('MatriculaAsignacion', back_populates='matricula', cascade='all, delete-orphan')
+    calificaciones = db.relationship("Calificacion", backref="matricula")
 
 
 class MatriculaAsignacion(db.Model):
     __tablename__ = 'matricula_asignacion'
     __table_args__ = (
-        db.UniqueConstraint('idMatricula', 'idAsignacion', name='uq_matricula_asignacion'),
+        db.UniqueConstraint('idMatricula', 'idCursoAsignacion', name='uq_matricula_asignacion'),
         {'mysql_engine': 'InnoDB'}
     )
     def to_dict(self):
@@ -147,11 +150,11 @@ class MatriculaAsignacion(db.Model):
 
     idMatriculaAsignacion = db.Column(db.Integer, primary_key=True, autoincrement=True)
     idMatricula = db.Column(db.Integer, db.ForeignKey('matricula.idMatricula', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
-    idAsignacion = db.Column(db.Integer, db.ForeignKey('asignacion_curso.idAsignacion', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
-
+    idCursoAsignacion = db.Column(db.Integer, db.ForeignKey('asignacion_curso.idCursoAsignacion', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    
     matricula = db.relationship('Matricula', back_populates='matricula_asignacion')
     asignaciones_curso = db.relationship('AsignacionCurso', back_populates='matricula_asignacion')
-    calificacion = db.relationship('Calificacion', back_populates='matricula_asignacion', uselist=False)
+    calificacion = db.relationship('Calificacion', backref='matricula_asignacion', uselist=False)
 
     
 class Calificacion(db.Model):
@@ -159,16 +162,15 @@ class Calificacion(db.Model):
     __table_args__ = {'mysql_engine': 'InnoDB'}
 
     idCalificacion = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    idMatricula = db.Column(
+        db.Integer, 
+        db.ForeignKey('matricula.idMatricula', ondelete='CASCADE', onupdate='CASCADE'), 
+        nullable=False,
+    )
     idMatriculaAsignacion = db.Column(
         db.Integer,
         db.ForeignKey('matricula_asignacion.idMatriculaAsignacion', ondelete='CASCADE', onupdate='CASCADE'),
         nullable=False,
-        unique=True 
-    )
-    idAsignacionCurso = db.Column(
-        db.Integer, 
-        db.ForeignKey('asignacion_curso.idAsignacion', ondelete='CASCADE', onupdate='CASCADE'),
-        nullable=False
     )
     NotaAutonoma1 = db.Column(db.Numeric(5, 2), default=0)
     NotaPractica1 = db.Column(db.Numeric(5, 2), default=0)
@@ -182,8 +184,6 @@ class Calificacion(db.Model):
     PromQuimestre2 = db.Column(db.Numeric(5, 2), default=0)
     PromedioFinal = db.Column(db.Numeric(5, 2), default=0)
 
-    matricula_asignacion = db.relationship('MatriculaAsignacion', back_populates='calificacion')
-    asignaciones_curso = db.relationship('AsignacionCurso', back_populates='calificacion')
 
 class Usuario(db.Model):
     __tablename__ = 'usuarios'

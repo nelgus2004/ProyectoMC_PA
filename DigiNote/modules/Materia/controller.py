@@ -16,11 +16,11 @@ class MateriaController:
                 )
                 db.session.add(materia)
                 db.session.commit()
-                return ('Materia añadida correctamente', 'successful')
+                return { 'mensaje': ('Materia añadida correctamente', 'successful') }
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f" * Error al añadir materia: {e}")
-                return ('ERROR: No se pudo añadir la materia.', 'danger')
+                return { 'mensaje': ('No se pudo añadir la materia', 'danger') }
 
     def get_materia_by_id(self, id):
         return Materia.query.get(id)
@@ -30,25 +30,25 @@ class MateriaController:
             try:
                 materia = Materia.query.get(id)
                 if not materia:
-                    return ('Materia no encontrada', 'info')
+                    return { 'mensaje': ('Materia no encontrada', 'info') }
                 materia.Nombre = request.form['Nombre'].strip().title()
                 materia.Descripcion = request.form.get('Descripcion') or None
                 db.session.commit()
-                return ('Materia editada correctamente', 'info')
+                return { 'mensaje': ('Materia editada correctamente', 'info') }
             except SQLAlchemyError as e:
                 db.session.rollback()
                 print(f" * Error al editar materia: {e}")
-                return ('ERROR: No se pudo editar la materia.', 'danger')
+                return { 'mensaje': ('ERROR: No se pudo editar la materia.', 'danger') }
 
     def delete_materia(self, id):
         try:
             materia = Materia.query.get(id)
             if not materia:
-                return ('No se encontró la materia para eliminar', 'info')
+                return { 'mensaje': ('No se encontró la materia para eliminar', 'info') }
             db.session.delete(materia)
             db.session.commit()
-            return ('Materia eliminada correctamente', 'danger')
+            return { 'mensaje': ('Materia eliminada correctamente', 'successful') }
         except SQLAlchemyError as e:
             db.session.rollback()
             print(f" * Error al eliminar materia: {e}")
-            return ('ERROR: No se pudo eliminar la materia.', 'danger')
+            return { 'mensaje': ('No se pudo eliminar la materia.', 'danger') }

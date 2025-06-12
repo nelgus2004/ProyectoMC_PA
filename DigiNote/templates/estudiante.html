@@ -48,9 +48,6 @@
                     required>
             </div>
             <div class="form__group">
-                <input type="email" class="form__campo--correo" name="Correo" placeholder="Correo electrónico" required>
-            </div>
-            <div class="form__group">
                 <input type="text" class="form__campo--texto" name="Telefono" placeholder="Teléfono" pattern="^\d{10}$"
                     inputmode="numeric" maxlength="10" title="El teléfono debe tener exactamente 10 dígitos numéricos">
             </div>
@@ -120,7 +117,6 @@
             <h3 class="card__text card__title">{{ est.Cedula }}</h3>
             <p class="card__text"><b>Nombres:</b> {{ est.Apellido }} {{ est.Nombre }}</p>
             <p class="card__text"><b>Fecha Nacimiento:</b> {{ est.FechaNacimiento }}</p>
-            <p class="card__text"><b>Correo:</b> {{ est.Correo }}</p>
             <p class="card__text"><b>Telefono:</b> {{ est.Telefono or '' }}</p>
             <p class="card__text"><b>Direccion:</b> {{ est.Direccion or '' }}</p>
             <p class="card__text"><b>Observacion:</b> {{ est.Observacion or '' }}</p>
@@ -142,6 +138,5 @@
 {% endblock %}
 
 {% block sripts %}
-<script src="{{url_for('static', filename='js/emergente.js')}}"></script>
 <script src="{{url_for('static', filename='js/estudiante.js')}}"></script>
 {% endblock %}

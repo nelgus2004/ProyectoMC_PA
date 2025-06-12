@@ -1,30 +1,39 @@
 
 INSERT INTO `administrador` VALUES
-(1, '1100000000', 'Admin', '');
+(1, '1100000000', 'Administrador', 'One');
 
 
-INSERT INTO `asignacion_curso` VALUES
-(2, 13, 6, 1, 'A-101', '21:27:00', '23:27:00', 10),
-(3, 17, 3, 1, 'A-102', '21:27:00', '23:27:00', 10),
-(4, 18, 9, 1, 'A-103', '21:28:00', '23:28:00', 10),
-(5, 8, 14, 1, 'A-104', '21:28:00', '23:28:00', 10),
-(6, 9, 16, 1, 'A-105', '21:29:00', '23:29:00', 10),
-(7, 20, 10, 1, 'A-106', '21:29:00', '23:29:00', 10),
-(8, 16, 7, 1, '', '21:30:00', '23:30:00', 10),
-(9, 17, 10, 6, 'L-102', '21:31:00', '23:31:00', 10),
-(10, 11, 14, 6, 'A-107', '21:35:00', '23:35:00', 10);
+INSERT INTO `periodo_lectivo` VALUES
+(1, 'P1 2022', '2022-02-01', '2022-05-31', 'Inactivo'),
+(3, 'P2 2022', '2022-10-01', '2023-01-31', 'Inactivo'),
+(4, 'P1 2023', '2023-02-01', '2023-05-31', 'Inactivo'),
+(6, 'P2 2023', '2023-10-01', '2024-01-31', 'Inactivo'),
+(7, 'P1 2024', '2024-02-01', '2024-05-31', 'Inactivo'),
+(9, 'P2 2024', '2024-10-01', '2025-01-31', 'Inactivo'),
+(10, 'P1 2025', '2025-02-01', '2025-05-31', 'Activo');
 
 
-INSERT INTO `calificacion` VALUES
-(1, 7, 5, '9.00', '9.00', '9.00', '9.00', '9.00', '9.00', '9.00', '9.00', '9.00', '9.00', '9.00');
-
-
-INSERT INTO `curso` VALUES
-(6, '1ro', 'A'),
-(2, '1ro', 'B'),
-(1, '2do', 'A'),
-(3, '2do', 'B'),
-(7, '3ro', 'C');
+INSERT INTO `profesor` VALUES
+(1, '1100000001', 'Juan', 'Pérez', '0990000001', 'Educación General', 'Dirección 1'),
+(2, '1100000002', 'María', 'Gómez', '0990000002', 'Educación General', 'Dirección 2'),
+(3, '1100000003', 'Pedro', 'Rodríguez', '0990000003', 'Educación General', 'Dirección 3'),
+(4, '1100000004', 'Luisa', 'López', '0990000004', 'Educación General', 'Dirección 4'),
+(5, '1100000005', 'Carlos', 'Martínez', '0990000005', 'Educación General', 'Dirección 5'),
+(6, '1100000006', 'Ana', 'García', '0990000006', 'Educación General', 'Dirección 6'),
+(7, '1100000007', 'Jorge', 'Sánchez', '0990000007', 'Educación General', 'Dirección 7'),
+(8, '1100000008', 'Marta', 'Ramírez', '0990000008', 'Educación General', 'Dirección 8'),
+(9, '1100000009', 'Luis', 'Torres', '0990000009', 'Educación General', 'Dirección 9'),
+(10, '1100000010', 'Carmen', 'Vargas', '0990000010', 'Educación General', 'Dirección 10'),
+(11, '1100000011', 'Juan', 'Pérez', '0990000011', 'Educación General', 'Dirección 11'),
+(12, '1100000012', 'María', 'Gómez', '0990000012', 'Educación General', 'Dirección 12'),
+(13, '1100000013', 'Pedro', 'Rodríguez', '0990000013', 'Educación General', 'Dirección 13'),
+(14, '1100000014', 'Luisa', 'López', '0990000014', 'Educación General', 'Dirección 14'),
+(15, '1100000015', 'Carlos', 'Martínez', '0990000015', 'Educación General', 'Dirección 15'),
+(16, '1100000016', 'Ana', 'García', '0990000016', 'Educación General', 'Dirección 16'),
+(17, '1100000017', 'Jorge', 'Sánchez', '0990000017', 'Educación General', 'Dirección 17'),
+(18, '1100000018', 'Marta', 'Ramírez', '0990000018', 'Educación General', 'Dirección 18'),
+(19, '1100000019', 'Luis', 'Torres', '0990000019', 'Educación General', 'Dirección 19'),
+(20, '1100000020', 'Carmen', 'Vargas', '0990000020', 'Educación General', 'Dirección 20');
 
 
 INSERT INTO `estudiante` VALUES
@@ -136,12 +145,33 @@ INSERT INTO `materia` VALUES
 (16, 'Educacion Fisica', 'Materia de Educacion Fisica para 2do');
 
 
+INSERT INTO `curso` VALUES
+(1, '2do', 'A'),
+(2, '1ro', 'B'),
+(3, '2do', 'B'),
+(6, '1ro', 'A'),
+(7, '3ro', 'C');
+
+
+INSERT INTO `asignacion_curso` VALUES
+(2, 13, 6, 1, 'A-101', '21:27:00', '23:27:00', 10),
+(3, 17, 3, 1, 'A-102', '21:27:00', '23:27:00', 10),
+(4, 18, 9, 1, 'A-103', '21:28:00', '23:28:00', 10),
+(5, 8, 14, 1, 'A-104', '21:28:00', '23:28:00', 10),
+(6, 9, 16, 1, 'A-105', '21:29:00', '23:29:00', 10),
+(7, 20, 10, 1, 'A-106', '21:29:00', '23:29:00', 10),
+(8, 16, 7, 1, 'A-108', '21:30:00', '23:30:00', 10),
+(9, 17, 10, 6, 'L-102', '21:31:00', '23:31:00', 10),
+(10, 11, 14, 6, 'A-107', '21:35:00', '23:35:00', 10);
+
+
 INSERT INTO `matricula` VALUES
-(2, 7, '2025-06-03', '1ro', 'A', '0.00'),
-(3, 12, '2025-06-03', '2do', 'A', '0.00'),
-(4, 18, '2025-06-03', '2do', 'A', '0.00'),
-(5, 5, '2025-06-04', '2do', 'A', '0.00'),
-(6, 5, '2025-06-04', '2do', 'A', '0.00');
+(2, 7, '2025-06-03', '1ro', 'A', 10, '0.00'),
+(3, 12, '2025-06-03', '2do', 'A', 10,'0.00'),
+(4, 18, '2025-06-03', '2do', 'A', 10, '0.00'),
+(5, 5, '2025-06-04', '2do', 'A', 10, '0.00'),
+(6, 5, '2025-06-04', '2do', 'A', 10, '0.00');
+
 
 INSERT INTO `matricula_asignacion` VALUES
 (1, 2, 9),
@@ -160,38 +190,6 @@ INSERT INTO `matricula_asignacion` VALUES
 (14, 6, 3);
 
 
-INSERT INTO `periodo_lectivo` VALUES
-(1, 'P1 2022', '2022-02-01', '2022-05-31', 'Inactivo'),
-(3, 'P2 2022', '2022-10-01', '2023-01-31', 'Inactivo'),
-(4, 'P1 2023', '2023-02-01', '2023-05-31', 'Inactivo'),
-(6, 'P2 2023', '2023-10-01', '2024-01-31', 'Inactivo'),
-(7, 'P1 2024', '2024-02-01', '2024-05-31', 'Inactivo'),
-(9, 'P2 2024', '2024-10-01', '2025-01-31', 'Inactivo'),
-(10, 'P1 2025', '2025-02-01', '2025-05-31', 'Activo');
+INSERT INTO `calificacion` VALUES
+(1, 4, 7, '9.00', '9.00', '9.00', '9.00', '9.00', '9.00', '9.00', '9.00', '9.00', '9.00', '9.00');
 
-
-INSERT INTO `profesor` VALUES
-(1, '1100000001', 'Juan', 'Pérez', '0990000001', 'Educación General', 'Dirección 1'),
-(2, '1100000002', 'María', 'Gómez', '0990000002', 'Educación General', 'Dirección 2'),
-(3, '1100000003', 'Pedro', 'Rodríguez', '0990000003', 'Educación General', 'Dirección 3'),
-(4, '1100000004', 'Luisa', 'López', '0990000004', 'Educación General', 'Dirección 4'),
-(5, '1100000005', 'Carlos', 'Martínez', '0990000005', 'Educación General', 'Dirección 5'),
-(6, '1100000006', 'Ana', 'García', '0990000006', 'Educación General', 'Dirección 6'),
-(7, '1100000007', 'Jorge', 'Sánchez', '0990000007', 'Educación General', 'Dirección 7'),
-(8, '1100000008', 'Marta', 'Ramírez', '0990000008', 'Educación General', 'Dirección 8'),
-(9, '1100000009', 'Luis', 'Torres', '0990000009', 'Educación General', 'Dirección 9'),
-(10, '1100000010', 'Carmen', 'Vargas', '0990000010', 'Educación General', 'Dirección 10'),
-(11, '1100000011', 'Juan', 'Pérez', '0990000011', 'Educación General', 'Dirección 11'),
-(12, '1100000012', 'María', 'Gómez', '0990000012', 'Educación General', 'Dirección 12'),
-(13, '1100000013', 'Pedro', 'Rodríguez', '0990000013', 'Educación General', 'Dirección 13'),
-(14, '1100000014', 'Luisa', 'López', '0990000014', 'Educación General', 'Dirección 14'),
-(15, '1100000015', 'Carlos', 'Martínez', '0990000015', 'Educación General', 'Dirección 15'),
-(16, '1100000016', 'Ana', 'García', '0990000016', 'Educación General', 'Dirección 16'),
-(17, '1100000017', 'Jorge', 'Sánchez', '0990000017', 'Educación General', 'Dirección 17'),
-(18, '1100000018', 'Marta', 'Ramírez', '0990000018', 'Educación General', 'Dirección 18'),
-(19, '1100000019', 'Luis', 'Torres', '0990000019', 'Educación General', 'Dirección 19'),
-(20, '1100000020', 'Carmen', 'Vargas', '0990000020', 'Educación General', 'Dirección 20');
-
-
-INSERT INTO `usuarios` VALUES
-(1, 'superAdmin', 'admin@diginote.com', '$scrypt$ln=16,r=8,p=1$srY2xngPAaD0fu99D4FQKg$t4yu3yxBX5wyY2Bb38x7G9zFVCsfAO+FxFjsp3psSiM', 'Admin', 'Activo', NULL, NULL, NULL);

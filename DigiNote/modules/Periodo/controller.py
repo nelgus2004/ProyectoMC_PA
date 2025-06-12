@@ -63,7 +63,7 @@ class PeriodoController:
                 return ('No se encontró el periodo para eliminar', 'info')
             db.session.delete(periodo)
             db.session.commit()
-            return ('Periodo eliminado correctamente', 'danger')
+            return ('Periodo eliminado correctamente', 'successful')
         except SQLAlchemyError as e:
             db.session.rollback()
             print(f' * Error al eliminar periodo: {e}')

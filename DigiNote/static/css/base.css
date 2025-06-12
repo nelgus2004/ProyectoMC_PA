@@ -29,6 +29,7 @@ section {
 :root {
   --blanco: #F3F5F1;
   --verde: #399b6c;
+  --verde-claro: #bfd7cbee;
   --agua: #89AAB0;
   --gris: #748887;
   --verde-oscuro: #34464B;
@@ -70,7 +71,7 @@ html {
 
 /* Encabezado */
 .no-bg {
-    background: none !important;
+  background: none !important;
 }
 
 .header {
@@ -160,11 +161,13 @@ html {
   background-color: #699f71;
 }
 
+.btn__info,
 .btn__save {
   background-color: var(--azul);
   width: 6.2rem;
 }
 
+.btn__info:hover,
 .btn__save:hover {
   background-color: #4b8dd2;
 }
@@ -178,11 +181,13 @@ html {
 }
 
 .btn__danger,
+.btn__reset,
 .btn__delete {
   background-color: var(--rojo);
 }
 
 .btn__danger:hover,
+.btn__reset:hover,
 .btn__delete:hover {
   background-color: #dc5966;
 }
@@ -207,19 +212,33 @@ html {
 }
 
 /* alertas */
-.alert {
+#flash-messages {
+  position: fixed;
+  top: 5rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 1000;
+  width: 30dvw;
+  pointer-events: none;
+}
+
+#flash-messages .alert {
+  pointer-events: auto;
   padding: .6rem;
-  margin-left: auto;
-  margin-right: 1rem;
+  margin: 0 1rem 0 auto;
   border-radius: 4px;
   position: relative;
   font-size: .8rem;
-  margin-bottom: 5px;
-  width: 350px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  animation: slideIn 0.3s ease-out;
 }
 
-.alert p{
-  margin-left: 5px;
+#flash-messages .alert span {
+  width: 96%;
 }
 
 .alert__successful {
@@ -240,13 +259,57 @@ html {
   border-color: #4b8dd2;
 }
 
-.alert .close {
+#flash-messages .alert .close {
   position: absolute;
-  top: 0.25rem;
-  right: 0.75rem;
+  top: 0.2rem;
+  right: 0.2rem;
   background: none;
   border: none;
   font-size: 1.3rem;
   color: inherit;
   cursor: pointer;
+}
+
+.btn__reload {
+  position: absolute;
+  top: 0.5rem;
+  right: 7.8rem;
+  font-size: 24px;
+  background-color: var(--verde);
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+.btn__reload img {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0;
+}
+
+.btn__reload:hover {
+  background-color: #699f71;
+}
+
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.alert.hide {
+  animation: slideOut 0.3s ease-in;
+}
+
+@keyframes slideOut {
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }

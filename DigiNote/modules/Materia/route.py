@@ -20,7 +20,7 @@ def show():
 @materia_bp.route('/add_materia', methods=['POST'])
 def add():
     result = controller.add_materia(request)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('materia.show'))
 
 @materia_bp.route('/get_materia/<int:id>', methods=['GET'])
@@ -38,11 +38,11 @@ def get(id):
 @materia_bp.route('/update_materia/<int:id>', methods=['POST'])
 def update(id):
     result = controller.update_materia(id, request)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('materia.show'))
 
 @materia_bp.route('/delete_materia/<int:id>', methods=['POST', 'GET'])
 def delete(id):
     result = controller.delete_materia(id)
-    flash(*result)
+    flash(*result['mensaje'])
     return redirect(url_for('materia.show'))

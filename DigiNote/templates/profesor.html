@@ -49,9 +49,6 @@
                     inputmode="numeric" maxlength="10" title="El teléfono debe tener exactamente 10 dígitos numéricos">
             </div>
             <div class="form__group">
-                <input type="email" class="form__campo--correo" name="Correo" placeholder="Correo electrónico" required>
-            </div>
-            <div class="form__group">
                 <input type="text" class="form__campo--texto" name="Especialidad" placeholder="Especialidad" required>
             </div>
             <div class="form__group">
@@ -76,7 +73,6 @@
             <h3 class="card__text card__title">{{ reg.Cedula }}</h3>
             <p class="card__text"><b>Nombres:</b> {{ reg.Apellido }} {{ reg.Nombre }}</p>
             <p class="card__text"><b>Teléfono:</b> {{ reg.Telefono or '' }}</p>
-            <p class="card__text"><b>Correo:</b> {{ reg.Correo or '' }}</p>
             <p class="card__text"><b>Especialidad:</b> {{ reg.Especialidad or '' }}</p>
             <p class="card__text"><b>Dirección:</b> {{ reg.Direccion or '' }}</p>
         </div>
@@ -100,5 +96,4 @@
 {% endblock %}
 
 {% block sripts %}
-<script src="{{url_for('static', filename='js/emergente.js')}}"></script>
 {% endblock %}

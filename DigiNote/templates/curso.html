@@ -138,11 +138,11 @@
             <p class="card__text"><b>Periodo Lectivo:</b> {{ reg.Periodo }}</p>
         </div>
         <div class="card__btn">
-            <button type="button" class="btn btn__edit" data-id="{{ reg.idAsignacion }}" data-name="curso">
+            <button type="button" class="btn btn__edit" data-id="{{ reg.idCursoAsignacion }}" data-name="curso">
                 <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
                 <span>Editar</span>
             </button>
-            <button type="button" class="btn btn__delete" data-id="{{ reg.idAsignacion }}">
+            <button type="button" class="btn btn__delete" data-id="{{ reg.idCursoAsignacion }}">
                 <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
                 <span>Borrar</span>
             </button>
@@ -156,6 +156,5 @@
 {% endblock %}
 
 {% block sripts %}
-<script src="{{url_for('static', filename='js/emergente.js')}}"></script>
 <script src="{{url_for('static', filename='js/curso.js')}}"></script>
 {% endblock %}

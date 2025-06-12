@@ -3,25 +3,21 @@
 {% block title %}| Calificaciones{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block header %}
 <h1>Gestionar Calificaciones</h1>
 <div class="header__btns">
-    <button class="btn btn__add" data-name="calificacion">
-        <img src="{{ url_for('static', filename='image/add.png') }}" alt="añadir">
-        <span>Añadir</span>
-    </button>
+
 </div>
 {% endblock %}
 
 {% block content %}
 <!-- Rutas -->
 <template id="rutas" data-add="{{ r_add }}" data-get="{{ r_get }}" data-update="{{ r_update }}"
-    data-delete="{{ r_delete }}" data-asignaciones="{{ r_asignaciones }}">
-</template>
+    data-delete="{{ r_delete }}" data-asignaciones="{{ r_asignaciones }}"></template>
 
 <!-- Formulario Emergente -->
 <div class="emergente" id="modal-calificacion">
@@ -33,28 +29,26 @@
             <img src="{{ url_for('static', filename='image/notas.png') }}" alt="Icono">
         </div>
 
-        <form action="{{ r_add }}" method="POST" class="form form__calificacion" id="form-calificacion">
+        <form action="" method="POST" class="form form__calificacion" id="form-calificacion">
             <div class="placeholder__estudiante">
+                <!-- Mostrar Estudiante -->
                 <div class="form__group">
-                    <select class="form__campo--select" name="idMatriculaAsignacion" required>
-                        <option value="" disabled selected>Seleccione Estudiante</option>
-                        {% for est in foraneo.estudiantes %}
-                        <option value="{{ est.idEstudiante }}">
-                            {{ est.nombreCompleto }} - {{ est.cedula }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form__group">
-                    <select class="form__campo--select" name="idMatriculaAsignacion" id="select-materia" required>
-                        <option value="" disabled selected>Seleccione Materia</option>
-                    </select>
+                    <label for="campo-estudiante">Estudiante</label>
+                    <input type="text" class="form__campo--texto" id="campo-estudiante" readonly>
                 </div>
 
+                <!-- Mostrar Materia -->
+                <div class="form__group">
+                    <label for="campo-materia">Materia</label>
+                    <input type="text" class="form__campo--texto" id="campo-materia" readonly>
+                </div>
+
+                <input type="hidden" name="idMatriculaAsignacion" id="input-idMatriculaAsignacion">
+
                 <div class="form__buttons">
-                    <button type="submit" class="btn btn__save" id="btn-submit btn-guardar-final">
-                        <img src="{{ url_for('static', filename='image/save.png') }}" alt="guardar">
-                        <span>Guardar</span>
+                    <button type="submit" class="btn btn__save" id="btn-submit">
+                        <img src="{{ url_for('static', filename='image/update.png') }}" alt="Actualizar">
+                        <span>Actualizar</span>
                     </button>
                 </div>
             </div>
@@ -62,7 +56,7 @@
             <div class="placeholder__notas" id="modal-quimestre">
                 <div class="placeholder__notas" id="modal-quimestre">
                     <div class="quimestre-section">
-                        <h4>Quimestre 1</h4>
+                        <label>Notas Primer Quimestre</label>
                         <div class="filas">
                             <div class="form__group">
                                 <input type="number" min="0" max="10" step="0.01" name="NotaAutonoma1"
@@ -84,7 +78,7 @@
                     </div>
 
                     <div class="quimestre-section">
-                        <h4>Quimestre 2</h4>
+                        <label>Notas Segundo Quimestre</label>
                         <div class="filas">
                             <div class="form__group">
                                 <input type="number" min="0" max="10" step="0.01" name="NotaAutonoma2"
@@ -111,43 +105,103 @@
     </div>
 </div>
 
+<!-- Modal para calificaciones de forma detallada -->
+<div id="modal-detalle" class="table__container">
+    <h3>Calificaciones</h3>
+    <button id="btn-reload" class="btn btn__reload">
+        <img src="{{ url_for('static', filename='image/clearTable.png') }}" alt="Limpiar tabla">
+    </button>
+    <div class="table__wrapper">
+        <table class="table" id="tabla-calificaciones">
+            <thead class="table__columnName">
+                <tr>
+                    <th colspan="2">INFORMACIÓN DEL ESTUDIANTE</th>
+                    <th colspan="6">PRIMER QUIMESTRE</th>
+                    <th colspan="6">SEGUNDO QUIMESTRE</th>
+                    <th rowspan="2">PROMEDIO FINAL</th>
+                    <th rowspan="2">ACCIONES</th>
+                </tr>
+                <tr>
+                    <!-- Información estudiante -->
+                    <th>CÉDULA</th>
+                    <th>ESTUDIANTE</th>
 
+                    <th>DOCENTE</th>
+                    <th>MATERIA</th>
 
-<!-- Tarjetas de Calificaciones -->
-<div class="cards">
-    {% if registros %}
-    {% for cal in registros %}
-    <div class="card">
-        <div class="card__content">
-            <h3 class="card__text card__title">
-                {{ cal.Estudiante }} - {{ cal.Nivel }} {{ cal.Paralelo }} - {{ cal.Materia }}
-            </h3>
-            <p class="card__text"><b>Docente:</b> {{ cal.Profesor }}</p>
-            <p class="card__text"><b>Promedio Quimestre 1:</b> {{ cal.PromQuimestre1 }}</p>
-            <p class="card__text"><b>Promedio Quimestre 2:</b> {{ cal.PromQuimestre2 }}</p>
-            <p class="card__text"><b>Promedio Final:</b> {{ cal.PromedioFinal }}</p>
-        </div>
-        <div class="card__btn">
-            <button type="button" class="btn btn__edit" data-id="{{ cal.idCalificacionQuimestre }}"
-                data-name="calificacion">
-                <img src="{{ url_for('static', filename='image/edit.png') }}" alt="editar">
-                <span>Editar</span>
-            </button>
-            <button type="button" class="btn btn__delete" data-id="{{ cal.idCalificacionQuimestre }}">
-                <img src="{{ url_for('static', filename='image/delete.png') }}" alt="borrar">
-                <span>Borrar</span>
-            </button>
-        </div>
+                    <!-- Primer quimestre -->
+                    <th>Autónoma</th>
+                    <th>Práctica</th>
+                    <th>Lección</th>
+                    <th>Examen</th>
+                    <th>Prom. Q1</th>
+
+                    <!-- Segundo quimestre -->
+                    <th>Autónoma</th>
+                    <th>Práctica</th>
+                    <th>Lección</th>
+                    <th>Examen</th>
+                    <th>Prom. Q2</th>
+                </tr>
+            </thead>
+            <tbody class="table__rows" id="cuerpo-tabla">
+                <tr>
+                    <td colspan="14" class="table__empty">Elija un estudiante</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    {% endfor %}
-    {% else %}
-    <p>No hay calificaciones registradas actualmente</p>
-    {% endif %}
+
+</div>
+
+<div class="main__linea"></div>
+
+<!-- Tabla estudiantes Matriculados -->
+<div class="table__container">
+    <h3>Estudiantes Matriculados</h3>
+    <div class="table__wrapper">
+        <table class="table" id="tabla-estudiantes">
+            <thead class="table__columnName">
+                <tr>
+                    <th>CÉDULA</th>
+                    <th>ESTUDIANTE</th>
+                    <th>NIVEL</th>
+                    <th>PARALELO</th>
+                    <th>Promedio General</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody class="table__rows">
+                {% if registros %}
+                {% for est in registros %}
+                <tr>
+                    <td><b>{{ est.cedula }}</b></td>
+                    <td>{{ est.nombreCompleto }}</td>
+                    <td>{{ est.nivel }}</td>
+                    <td>{{ est.paralelo }}</td>
+                    <td>{{ est.promedio }}</td>
+                    <td class="table__btn">
+                        <button type="button" class="btn btn__info"
+                            onclick="verCalificaciones('{{ est.idEstudiante }}')">
+                            <img src="{{ url_for('static', filename='image/info.png') }}" alt="detalles">
+                            <span>Ver Notas</span>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="6" class="table__empty">No hay calificaciones registradas actualmente</td>
+                </tr>
+
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 {% endblock %}
 
 {% block sripts %}
-<script src="{{url_for('static', filename='js/emergente.js')}}"></script>
 <script src="{{url_for('static', filename='js/calificacion.js')}}"></script>
 {% endblock %}
