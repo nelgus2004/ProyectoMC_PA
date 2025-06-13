@@ -74,6 +74,10 @@ html {
   background: none !important;
 }
 
+.no-btn {
+  display: none !important;
+}
+
 .header {
   width: 100%;
   height: 6.3rem;

@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reporte.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
     {% block head %}{% endblock %}
 </head>
 
@@ -106,7 +107,7 @@
             <h1>{% block headerTitle %}{% endblock %}</h1>
             <div class="header__btns">
                 {% block headerBtn %}{% endblock %}
-                <button class="btn btn__info" data-modalId="#reporteModal">
+                <button class="btn btn__info {% if active_page == 'inicio' %}no-btn{% endif %}" data-modalId="#reporteModal">
                     <img src="{{ url_for('static', filename='image/info.png') }}" alt="Reportes">
                     <span>Reportes</span>
                 </button>

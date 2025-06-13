@@ -1,4 +1,4 @@
-from flask import render_template, make_response, request, Blueprint, send_file, flash, current_app
+from flask import render_template, make_response, request, Blueprint, send_file, flash, current_app, redirect, url_for
 
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak, Image
 from reportlab.lib.pagesizes import letter, A4, landscape
@@ -24,19 +24,28 @@ def generar_pdf_route():
     if paralelo != 'all':
         filtros['paralelo'] = paralelo
         
-    pdf_response = generar_pdf(tipo, filtros)
+    try:
+        pdf_response = generar_pdf(tipo, filtros)
+        return send_file(
+            pdf_response, 
+            as_attachment=False, 
+            download_name=f"{tipo}_reporte.pdf", 
+            mimetype='application/pdf'
+        )
+        
+    except ValueError as e:
+        flash(str(e), 'danger')
+        return redirect(url_for('inicio.menu'))
     
-    if isinstance(pdf_response, list) and not pdf_response:
-        flash('No se pudo generar el reporte. No hay registros de la consulta.', 'warning')
-        return render_template('inicio.html')
-
-    return pdf_response
+    except Exception as e:
+        current_app.logger.error(f"Error generando PDF: {str(e)}")
+        flash('Ocurrió un error interno al generar el reporte', 'danger')
+        return redirect(url_for('inicio.menu'))
 
 
 def generar_pdf(tipo, filtros):
     if tipo not in ['matricula', 'calificaciones']:
-        flash('Tipo de reporte inválido', 'danger')
-        return []
+        raise ValueError('Tipo de reporte inválido. Debe ser "matricula" o "calificaciones"')
     
     # Crear buffer para el PDF
     buffer = io.BytesIO()
@@ -50,14 +59,11 @@ def generar_pdf(tipo, filtros):
     estilo_info.spaceAfter = 12
     estilo_info.leftIndent = 20
 
-
     # Cuerpo del documento según tipo
     if tipo == 'matricula':
         datos = obtener_matriculas(filtros)
         if not datos:
-            flash('No se encontraron matrículas con los filtros proporcionados', 'info')
-            return []
-        
+            raise ValueError(f'No se encontraron matrículas para nivel: {filtros.get("nivel", "todos")}, paralelo: {filtros.get("paralelo", "todos")}')
 
         for i, estudiante in enumerate(datos):
             elementos.append(Spacer(1, 24))
@@ -85,9 +91,8 @@ def generar_pdf(tipo, filtros):
 
     elif tipo == 'calificaciones':
         datos = obtener_calificaciones(filtros)
-        if not isinstance(datos, list):
-            flash('No se encontraron calificaciones con los filtros proporcionados', 'info')
-            return []
+        if not datos:
+            raise ValueError(f'No se encontraron calificaciones para nivel: {filtros.get("nivel", "todos")}, paralelo: {filtros.get("paralelo", "todos")}')
 
         for i, estudiante in enumerate(datos):
             elementos.append(Spacer(1, 24))
@@ -107,8 +112,7 @@ def generar_pdf(tipo, filtros):
 
     doc.build(elementos, onFirstPage=encabezado_y_footer, onLaterPages=encabezado_y_footer)
     buffer.seek(0)
-
-    return send_file(buffer, as_attachment=False, download_name=f"{tipo}_reporte.pdf", mimetype='application/pdf')
+    return buffer
 
 def encabezado_y_footer(canvas, doc):
     agregar_encabezado(canvas, doc)
@@ -255,6 +259,9 @@ def obtener_matriculas(filtros=None):
             query_matriculas = query_matriculas.filter(Matricula.Paralelo == filtros['paralelo'])
     matriculas = query_matriculas.all()
 
+    if not matriculas:
+        raise ValueError('No hay matrículas registradas con los filtros proporcionados')
+    
     # Consulta de asignaciones con calificación final
     asignaciones = db.session.query(
         MatriculaAsignacion.idMatricula,
@@ -327,8 +334,7 @@ def obtener_calificaciones(filtros=None):
 
 
     if not matriculas:
-        flash('No hay matrículas registradas con los filtros proporcionados', 'danger')
-        return []
+        raise ValueError('No hay matrículas registradas con los filtros proporcionados')
 
     resultados = []
 
