@@ -7,7 +7,7 @@ una terminal de MySQL:  mysql -u root -p
 
 ```bash
 -- Crear base de datos
-CREATE DATABASE IF NOT EXISTS db_notas;
+CREATE DATABASE IF NOT EXISTS db_notas CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci;
 
 -- Crear usuario y otorgar privilegios
 CREATE USER IF NOT EXISTS 'adminNotes'@'localhost' IDENTIFIED BY 'admin123.';

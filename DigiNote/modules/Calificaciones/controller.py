@@ -111,7 +111,7 @@ class CalificacionesController:
             
             resultado = {
                 'idEstudiante': matricula.idEstudiante,
-                'estudiante': f'{matricula.estudiante.Nombre} {matricula.estudiante.Apellido}',
+                'estudiante': f'{matricula.estudiante.Apellido} {matricula.estudiante.Nombre}',
                 'cedula': matricula.estudiante.Cedula,
                 'nivel': matricula.Nivel,
                 'paralelo': matricula.Paralelo,

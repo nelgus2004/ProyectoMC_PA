@@ -43,5 +43,6 @@ def update(id):
 @matricula_bp.route('/delete_matricula/<string:id>', methods=['POST', 'GET'])
 def delete(id):
     result = controller.delete_matricula(id)
+    print(*result['mensaje'])
     flash(*result['mensaje'])
     return redirect(url_for('matricula.show'))

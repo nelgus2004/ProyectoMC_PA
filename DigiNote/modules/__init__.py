@@ -7,7 +7,7 @@ from .Estudiante.route import estudiante_bp
 from .Matricula.route import matricula_bp
 from .Calificaciones.route import calificacion_bp
 from .Usuario.route import usuario_bp
-from .Reportes.route import report_bp
+from .Reportes.reportes import report_bp
 
 all_routes = [
     (index_bp, '/app'),

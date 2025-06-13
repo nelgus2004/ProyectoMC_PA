@@ -16,6 +16,7 @@
     <!-- Hojas de Estilo -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reporte.css') }}">
     {% block head %}{% endblock %}
 </head>
 
@@ -105,8 +106,8 @@
             <h1>{% block headerTitle %}{% endblock %}</h1>
             <div class="header__btns">
                 {% block headerBtn %}{% endblock %}
-                <button class="btn btn__info" data-bs-toggle="modal" data-bs-target="#reporteModal">
-                    <img src="{{ url_for('static', filename='image/report.png') }}" alt="Reportes">
+                <button class="btn btn__info" data-modalId="#reporteModal">
+                    <img src="{{ url_for('static', filename='image/info.png') }}" alt="Reportes">
                     <span>Reportes</span>
                 </button>
             </div>
@@ -130,7 +131,7 @@
             </div>
 
             <!--Reportes del sistema-->
-            {# include "reports/modalReporte.html" #}
+            {% include "reports/modalReporte.html" %}
 
             <!-- Contenido -->
             {% block content %}{% endblock %}
@@ -140,6 +141,7 @@
     {% block sripts %}{% endblock %}
     <script src="{{ url_for('static', filename='js/emergente.js') }}"></script>
     <script src="{{url_for('static', filename='js/alertas.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/reporte.js') }}"></script>
 </body>
 
 </html>

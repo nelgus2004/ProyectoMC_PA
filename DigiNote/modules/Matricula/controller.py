@@ -1,6 +1,6 @@
 from flask import request
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func 
+from sqlalchemy import func
 from DigiNote.database import db
 from DigiNote.database.models import Estudiante, Materia, Matricula, MatriculaAsignacion, Profesor, Curso, AsignacionCurso, PeriodoLectivo, Calificacion
 from datetime import date
@@ -20,7 +20,12 @@ class MatriculaController:
                 Matricula.FechaMatricula,
                 Matricula.Nivel,
                 Matricula.Paralelo,
-                Matricula.PromedioAnual
+                Matricula.PromedioAnual,
+                PeriodoLectivo.Nombre.label('Periodo'),
+                db.func.concat(
+                    db.func.date_format(PeriodoLectivo.FechaInicio, '%M'), '-',
+                    db.func.date_format(PeriodoLectivo.FechaFin, '%M')
+                ).label('DuracionPeriodo')
             ).join(Estudiante, Estudiante.idEstudiante == Matricula.idEstudiante) \
             .join(PeriodoLectivo, PeriodoLectivo.idPeriodo == Matricula.idPeriodo) \
             .filter(PeriodoLectivo.Estado == 'Activo') \
@@ -64,6 +69,8 @@ class MatriculaController:
                     'fecha_matricula': mat.FechaMatricula.strftime('%Y-%m-%d'),
                     'nivel': mat.Nivel,
                     'paralelo': mat.Paralelo,
+                    'periodo': mat.Periodo,
+                    'duracion_periodo': mat.DuracionPeriodo,
                     'promedio_anual': float(mat.PromedioAnual) if mat.PromedioAnual else 0.0,
                     'asignaciones': asignaciones_dict.get(mat.idMatricula, [])
                 }
@@ -79,6 +86,15 @@ class MatriculaController:
     def add_matricula(self, request):
         if request.method == 'POST':
             periodo_activo = db.session.query(PeriodoLectivo).filter_by(Estado='Activo').first()
+            
+            ya_matriculado = db.session.query(Matricula).filter(
+                Matricula.idEstudiante == request.form['idEstudiante'],
+                Matricula.idPeriodo == periodo_activo.idPeriodo
+            ).first()
+
+            if ya_matriculado:
+                return {'mensaje': ('El estudiante ya está matriculado en el periodo activo', 'danger')}
+
             try:
                 nueva = Matricula(
                     idEstudiante=request.form['idEstudiante'],
@@ -115,24 +131,45 @@ class MatriculaController:
 
     def get_matricula_by_id(self, id):
         try:
-            matricula = db.session.get(Matricula, id)
-            if not matricula:
+            query = (
+                db.session.query(
+                    Matricula,
+                    PeriodoLectivo.Nombre.label('Periodo'),
+                    db.func.concat(
+                        db.func.date_format(PeriodoLectivo.FechaInicio, '%M'), '-',
+                        db.func.date_format(PeriodoLectivo.FechaFin, '%M')
+                    ).label('DuracionPeriodo')
+                )
+                .join(PeriodoLectivo, Matricula.idPeriodo == PeriodoLectivo.idPeriodo)
+                .filter(Matricula.idMatricula == id)
+                .first()
+            )
+
+            if not query:
                 return []
 
+            matricula, periodo, duracion = query
             asignaciones = [ma.idCursoAsignacion for ma in matricula.matricula_asignacion]
+
             result = {
                 'idMatricula': matricula.idMatricula,
                 'idEstudiante': matricula.idEstudiante,
                 'FechaMatricula': matricula.FechaMatricula.isoformat(),
                 'Nivel': matricula.Nivel,
+                'Paralelo': matricula.Paralelo,
                 'PromedioAnual': matricula.PromedioAnual,
+                'Periodo': periodo,
+                'DuracionPeriodo': duracion,
                 'asignaciones': asignaciones
             }
+
             return result
+
         except SQLAlchemyError as e:
             print(f" * Error en get_matricula_by_id: {e}")
-            return []
+            return []   
 
+    
     def update_matricula(self, id, request):
         if request.method == 'POST':
             try:
@@ -194,12 +231,12 @@ class MatriculaController:
                                     
             db.session.delete(matricula)
             db.session.commit()
-            return ('Matrícula eliminada correctamente', 'danger')
+            return { 'mensaje': ('Matrícula eliminada correctamente', 'successful') }
         except SQLAlchemyError as e:
             db.session.rollback()
             print(f" * Error al eliminar matrícula: {e}")
             return { 'mensaje': ('No se pudo eliminar la matrícula', 'danger') } 
-        
+
 
     def foreign_records(self):
         try:

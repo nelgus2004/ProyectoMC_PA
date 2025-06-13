@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Estudiante(db.Model):
     __tablename__ = 'estudiante'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
@@ -23,7 +23,7 @@ class Estudiante(db.Model):
 
 class Profesor(db.Model):
     __tablename__ = 'profesor'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
@@ -41,7 +41,7 @@ class Profesor(db.Model):
 
 class Administrador(db.Model):
     __tablename__ = 'administrador'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
     
@@ -55,7 +55,7 @@ class Administrador(db.Model):
 
 class Materia(db.Model):
     __tablename__ = 'materia'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
@@ -68,7 +68,7 @@ class Materia(db.Model):
 
 class PeriodoLectivo(db.Model):
     __tablename__ = 'periodo_lectivo'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
@@ -86,7 +86,7 @@ class Curso(db.Model):
     __tablename__ = 'curso'
     __table_args__ = (
         db.UniqueConstraint('Nivel', 'Paralelo', name='uq_nivel_paralelo'),
-        {'mysql_engine': 'InnoDB'}
+        {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
     )
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
@@ -100,7 +100,7 @@ class Curso(db.Model):
 
 class AsignacionCurso(db.Model):
     __tablename__ = 'asignacion_curso'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
@@ -122,7 +122,7 @@ class AsignacionCurso(db.Model):
 
 class Matricula(db.Model):
     __tablename__ = 'matricula'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
@@ -143,7 +143,7 @@ class MatriculaAsignacion(db.Model):
     __tablename__ = 'matricula_asignacion'
     __table_args__ = (
         db.UniqueConstraint('idMatricula', 'idCursoAsignacion', name='uq_matricula_asignacion'),
-        {'mysql_engine': 'InnoDB'}
+        {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
     )
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
@@ -159,7 +159,7 @@ class MatriculaAsignacion(db.Model):
     
 class Calificacion(db.Model):
     __tablename__ = 'calificacion'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
 
     idCalificacion = db.Column(db.Integer, primary_key=True, autoincrement=True)
     idMatricula = db.Column(
@@ -187,7 +187,7 @@ class Calificacion(db.Model):
 
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_collate': 'utf8mb4_spanish_ci'}
 
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
